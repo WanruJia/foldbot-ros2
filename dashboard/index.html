@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FoldBot ROS 2 — 真机部署进展</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+         background: #0f1420; color: #e8ecf4; padding: 24px; }
+  h1 { font-size: 22px; margin-bottom: 4px; }
+  .sub { color: #8b94a7; font-size: 13px; margin-bottom: 20px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .card { background: #1a2133; border-radius: 12px; padding: 18px; }
+  .card h2 { font-size: 15px; margin-bottom: 12px; color: #9fb4ff; }
+  .ms { display: flex; align-items: center; gap: 10px; padding: 8px 0;
+        border-bottom: 1px solid #2a3350; font-size: 14px; }
+  .ms:last-child { border-bottom: none; }
+  .badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+  .done { background: #1d4d2e; color: #7dffa8; }
+  .doing { background: #4d3a1d; color: #ffcf7d; }
+  .pending { background: #2a3350; color: #8b94a7; }
+  .ms .detail { color: #8b94a7; font-size: 12px; margin-top: 2px; }
+  .log { font-size: 13px; line-height: 1.7; }
+  .log .date { color: #9fb4ff; font-weight: 600; }
+  .tests { font-size: 14px; }
+  .tests .pass { color: #7dffa8; } .tests .fail { color: #ff7d7d; }
+  /* BT tree */
+  .btree { display: flex; flex-direction: column; align-items: center; gap: 0; }
+  .bnode { background: #24304d; border: 2px solid #3a4a75; border-radius: 10px;
+           padding: 10px 18px; font-size: 13px; text-align: center; min-width: 170px; }
+  .bnode .nm { font-weight: 700; color: #cfe0ff; }
+  .bnode .ds { font-size: 11px; color: #8b94a7; margin-top: 3px; }
+  .bnode.stub { border-color: #6b5a2e; }
+  .bnode .st { font-size: 10px; margin-top: 4px; display: inline-block;
+               padding: 2px 8px; border-radius: 10px; background: #4d3a1d; color: #ffcf7d; }
+  .barrow { width: 2px; height: 22px; background: #3a4a75; }
+  .broot { background: #1d3a5f; border-color: #4d8dff; }
+  @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<h1>🤖 FoldBot ROS 2 — 真机部署进展</h1>
+<div class="sub">每天自动推进一部分 · 最后更新 <span id="updated"></span></div>
+<div class="grid">
+  <div class="card">
+    <h2>🗺️ 里程碑</h2>
+    <div id="milestones"></div>
+  </div>
+  <div class="card">
+    <h2>🌳 行为树主干</h2>
+    <div class="btree" id="btree"></div>
+  </div>
+  <div class="card">
+    <h2>🧪 测试</h2>
+    <div class="tests" id="tests"></div>
+  </div>
+  <div class="card">
+    <h2>📝 每日日志</h2>
+    <div class="log" id="log"></div>
+  </div>
+</div>
+<script>
+fetch('progress.json').then(r => r.json()).then(d => {
+  document.getElementById('updated').textContent = d.updated;
+  // milestones
+  const ms = document.getElementById('milestones');
+  d.milestones.forEach(m => {
+    const cls = m.status === 'done' ? 'done' : m.status === 'doing' ? 'doing' : 'pending';
+    const txt = m.status === 'done' ? '✅ 完成' : m.status === 'doing' ? '🔄 进行中' : '⏳ 待做';
+    ms.innerHTML += `<div class="ms"><span class="badge ${cls}">${m.id}</span>
+      <div><div>${txt} ${m.title}</div>${m.detail ? `<div class="detail">${m.detail}</div>` : ''}</div></div>`;
+  });
+  // btree
+  const bt = document.getElementById('btree');
+  bt.innerHTML = `<div class="bnode broot"><div class="nm">FoldBotMain</div>
+    <div class="ds">Sequence · 主树</div></div><div class="barrow"></div>`;
+  d.bt_nodes.forEach((n, i) => {
+    bt.innerHTML += `<div class="bnode stub"><div class="nm">${n.name}</div>
+      <div class="ds">${n.desc}</div><div class="st">${n.status === 'done' ? '✅ 实现' : '🔧 stub'}</div></div>`;
+    if (i < d.bt_nodes.length - 1) bt.innerHTML += `<div class="barrow"></div>`;
+  });
+  // tests
+  document.getElementById('tests').innerHTML =
+    `上次运行：${d.tests.last_run}<br><span class="pass">✅ 通过 ${d.tests.passed}</span> ·
+     <span class="fail">❌ 失败 ${d.tests.failed}</span>`;
+  // log
+  const log = document.getElementById('log');
+  d.daily_log.slice().reverse().forEach(e => {
+    log.innerHTML += `<div style="margin-bottom:10px"><span class="date">${e.date}</span><br>${e.done}</div>`;
+  });
+});
+</script>
+</body>
+</html>
