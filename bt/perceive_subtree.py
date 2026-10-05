@@ -21,6 +21,7 @@ from planning.fold_planner import (
     classify_owner, detect_pants_length, pants_fold_mode,
     plan_folds, plan_pants_folds,
 )
+from planning.board import plan_board_folds
 
 
 def _bb_write():
@@ -30,6 +31,7 @@ def _bb_write():
     bb.register_key(key="keypoints", access=py_trees.common.Access.WRITE)
     bb.register_key(key="perception", access=py_trees.common.Access.WRITE)
     bb.register_key(key="fold_plan", access=py_trees.common.Access.WRITE)
+    bb.register_key(key="board_plan", access=py_trees.common.Access.WRITE)
     return bb
 
 
@@ -134,15 +136,23 @@ class PlanFoldsNode(py_trees.behaviour.Behaviour):
         owner = bb.perception.owner
         if kind == "shirt":
             plan = plan_folds(kp)
+            # Board plan: detect sleeve length from keypoints in real system;
+            # mock uses 'short' here, real vision provides it.
+            bplan = plan_board_folds("shirt", owner, sleeve="short")
         else:
             length = detect_pants_length(kp)
             mode = pants_fold_mode(owner, length)
             plan = plan_pants_folds(kp, mode)
             self.logger.info(f"[PlanFolds] pants length={length} mode={mode}")
+            bplan = plan_board_folds("pants", owner, pants_mode=mode)
         bb.fold_plan = plan
+        bb.board_plan = bplan
         self.logger.info(
             f"[PlanFolds] real plan: {len(plan.folds)} folds "
             f"({', '.join(f.label for f in plan.folds)})")
+        self.logger.info(
+            f"[PlanFolds] board plan: slot={bplan['slot']} "
+            f"panels={bplan['panels']}")
         return py_trees.common.Status.SUCCESS
 
 

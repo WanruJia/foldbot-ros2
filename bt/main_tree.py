@@ -10,13 +10,15 @@ import py_trees
 from bt.pick_subtree import create_pick_subtree
 from bt.perceive_subtree import create_perceive_subtree
 from bt.fold_subtree import create_fold_subtree
+from bt.board_actions import create_board_fold_subtree
 from bt.sort_subtree import create_sort_subtree
 
 
-def create_main_tree(succeed_on_attempt=1, kind="random", owner="random"):
+def create_main_tree(succeed_on_attempt=1, kind="random", owner="random",
+                     use_board=False):
     pick, _ = create_pick_subtree(succeed_on_attempt=succeed_on_attempt)
     perceive = create_perceive_subtree(kind=kind, owner=owner)
-    fold = create_fold_subtree()
+    fold = create_board_fold_subtree() if use_board else create_fold_subtree()
     sort = create_sort_subtree()
     root = py_trees.composites.Sequence(name="FoldBotMain", memory=True)
     root.add_children([pick, perceive, fold, sort])
