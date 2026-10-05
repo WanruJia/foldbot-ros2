@@ -85,9 +85,11 @@ def pants_fold_mode(owner, length):
     return "bi" if length == "long" else "none"
 
 
-def plan_folds(k):
-    """T-shirt: B-step left fold, C-step right fold (mirror), D-step hem flip.
-    k: dict with sleeve_l/r, shoulder_l/r, hem_l/r, a, b, c (each {'x','y','z'})."""
+def plan_folds(k, sleeve="short"):
+    """T-shirt: long sleeves first tuck in (left then right), then B-step left
+    fold, C-step right fold (mirror), D-step hem flip.
+    k: dict with sleeve_l/r, shoulder_l/r, hem_l/r, a, b, c (each {'x','y','z'}).
+    sleeve: 'short' | 'long'."""
     hem_mid = {"x": (k["hem_l"]["x"] + k["hem_r"]["x"]) / 2, "y": 0.002,
                "z": (k["hem_l"]["z"] + k["hem_r"]["z"]) / 2}
     top_mid = {"x": (k["shoulder_l"]["x"] + k["shoulder_r"]["x"]) / 2,
@@ -95,6 +97,35 @@ def plan_folds(k):
     up = _norm2(top_mid["x"] - hem_mid["x"], top_mid["z"] - hem_mid["z"])
     right = _norm2(k["sleeve_r"]["x"] - k["sleeve_l"]["x"],
                    k["sleeve_r"]["z"] - k["sleeve_l"]["z"])
+
+    folds = []
+
+    if sleeve == "long":
+        # Sleeve tuck: fold each long sleeve in along the body side line
+        ss_l = side_of_line(k["shoulder_l"]["x"], k["shoulder_l"]["z"], up[0], up[1],
+                            k["sleeve_l"]["x"], k["sleeve_l"]["z"])
+        sf_l = {"px": k["shoulder_l"]["x"], "pz": k["shoulder_l"]["z"],
+                "dx": up[0], "dz": up[1],
+                "fold_sign": 1 if ss_l >= 0 else -1, "axis_h": 0.008, "duration": 1.6}
+        folds.append(FoldStep(
+            label="收左袖", status="A·收左袖 — 左臂抓左袖口, 沿左肩线内折",
+            px=sf_l["px"], pz=sf_l["pz"], dx=sf_l["dx"], dz=sf_l["dz"],
+            fold_sign=sf_l["fold_sign"], axis_h=sf_l["axis_h"], duration=sf_l["duration"],
+            grab=_pt(k["sleeve_l"]["x"], 0.002, k["sleeve_l"]["z"]), grab_arm="L",
+            press=_pt(k["shoulder_l"]["x"], 0.03, k["shoulder_l"]["z"]), press_arm="R",
+        ))
+        ss_r = side_of_line(k["shoulder_r"]["x"], k["shoulder_r"]["z"], up[0], up[1],
+                            k["sleeve_r"]["x"], k["sleeve_r"]["z"])
+        sf_r = {"px": k["shoulder_r"]["x"], "pz": k["shoulder_r"]["z"],
+                "dx": up[0], "dz": up[1],
+                "fold_sign": 1 if ss_r >= 0 else -1, "axis_h": 0.008, "duration": 1.6}
+        folds.append(FoldStep(
+            label="收右袖", status="B·收右袖 — 右臂抓右袖口, 沿右肩线内折",
+            px=sf_r["px"], pz=sf_r["pz"], dx=sf_r["dx"], dz=sf_r["dz"],
+            fold_sign=sf_r["fold_sign"], axis_h=sf_r["axis_h"], duration=sf_r["duration"],
+            grab=_pt(k["sleeve_r"]["x"], 0.002, k["sleeve_r"]["z"]), grab_arm="R",
+            press=_pt(k["shoulder_r"]["x"], 0.03, k["shoulder_r"]["z"]), press_arm="L",
+        ))
 
     # Fold 1: left side in along left ABC line
     s1 = side_of_line(k["a"]["x"], k["a"]["z"], up[0], up[1],
@@ -123,7 +154,7 @@ def plan_folds(k):
              "fold_sign": 1 if s2 >= 0 else -1, "axis_h": 0.014, "duration": 1.5}
     keep2 = _norm2(k["b"]["x"] - hem_mid_f["x"], k["b"]["z"] - hem_mid_f["z"])
 
-    folds = [
+    folds.extend([
         FoldStep(
             label="左折", status="B·左折 — 左臂抓左袖口, 沿左ABC线翻折",
             px=fold1["px"], pz=fold1["pz"], dx=fold1["dx"], dz=fold1["dz"],
@@ -148,7 +179,7 @@ def plan_folds(k):
             press=_pt(k["b"]["x"] + keep2[0] * 0.05, 0.04, k["b"]["z"] + keep2[1] * 0.05),
             press_arm="L",
         ),
-    ]
+    ])
     markers = [
         {"name": "A", "x": k["a"]["x"], "y": k["a"]["y"], "z": k["a"]["z"],
          "color": "#ff5252", "label": "A"},

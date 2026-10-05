@@ -69,6 +69,15 @@ def test_plan_folds_shirt():
     print("PASS test_plan_folds_shirt (3 folds: left+right+hem)")
 
 
+def test_plan_folds_long_sleeve():
+    plan = plan_folds(_shirt_k(0.62), sleeve="long")
+    assert len(plan.folds) == 5, f"long sleeve should have 5 folds, got {len(plan.folds)}"
+    assert plan.folds[0].label == "收左袖" and plan.folds[1].label == "收右袖"
+    assert plan.folds[2].label == "左折" and plan.folds[3].label == "右折"
+    assert plan.folds[4].label == "对折"
+    print("PASS test_plan_folds_long_sleeve (5 folds: sleeves+left+right+hem)")
+
+
 def test_plan_pants_modes():
     k = _pants_k(0.48, True)
     assert len(plan_pants_folds(k, "tri").folds) == 3, "tri should have 3 folds"
@@ -81,5 +90,6 @@ if __name__ == "__main__":
     test_classify_owner()
     test_pants_length_and_mode()
     test_plan_folds_shirt()
+    test_plan_folds_long_sleeve()
     test_plan_pants_modes()
     print("\nAll M2 tests passed ✅")
