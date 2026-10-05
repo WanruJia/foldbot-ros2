@@ -37,6 +37,10 @@
   {
    "date": "2026-10-05",
    "done": "M4 完成：bt/perceive_subtree.py 把 PerceiveAndPlan 拆成 5 节点 (CaptureImage/ClassifyGarment/DetectKeypoints/ClassifyOwner/PlanFolds)，ClassifyOwner 和 PlanFolds 用 M2 的真实 planner 不再 mock；FoldGarment 改读真实 FoldPlan；tests/test_m4.py 4 个测试全过 (T恤3折/爸爸长裤tri/全树端到端)。修 mock_perception 裤子比例使其判为长裤。"
+  },
+  {
+   "date": "2026-10-05",
+   "done": "M5 完成 (全部里程碑 done)：bt/fold_subtree.py — 每个 FoldStep 展开成 6 个原子动作 (抓/闭爪/按/执行折/松爪/收臂)，FoldStepsIterator 从黑板动态读计划；bt/sort_subtree.py — 5 节点 (抓/移到衣箱/堆叠/松爪/收臂)，黑板维护各衣箱堆叠计数。tests/test_m5.py 4 个测试全过。修 StackInBin 黑板 KeyError (bin_counts 不存在时)。19/19 测试全过。"
   }
  ],
  "milestones": [
@@ -76,15 +80,15 @@
    "title": "PerceiveAndPlan 子树细化"
   },
   {
-   "date": null,
-   "detail": "",
+   "date": "2026-10-05",
+   "detail": "bt/fold_subtree.py (每折6个原子动作，动态迭代) + bt/sort_subtree.py (5节点+衣箱堆叠计数)，4 个测试全过",
    "id": "M5",
-   "status": "pending",
+   "status": "done",
    "title": "FoldStep / SortToBin 子树细化"
   }
  ],
  "tests": {
-  "passed": 15,
+  "passed": 19,
   "failed": 0,
   "last_run": "2026-10-05"
  },
