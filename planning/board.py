@@ -1,53 +1,49 @@
 """Folding board geometry and board-based fold planning.
 
-Board design (v1.0, 2026-10-05):
-  - 55cm x 75cm board on a 20cm-wide center pedestal, 15-20cm tall.
-  - Robot arm reaches UNDER the side panels and pushes UP to flip them.
+Board design (v1.1, 2026-10-05 — per Wanru's video reference):
+  - 75cm x 72cm board, three columns x 25cm wide.
+  - Side columns: single 72cm panels (hinged inner edge, flip in).
+  - Middle column: top 36cm FIXED (pedestal underneath),
+                   bottom 36cm hinged (flips up for hem fold).
+  - Robot arm reaches UNDER the panels and pushes UP to flip them.
   - Gravity assists once the panel passes vertical.
-  - Side hinges have 2 slots: adult (center 25cm) / child (center 17cm).
 
 Layout (top view, meters):
-  ┌─────────────────────────────────────────┐
-  │  ┌──────┬──────────────────┬──────┐     │
-  │  │ left │      center      │right │ 40cm
-  │  │panel │      panel       │panel │     │
-  │  ├──────┴──────────────────┴──────┤     │
-  │  │        bottom panel             │ 35cm
-  │  └───────────────────────────────┘     │
-  └─────────────────────────────────────────┘
+  ┌─────────┬─────────┬─────────┐
+  │         │  0.36   │         │
+  │         │ (fixed) │         │
+  │  0.25   ├─────────┤  0.25   │  0.72
+  │         │  0.36   │         │
+  │         │ (flips) │         │
+  └─────────┴─────────┴─────────┘
+     0.25      0.25      0.25
 """
 
 # Board dimensions (meters)
-BOARD_W = 0.55
-BOARD_L = 0.75
-CENTER_H = 0.40          # center panel height
-BOTTOM_H = 0.35          # bottom panel height
-SIDE_W = 0.15            # side panel width (fixed outer)
+BOARD_W = 0.75
+BOARD_L = 0.72
+COL_W = 0.25
+SIDE_H = 0.72
+MID_H = 0.36
 
-# Hinge slots: center panel width per size class
-HINGE_SLOTS = {
-    "adult": 0.25,   # dad (50cm) / mom (43cm)
-    "child": 0.17,   # daughter (36cm) / son (33cm)
-}
-
-# Pedestal
+# Pedestal (under middle-top fixed panel)
 PEDESTAL_W = 0.20
 PEDESTAL_H = 0.18   # clearance for arm underneath
 
 # Panel names
 PANEL_LEFT = "left"
 PANEL_RIGHT = "right"
-PANEL_BOTTOM = "bottom"
+PANEL_BOTTOM = "bottom"  # middle-bottom flip panel
 
 
 def hinge_slot_for_owner(owner):
-    """Pick hinge slot from owner size class."""
+    """Pick hinge slot from owner size class (v1.1: fixed 25cm, kept for API)."""
     return "adult" if owner in ("dad", "mom") else "child"
 
 
-def center_width(slot):
-    """Center panel width for a hinge slot."""
-    return HINGE_SLOTS[slot]
+def center_width(slot="adult"):
+    """Center column width (fixed 25cm in v1.1)."""
+    return COL_W
 
 
 def plan_board_folds(kind, owner, sleeve="short", pants_mode=None):
@@ -99,18 +95,18 @@ def plan_board_folds(kind, owner, sleeve="short", pants_mode=None):
 def panel_push_pose(panel, slot="adult"):
     """Arm push pose for flipping a panel (underneath, pushing up).
 
-    Returns {'x', 'z', 'y'} — position under the panel edge where the
+    Returns {'x', 'z', 'y'} — position under the panel where the
     arm makes contact, plus push direction (always +y).
     Board center = origin, board top surface at y=0.
+    Middle-top fixed panel spans z in [-0.36, 0]; hinge at z=0.
     """
-    cw = center_width(slot)
     if panel == PANEL_LEFT:
-        return {"x": -(cw / 2 + SIDE_W / 2), "z": 0.0, "y": -0.05}
+        return {"x": -(COL_W / 2 + COL_W / 2), "z": 0.0, "y": -0.05}
     if panel == PANEL_RIGHT:
-        return {"x": cw / 2 + SIDE_W / 2, "z": 0.0, "y": -0.05}
+        return {"x": COL_W / 2 + COL_W / 2, "z": 0.0, "y": -0.05}
     if panel == PANEL_BOTTOM:
-        return {"x": 0.0, "z": CENTER_H / 2 + BOTTOM_H / 2, "y": -0.05}
+        return {"x": 0.0, "z": MID_H / 2, "y": -0.05}
     if panel == "top":
         # Top fold for pants tri-fold: arm presses from above
-        return {"x": 0.0, "z": -(CENTER_H / 2 + 0.10), "y": 0.10}
+        return {"x": 0.0, "z": -(MID_H / 2 + 0.10), "y": 0.10}
     raise ValueError(f"unknown panel: {panel}")
