@@ -37,16 +37,22 @@ def _pt(x, y, z):
 def classify_owner(kind, k):
     """Classify garment owner from keypoint measurements.
     kind: 'shirt' | 'pants'. k: dict of {'x','z'} keypoints.
-    Returns (owner, metric, metric_name)."""
+    Returns (owner, metric, metric_name).
+
+    Shirt thresholds calibrated 2026-10-05 from Wanru's real measurements:
+    dad 43 / mom 35 / daughter 32 / son 27-32 cm (midpoints as cutoffs).
+    Note: daughter (32) overlaps son's T-shirt (32) — size alone can't
+    fully separate the siblings.
+    """
     if kind == "shirt":
         m = math.hypot(k["shoulder_r"]["x"] - k["shoulder_l"]["x"],
                        k["shoulder_r"]["z"] - k["shoulder_l"]["z"])
         name = "肩宽"
-        if m >= 0.69:
+        if m >= 0.39:
             return "dad", m, name
-        if m >= 0.595:
+        if m >= 0.335:
             return "mom", m, name
-        if m >= 0.50:
+        if m >= 0.295:
             return "daughter", m, name
         return "son", m, name
     m = math.hypot(k["waist_r"]["x"] - k["waist_l"]["x"],

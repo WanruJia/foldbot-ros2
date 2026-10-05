@@ -27,8 +27,8 @@ def mock_perceive(kind="shirt", owner="mom"):
     result = PerceptionResult(kind=kind, owner=owner)
 
     if kind == "shirt":
-        # Shoulder widths per owner (mirrors planner.classifyOwner thresholds)
-        widths = {"dad": 0.72, "mom": 0.62, "daughter": 0.54, "son": 0.46}
+        # 真实数据 (2026-10-05): dad 0.43 / mom 0.35 / daughter 0.32 / son 0.27
+        widths = {"dad": 0.43, "mom": 0.35, "daughter": 0.32, "son": 0.27}
         w = widths[owner]
         cx, cz = (random.random() - 0.5) * 0.2, (random.random() - 0.5) * 0.15
         k = KeypointsShirt(
