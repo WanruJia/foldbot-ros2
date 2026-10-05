@@ -33,6 +33,10 @@
   {
    "date": "2026-10-05",
    "done": "M3 完成：bt/pick_subtree.py 把 PickFromBasket 拆成 8 个独立节点 (MoveToBasket/DescendToGarment/CloseGripper/LiftSlightly/VerifyGrasp/MoveToFoldZone/ReleaseGarment/RetractArm)，GraspSequence 用 Retry 装饰器做 3 次重试；tests/test_m3.py 4 个测试全过 (结构/重试成功/3次耗尽/全树回归)。修了一个 py_trees memory=False 导致 Sequence 死循环的 bug。"
+  },
+  {
+   "date": "2026-10-05",
+   "done": "M4 完成：bt/perceive_subtree.py 把 PerceiveAndPlan 拆成 5 节点 (CaptureImage/ClassifyGarment/DetectKeypoints/ClassifyOwner/PlanFolds)，ClassifyOwner 和 PlanFolds 用 M2 的真实 planner 不再 mock；FoldGarment 改读真实 FoldPlan；tests/test_m4.py 4 个测试全过 (T恤3折/爸爸长裤tri/全树端到端)。修 mock_perception 裤子比例使其判为长裤。"
   }
  ],
  "milestones": [
@@ -65,10 +69,10 @@
    "title": "PickFromBasket 子树细化"
   },
   {
-   "date": null,
-   "detail": "",
+   "date": "2026-10-05",
+   "detail": "bt/perceive_subtree.py: 5 节点感知规划链，接入 M2 真实 planner (classifyOwner/planFolds)，4 个测试全过",
    "id": "M4",
-   "status": "pending",
+   "status": "done",
    "title": "PerceiveAndPlan 子树细化"
   },
   {
@@ -80,7 +84,7 @@
   }
  ],
  "tests": {
-  "passed": 11,
+  "passed": 15,
   "failed": 0,
   "last_run": "2026-10-05"
  },

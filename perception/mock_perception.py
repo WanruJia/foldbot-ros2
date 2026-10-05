@@ -48,12 +48,14 @@ def mock_perceive(kind="shirt", owner="mom"):
         widths = {"dad": 0.56, "mom": 0.48, "daughter": 0.40, "son": 0.32}
         w = widths[owner]
         cx, cz = (random.random() - 0.5) * 0.2, (random.random() - 0.5) * 0.15
+        # 长裤: 腿长 ~1.7x 腰宽 (dad 0.95/0.56)，保证 detect_pants_length 判为 long
+        leg = w * 1.7
         k = KeypointsPants(
             waist_l=_pt(cx - w / 2, 0.002, cz - 0.25),
             waist_r=_pt(cx + w / 2, 0.002, cz - 0.25),
             crotch=_pt(cx, 0.002, cz - 0.05),
-            cuff_l=_pt(cx - w / 2 + 0.03, 0.002, cz + 0.30),
-            cuff_r=_pt(cx + w / 2 - 0.03, 0.002, cz + 0.30),
+            cuff_l=_pt(cx - w / 2 + 0.03, 0.002, cz - 0.25 + leg),
+            cuff_r=_pt(cx + w / 2 - 0.03, 0.002, cz - 0.25 + leg),
         )
         result.keypoints_pants = k
         result.metric, result.metric_name = w, "腰宽"

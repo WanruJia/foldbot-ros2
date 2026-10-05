@@ -7,34 +7,12 @@ M0: all action nodes are stubs that log and succeed; perception is mocked.
 Real robot: replace stubs with ROS 2 action clients (MoveIt2, gripper, etc.).
 """
 import py_trees
-from perception.mock_perception import mock_perceive
 from bt.pick_subtree import create_pick_subtree
-
-
-class PerceiveAndPlan(py_trees.behaviour.Behaviour):
-    """Run perception pipeline and fold planning (mocked in M0)."""
-
-    def __init__(self, name="PerceiveAndPlan"):
-        super().__init__(name)
-
-    def update(self):
-        self.logger.info("PerceiveAndPlan: capturing RGB-D (mock)...")
-        result = mock_perceive(kind="random", owner="random")
-        bb = py_trees.blackboard.Client(name="perceive")
-        bb.register_key(key="perception", access=py_trees.common.Access.WRITE)
-        bb.perception = result
-        self.logger.info(
-            f"  detected: {result.kind} / {result.owner} "
-            f"({result.metric_name}={result.metric:.3f})"
-        )
-        # M0: fake a 2-step fold plan; real planner ports planner.js
-        bb.register_key(key="fold_plan", access=py_trees.common.Access.WRITE)
-        bb.fold_plan = {"steps": ["fold_1", "fold_2"], "kind": result.kind}
-        return py_trees.common.Status.SUCCESS
+from bt.perceive_subtree import create_perceive_subtree
 
 
 class FoldGarment(py_trees.behaviour.Behaviour):
-    """Execute each fold step in the plan."""
+    """Execute each fold step in the plan (real FoldPlan from M4)."""
 
     def __init__(self, name="FoldGarment"):
         super().__init__(name)
@@ -46,10 +24,13 @@ class FoldGarment(py_trees.behaviour.Behaviour):
     def update(self):
         bb = py_trees.blackboard.Client(name="fold")
         bb.register_key(key="fold_plan", access=py_trees.common.Access.READ)
-        steps = getattr(bb, "fold_plan", {"steps": []})["steps"]
+        plan = getattr(bb, "fold_plan", None)
+        steps = plan.folds if plan else []
         if self._done < len(steps):
-            self.logger.info(f"  [fold] executing {steps[self._done]} "
-                             f"({self._done + 1}/{len(steps)})")
+            s = steps[self._done]
+            self.logger.info(f"  [fold] {s.label} ({s.status}) "
+                             f"[{self._done + 1}/{len(steps)}] "
+                             f"grab={s.grab_arm} press={s.press_arm}")
             self._done += 1
             return py_trees.common.Status.RUNNING
         self.logger.info("FoldGarment: all steps done")
@@ -73,12 +54,13 @@ class SortToBin(py_trees.behaviour.Behaviour):
         return py_trees.common.Status.SUCCESS
 
 
-def create_main_tree(succeed_on_attempt=1):
+def create_main_tree(succeed_on_attempt=1, kind="random", owner="random"):
     pick, _ = create_pick_subtree(succeed_on_attempt=succeed_on_attempt)
+    perceive = create_perceive_subtree(kind=kind, owner=owner)
     root = py_trees.composites.Sequence(name="FoldBotMain", memory=True)
     root.add_children([
         pick,
-        PerceiveAndPlan(),
+        perceive,
         FoldGarment(),
         SortToBin(),
     ])
