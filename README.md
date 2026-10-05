@@ -15,6 +15,14 @@
 - **M3**: PickFromBasket 子树细化
 - **M4**: PerceiveAndPlan 子树细化
 - **M5**: FoldStep / SortToBin 子树细化
+- **Board**: 叠衣板（75×72cm，三列25cm，中间36+36）— 机械臂抓板边翻折
+
+## 叠衣板 / Folding Board
+
+75×72cm 板，左/右/中三列各25cm宽，中间列分上下两块36cm。
+机械臂**抓板边**翻折（v1.2，替代从下推）：抓边 → 上翻 → 停顿 → 放回 → 松开。
+`planning/board.py` 有 `BoardFoldSimulator`（顶点级折叠验证，和可视化同数学）。
+短袖：翻左 → 翻右 → 翻底；长袖先收袖；裤子先对折再上板。
 
 ## 结构
 

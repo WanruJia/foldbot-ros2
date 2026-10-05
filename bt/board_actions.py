@@ -56,15 +56,28 @@ def create_place_on_board_subtree(place):
 
 
 def create_flip_panel_subtree(panel, slot="adult"):
-    """Build the FlipPanel sequence: go under, push up, retract."""
+    """Build the FlipPanel sequence: grab edge, flip up, pause, return down.
+
+    v1.2: Changed from push-from-below to grab-edge (Wanru's suggestion).
+    Grabbing gives full control: flip up AND return down.
+    Sequence: grab edge → flip up (garment folds) → pause → return panel → release.
+    """
     pose = panel_push_pose(panel, slot)
     root = py_trees.composites.Sequence(
         name=f"FlipPanel:{panel}", memory=True)
     root.add_children([
-        MockBoardAction("MoveUnderPanel", ticks=2,
-                        detail=f"arm under {panel} panel ({pose['x']:.2f},{pose['z']:.2f})"),
-        MockBoardAction("PushPanelUp", ticks=3,
-                        detail=f"push up {panel} panel, gravity assists"),
+        MockBoardAction("MoveToPanelEdge", ticks=2,
+                        detail=f"arm → {panel} panel edge ({pose['x']:.2f},{pose['z']:.2f})"),
+        MockBoardAction("CloseGripper", ticks=1,
+                        detail=f"gripper grabs {panel} panel edge"),
+        MockBoardAction("FlipPanelUp", ticks=3,
+                        detail=f"lift {panel} panel up and over (garment folds)"),
+        MockBoardAction("Pause", ticks=1,
+                        detail="let garment settle"),
+        MockBoardAction("ReturnPanel", ticks=3,
+                        detail=f"lower {panel} panel back down"),
+        MockBoardAction("OpenGripper", ticks=1,
+                        detail="gripper releases panel"),
         MockBoardAction("RetractArm", ticks=2,
                         detail="arm to home"),
     ])

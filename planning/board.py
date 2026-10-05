@@ -93,20 +93,113 @@ def plan_board_folds(kind, owner, sleeve="short", pants_mode=None):
 
 
 def panel_push_pose(panel, slot="adult"):
-    """Arm push pose for flipping a panel (underneath, pushing up).
+    """Arm grasp pose for flipping a panel (grab edge, flip, return).
 
-    Returns {'x', 'z', 'y'} — position under the panel where the
-    arm makes contact, plus push direction (always +y).
-    Board center = origin, board top surface at y=0.
+    Returns {'x', 'z', 'y'} — position at the panel edge where the
+    gripper grabs. Board center = origin, board top surface at y=0.
     Middle-top fixed panel spans z in [-0.36, 0]; hinge at z=0.
+
+    v1.2: Changed from push-from-below to grab-edge (Wanru's suggestion).
+    Grabbing gives full control for both flip-up and return-down.
     """
     if panel == PANEL_LEFT:
-        return {"x": -(COL_W / 2 + COL_W / 2), "z": 0.0, "y": -0.05}
+        return {"x": -(COL_W / 2 + COL_W / 2), "z": 0.0, "y": 0.02}
     if panel == PANEL_RIGHT:
-        return {"x": COL_W / 2 + COL_W / 2, "z": 0.0, "y": -0.05}
+        return {"x": COL_W / 2 + COL_W / 2, "z": 0.0, "y": 0.02}
     if panel == PANEL_BOTTOM:
-        return {"x": 0.0, "z": MID_H / 2, "y": -0.05}
+        return {"x": 0.0, "z": MID_H / 2, "y": 0.02}
     if panel == "top":
         # Top fold for pants tri-fold: arm presses from above
         return {"x": 0.0, "z": -(MID_H / 2 + 0.10), "y": 0.10}
     raise ValueError(f"unknown panel: {panel}")
+
+
+class BoardFoldSimulator:
+    """Vertex-level board fold simulator (Python port of the viz math).
+
+    Validates that a panel flip sequence produces the expected folded garment.
+    Used for planning verification and vision-based fold checking.
+
+    Vertices: list of {'x', 'y', 'z'}. Panel assignment is based on INITIAL
+    positions and never changes (a vertex folded by the left panel is still
+    'left' even after moving to the center).
+
+    Key insight (validated in viz): side panels use ORIGINAL assignment,
+    but the bottom panel folds EVERYTHING currently at z>0 (including
+    side-folded sleeves now lying on the bottom panel area).
+    """
+
+    def __init__(self, vertices):
+        """vertices: list of {'x','y','z'} in board coordinates (meters)."""
+        self.init_pos = [dict(v) for v in vertices]
+        self.pos = [dict(v) for v in vertices]
+        self.hx = COL_W / 2  # 0.125
+        # Assign panels by initial position
+        self.panel_of = []
+        for v in self.init_pos:
+            ox, oz = v["x"], v["z"]
+            if ox < -self.hx:
+                self.panel_of.append(PANEL_LEFT)
+            elif ox > self.hx:
+                self.panel_of.append(PANEL_RIGHT)
+            elif oz > 0:
+                self.panel_of.append(PANEL_BOTTOM)
+            else:
+                self.panel_of.append("center")
+        self.folded = {PANEL_LEFT: False, PANEL_RIGHT: False, PANEL_BOTTOM: False}
+
+    def apply_panel_fold(self, panel):
+        """Permanently apply a panel fold (panel flips 180° and returns).
+
+        Side panels: fold vertices originally assigned to that panel.
+        Bottom panel: fold ALL vertices currently at z>0 (includes side-folded parts).
+        """
+        if self.folded[panel]:
+            return  # already folded
+        hx = self.hx
+        for i, v in enumerate(self.pos):
+            bx, bz = v["x"], v["z"]
+            wy = v.get("y", 0.002)
+            should_fold = False
+            if panel in (PANEL_LEFT, PANEL_RIGHT):
+                should_fold = (self.panel_of[i] == panel)
+            elif panel == PANEL_BOTTOM:
+                # Bottom folds everything currently at z>0
+                should_fold = (bz > 0.005)
+            if not should_fold:
+                continue
+            if panel == PANEL_LEFT:
+                d = -(bx + hx)
+                v["x"] = -hx + d
+                v["y"] = max(wy, 0.004)
+            elif panel == PANEL_RIGHT:
+                d = bx - hx
+                v["x"] = hx - d
+                v["y"] = max(wy, 0.004)
+            elif panel == PANEL_BOTTOM:
+                d = bz
+                v["z"] = -d
+                v["y"] = max(wy, 0.006)
+        self.folded[panel] = True
+
+    def apply_sequence(self, panels):
+        """Apply a sequence of panel flips. Returns final vertex positions."""
+        for p in panels:
+            self.apply_panel_fold(p)
+        return self.pos
+
+    def bounding_box(self):
+        """Current (x_min, x_max, z_min, z_max) of vertices."""
+        xs = [v["x"] for v in self.pos]
+        zs = [v["z"] for v in self.pos]
+        return min(xs), max(xs), min(zs), max(zs)
+
+    def is_folded_clean(self, tol=0.02):
+        """Check if garment is folded to roughly the center panel size.
+
+        After left+right+bottom folds, garment should fit within
+        center column (0.25m wide) and top-middle (0.36m tall).
+        """
+        x_min, x_max, z_min, z_max = self.bounding_box()
+        w, h = x_max - x_min, z_max - z_min
+        return (w <= COL_W + tol) and (h <= MID_H + tol)
