@@ -29,6 +29,10 @@
   {
    "date": "2026-10-05",
    "done": "M2 完成：planning/fold_planner.py 移植 planner.js (classifyOwner 8 组阈值、detectPantsLength、pantsFoldMode tri/bi/none、planFolds 2折、planPantsFolds tri=3/bi=2/none=1)，tests/test_m2.py 4 个测试全过；M0 回归通过。"
+  },
+  {
+   "date": "2026-10-05",
+   "done": "M3 完成：bt/pick_subtree.py 把 PickFromBasket 拆成 8 个独立节点 (MoveToBasket/DescendToGarment/CloseGripper/LiftSlightly/VerifyGrasp/MoveToFoldZone/ReleaseGarment/RetractArm)，GraspSequence 用 Retry 装饰器做 3 次重试；tests/test_m3.py 4 个测试全过 (结构/重试成功/3次耗尽/全树回归)。修了一个 py_trees memory=False 导致 Sequence 死循环的 bug。"
   }
  ],
  "milestones": [
@@ -54,10 +58,10 @@
    "title": "planner.js 移植 (planFolds/planPantsFolds/classifyOwner)"
   },
   {
-   "date": null,
-   "detail": "",
+   "date": "2026-10-05",
+   "detail": "bt/pick_subtree.py: 8 个独立动作节点 + GraspWithRetry(3次重试)，4 个测试全过",
    "id": "M3",
-   "status": "pending",
+   "status": "done",
    "title": "PickFromBasket 子树细化"
   },
   {
@@ -76,7 +80,7 @@
   }
  ],
  "tests": {
-  "passed": 7,
+  "passed": 11,
   "failed": 0,
   "last_run": "2026-10-05"
  },

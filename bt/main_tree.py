@@ -8,30 +8,7 @@ Real robot: replace stubs with ROS 2 action clients (MoveIt2, gripper, etc.).
 """
 import py_trees
 from perception.mock_perception import mock_perceive
-
-
-class PickFromBasket(py_trees.behaviour.Behaviour):
-    """Take one garment from the laundry basket to the fold zone."""
-
-    def __init__(self, name="PickFromBasket"):
-        super().__init__(name)
-        self._steps = ["move_to_basket", "descend", "close_gripper",
-                       "lift", "move_to_fold_zone", "release", "retract"]
-        self._i = 0
-
-    def initialise(self):
-        self._i = 0
-        self.logger.info("PickFromBasket: reaching to basket...")
-
-    def update(self):
-        if self._i < len(self._steps):
-            self.logger.info(f"  [pick] {self._steps[self._i]}")
-            self._i += 1
-            return py_trees.common.Status.RUNNING
-        self.blackboard = py_trees.blackboard.Client(name="pick")
-        self.blackboard.register_key(key="garment_ready", access=py_trees.common.Access.WRITE)
-        self.blackboard.garment_ready = True
-        return py_trees.common.Status.SUCCESS
+from bt.pick_subtree import create_pick_subtree
 
 
 class PerceiveAndPlan(py_trees.behaviour.Behaviour):
@@ -96,10 +73,11 @@ class SortToBin(py_trees.behaviour.Behaviour):
         return py_trees.common.Status.SUCCESS
 
 
-def create_main_tree():
+def create_main_tree(succeed_on_attempt=1):
+    pick, _ = create_pick_subtree(succeed_on_attempt=succeed_on_attempt)
     root = py_trees.composites.Sequence(name="FoldBotMain", memory=True)
     root.add_children([
-        PickFromBasket(),
+        pick,
         PerceiveAndPlan(),
         FoldGarment(),
         SortToBin(),
