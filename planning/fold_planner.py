@@ -82,7 +82,7 @@ def pants_fold_mode(owner, length):
 
 
 def plan_folds(k):
-    """T-shirt: B-step flips left along ABC line, C-step hem flip.
+    """T-shirt: B-step left fold, C-step right fold (mirror), D-step hem flip.
     k: dict with sleeve_l/r, shoulder_l/r, hem_l/r, a, b, c (each {'x','y','z'})."""
     hem_mid = {"x": (k["hem_l"]["x"] + k["hem_r"]["x"]) / 2, "y": 0.002,
                "z": (k["hem_l"]["z"] + k["hem_r"]["z"]) / 2}
@@ -92,13 +92,24 @@ def plan_folds(k):
     right = _norm2(k["sleeve_r"]["x"] - k["sleeve_l"]["x"],
                    k["sleeve_r"]["z"] - k["sleeve_l"]["z"])
 
+    # Fold 1: left side in along left ABC line
     s1 = side_of_line(k["a"]["x"], k["a"]["z"], up[0], up[1],
                       k["sleeve_l"]["x"], k["sleeve_l"]["z"])
     fold1 = {"px": k["a"]["x"], "pz": k["a"]["z"], "dx": up[0], "dz": up[1],
              "fold_sign": 1 if s1 >= 0 else -1, "axis_h": 0.008, "duration": 1.6}
+    keep1 = _norm2(k["c"]["x"] - k["sleeve_l"]["x"], k["c"]["z"] - k["sleeve_l"]["z"])
+
+    # Fold 1b: right side in (A mirrored to A2) — right sleeve unaffected by fold1
+    a2x = k["shoulder_r"]["x"] - (k["a"]["x"] - k["shoulder_l"]["x"])
+    s1b = side_of_line(a2x, k["a"]["z"], up[0], up[1],
+                       k["sleeve_r"]["x"], k["sleeve_r"]["z"])
+    fold1b = {"px": a2x, "pz": k["a"]["z"], "dx": up[0], "dz": up[1],
+              "fold_sign": 1 if s1b >= 0 else -1, "axis_h": 0.008, "duration": 1.6}
+    c2x = k["shoulder_r"]["x"] - (k["c"]["x"] - k["shoulder_l"]["x"])
+    keep1b = _norm2(c2x - k["sleeve_r"]["x"], k["c"]["z"] - k["sleeve_r"]["z"])
 
     hem_lf = _after_fold(fold1, k["hem_l"])
-    hem_rf = _after_fold(fold1, k["hem_r"])
+    hem_rf = _after_fold(fold1b, k["hem_r"])
     hem_mid_f = {"x": (hem_lf["x"] + hem_rf["x"]) / 2,
                  "y": max(hem_lf["y"], hem_rf["y"]) + 0.015,
                  "z": (hem_lf["z"] + hem_rf["z"]) / 2}
@@ -106,13 +117,11 @@ def plan_folds(k):
                       hem_mid_f["x"], hem_mid_f["z"])
     fold2 = {"px": k["b"]["x"], "pz": k["b"]["z"], "dx": right[0], "dz": right[1],
              "fold_sign": 1 if s2 >= 0 else -1, "axis_h": 0.014, "duration": 1.5}
-
-    keep1 = _norm2(k["c"]["x"] - k["sleeve_l"]["x"], k["c"]["z"] - k["sleeve_l"]["z"])
     keep2 = _norm2(k["b"]["x"] - hem_mid_f["x"], k["b"]["z"] - hem_mid_f["z"])
 
     folds = [
         FoldStep(
-            label="翻折", status="B·翻折 — 左臂抓袖口, 沿ABC线翻折",
+            label="左折", status="B·左折 — 左臂抓左袖口, 沿左ABC线翻折",
             px=fold1["px"], pz=fold1["pz"], dx=fold1["dx"], dz=fold1["dz"],
             fold_sign=fold1["fold_sign"], axis_h=fold1["axis_h"], duration=fold1["duration"],
             grab=_pt(k["sleeve_l"]["x"], 0.002, k["sleeve_l"]["z"]), grab_arm="L",
@@ -120,7 +129,15 @@ def plan_folds(k):
             press_arm="R",
         ),
         FoldStep(
-            label="对折", status="C·对折 — 右臂抓下摆, 上翻对折",
+            label="右折", status="C·右折 — 右臂抓右袖口, 沿右ABC线翻折",
+            px=fold1b["px"], pz=fold1b["pz"], dx=fold1b["dx"], dz=fold1b["dz"],
+            fold_sign=fold1b["fold_sign"], axis_h=fold1b["axis_h"], duration=fold1b["duration"],
+            grab=_pt(k["sleeve_r"]["x"], 0.002, k["sleeve_r"]["z"]), grab_arm="R",
+            press=_pt(c2x + keep1b[0] * 0.05, 0.03, k["c"]["z"] + keep1b[1] * 0.05),
+            press_arm="L",
+        ),
+        FoldStep(
+            label="对折", status="D·对折 — 右臂抓下摆, 上翻对折",
             px=fold2["px"], pz=fold2["pz"], dx=fold2["dx"], dz=fold2["dz"],
             fold_sign=fold2["fold_sign"], axis_h=fold2["axis_h"], duration=fold2["duration"],
             grab=_pt(hem_mid_f["x"], hem_mid_f["y"], hem_mid_f["z"]), grab_arm="R",
@@ -131,6 +148,8 @@ def plan_folds(k):
     markers = [
         {"name": "A", "x": k["a"]["x"], "y": k["a"]["y"], "z": k["a"]["z"],
          "color": "#ff5252", "label": "A"},
+        {"name": "A2", "x": a2x, "y": k["a"]["y"], "z": k["a"]["z"],
+         "color": "#ff5252", "label": "A'"},
         {"name": "B", "x": k["b"]["x"], "y": k["b"]["y"], "z": k["b"]["z"],
          "color": "#ff9f1c", "label": "B"},
         {"name": "C", "x": k["c"]["x"], "y": k["c"]["y"], "z": k["c"]["z"],

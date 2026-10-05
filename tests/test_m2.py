@@ -61,10 +61,11 @@ def test_pants_length_and_mode():
 
 def test_plan_folds_shirt():
     plan = plan_folds(_shirt_k(0.62))
-    assert len(plan.folds) == 2, f"shirt should have 2 folds, got {len(plan.folds)}"
+    assert len(plan.folds) == 3, f"shirt should have 3 folds (left+right+hem), got {len(plan.folds)}"
     assert plan.folds[0].grab_arm == "L" and plan.folds[1].grab_arm == "R"
-    assert len(plan.markers) == 3
-    print("PASS test_plan_folds_shirt")
+    assert plan.folds[0].label == "左折" and plan.folds[1].label == "右折"
+    assert len(plan.markers) == 4  # A, A', B, C
+    print("PASS test_plan_folds_shirt (3 folds: left+right+hem)")
 
 
 def test_plan_pants_modes():
