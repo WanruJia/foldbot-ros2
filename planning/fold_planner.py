@@ -40,9 +40,7 @@ def classify_owner(kind, k):
     Returns (owner, metric, metric_name).
 
     Shirt thresholds calibrated 2026-10-05 from Wanru's real measurements:
-    dad 43 / mom 35 / daughter 32 / son 27-32 cm (midpoints as cutoffs).
-    Note: daughter (32) overlaps son's T-shirt (32) — size alone can't
-    fully separate the siblings.
+    dad 43 / mom 35 / daughter 34 / son 27-32 cm (midpoints as cutoffs).
     """
     if kind == "shirt":
         m = math.hypot(k["shoulder_r"]["x"] - k["shoulder_l"]["x"],
@@ -50,9 +48,9 @@ def classify_owner(kind, k):
         name = "肩宽"
         if m >= 0.39:
             return "dad", m, name
-        if m >= 0.335:
+        if m >= 0.345:
             return "mom", m, name
-        if m >= 0.295:
+        if m >= 0.33:
             return "daughter", m, name
         return "son", m, name
     m = math.hypot(k["waist_r"]["x"] - k["waist_l"]["x"],

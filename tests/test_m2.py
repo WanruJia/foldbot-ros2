@@ -34,10 +34,10 @@ def _pants_k(waist_w=0.48, long=True):
 
 
 def test_classify_owner():
-    # 真实数据校准 (2026-10-05): dad 0.43 / mom 0.35 / daughter 0.32 / son 0.27-0.32
+    # 真实数据校准 (2026-10-05, 女儿按34cm): dad 0.43 / mom 0.35 / daughter 0.34 / son 0.27-0.32
     cases = [
         ("shirt", 0.43, "dad"), ("shirt", 0.35, "mom"),
-        ("shirt", 0.32, "daughter"), ("shirt", 0.27, "son"),
+        ("shirt", 0.34, "daughter"), ("shirt", 0.32, "son"), ("shirt", 0.27, "son"),
         ("pants", 0.56, "dad"), ("pants", 0.48, "mom"),
         ("pants", 0.40, "daughter"), ("pants", 0.32, "son"),
     ]
