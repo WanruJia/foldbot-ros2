@@ -41,7 +41,7 @@
 </head>
 <body>
 <h1>🤖 FoldBot ROS 2 — 真机部署进展</h1>
-<div class="sub">每天自动推进一部分 · 最后更新 <span id="updated"></span></div>
+<div class="sub">每天自动推进一部分 · 最后更新 <span id="updated"></span> <span id="datasrc"></span></div>
 <div class="grid">
   <div class="card">
     <h2>🗺️ 里程碑</h2>
@@ -60,8 +60,11 @@
     <div class="log" id="log"></div>
   </div>
 </div>
+<script id="progress-embedded" type="application/json">
+{"bt_nodes": [{"desc": "从待洗篮取衣到折叠区", "name": "PickFromBasket", "status": "stub"}, {"desc": "感知 + 折叠规划 (mock)", "name": "PerceiveAndPlan", "status": "stub"}, {"desc": "执行折叠步骤", "name": "FoldGarment", "status": "stub"}, {"desc": "分类堆叠到衣箱", "name": "SortToBin", "status": "stub"}], "daily_log": [{"date": "2026-10-05", "done": "M0 完成：建 repo，写了 bt/main_tree.py (py_trees 四节点主干)，perception/mock_perception.py，planning/fold_math.py (fold.js 移植)，msgs/interfaces.py；tests/test_m0.py 3 个测试全过 (10 ticks 跑完主树)。"}], "milestones": [{"date": "2026-10-05", "detail": "py_trees 主树跑通 (pick→perceive→fold→sort)，3 个单测全过", "id": "M0", "status": "done", "title": "接口包 + BT 空主干 + mock 感知"}, {"date": null, "detail": "", "id": "M1", "status": "pending", "title": "fold.js 数学移植到 Python"}, {"date": null, "detail": "", "id": "M2", "status": "pending", "title": "planner.js 移植 (planFolds/planPantsFolds/classifyOwner)"}, {"date": null, "detail": "", "id": "M3", "status": "pending", "title": "PickFromBasket 子树细化"}, {"date": null, "detail": "", "id": "M4", "status": "pending", "title": "PerceiveAndPlan 子树细化"}, {"date": null, "detail": "", "id": "M5", "status": "pending", "title": "FoldStep / SortToBin 子树细化"}], "tests": {"failed": 0, "last_run": "2026-10-05", "passed": 3}, "updated": "2026-10-05"}
+</script>
 <script>
-fetch('progress.json').then(r => r.json()).then(d => {
+function render(d) {
   document.getElementById('updated').textContent = d.updated;
   // milestones
   const ms = document.getElementById('milestones');
@@ -89,7 +92,17 @@ fetch('progress.json').then(r => r.json()).then(d => {
   d.daily_log.slice().reverse().forEach(e => {
     log.innerHTML += `<div style="margin-bottom:10px"><span class="date">${e.date}</span><br>${e.done}</div>`;
   });
-});
+}
+function renderEmbedded() {
+  var el = document.getElementById('progress-embedded');
+  try {
+    render(JSON.parse(el.textContent));
+    document.getElementById('datasrc').textContent = '（本地快照 · 双击打开时显示）';
+  } catch (e) {
+    document.getElementById('milestones').innerHTML = '<div style="color:#ff7d7d">看板数据加载失败</div>';
+  }
+}
+fetch('progress.json').then(function (r) { if (!r.ok) throw new Error('no json'); return r.json(); }).then(render).catch(renderEmbedded);
 </script>
 </body>
 </html>
