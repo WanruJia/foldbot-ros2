@@ -9,6 +9,7 @@ from planning.board import (
 from bt.board_actions import (
     create_place_on_board_subtree, create_flip_panel_subtree,
     create_tuck_sleeve_subtree, create_side_fold_subtree,
+    create_arm_length_fold_subtree,
 )
 
 
@@ -37,10 +38,11 @@ def test_plan_board_shirt():
 
 
 def test_plan_board_pants():
-    # Tri-fold: side fold first, then bottom + top panels
+    # Tri-fold: side fold first, bottom panel, then ARM folds top down
+    # (v1.3: middle-top panel is fixed, no physical top panel — arm does it)
     p = plan_board_folds("pants", "dad", pants_mode="tri")
     assert p["side_fold_first"]
-    assert p["panels"] == [PANEL_BOTTOM, "top"]
+    assert p["panels"] == [PANEL_BOTTOM, "arm_fold"]
     # Bi-fold: side fold + bottom only
     p = plan_board_folds("pants", "daughter", pants_mode="bi")
     assert p["side_fold_first"]
@@ -82,6 +84,10 @@ def test_board_subtrees():
     side = create_side_fold_subtree()
     assert side.name == "SideFold"
     assert len(side.children) == 5
+
+    armfold = create_arm_length_fold_subtree()
+    assert armfold.name == "ArmLengthFold"
+    assert len(armfold.children) == 5  # move, grab, fold down, release, retract
     print("PASS test_board_subtrees")
 
 

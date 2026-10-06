@@ -57,7 +57,8 @@ def plan_board_folds(kind, owner, sleeve="short", pants_mode=None):
     Returns dict:
       slot: hinge slot ('adult' | 'child')
       place: {'x', 'z', 'yaw'} garment placement on board (board center = origin)
-      panels: ordered list of panels to flip (each 'left' | 'right' | 'bottom')
+      panels: ordered list of steps — panel names ('left'|'right'|'bottom')
+              or 'arm_fold' (arm does a direct length fold, no panel)
       side_fold_first: bool (pants only — arm does leg-to-leg fold before boarding)
       tuck_sleeves: bool (long sleeves — arm tucks before flipping)
     """
@@ -76,8 +77,11 @@ def plan_board_folds(kind, owner, sleeve="short", pants_mode=None):
 
     # Pants: arm does side fold first, then board does length folds.
     # Folded pants placed vertically, waist at top.
+    # v1.3: tri-fold second step is "arm_fold" (arm folds top down directly).
+    # The middle-top panel is FIXED (video design) — no physical top panel
+    # exists, so the arm does the second length fold instead of a panel.
     if pants_mode == "tri":
-        panels = [PANEL_BOTTOM, "top"]  # bottom third up, top third down
+        panels = [PANEL_BOTTOM, "arm_fold"]  # bottom panel up, arm folds top down
     elif pants_mode == "bi":
         panels = [PANEL_BOTTOM]          # flip in half
     else:  # none — side fold only, no board needed
@@ -108,9 +112,6 @@ def panel_push_pose(panel, slot="adult"):
         return {"x": COL_W / 2 + COL_W / 2, "z": 0.0, "y": 0.02}
     if panel == PANEL_BOTTOM:
         return {"x": 0.0, "z": MID_H / 2, "y": 0.02}
-    if panel == "top":
-        # Top fold for pants tri-fold: arm presses from above
-        return {"x": 0.0, "z": -(MID_H / 2 + 0.10), "y": 0.10}
     raise ValueError(f"unknown panel: {panel}")
 
 

@@ -84,6 +84,31 @@ def create_flip_panel_subtree(panel, slot="adult"):
     return root
 
 
+def create_arm_length_fold_subtree():
+    """Build the ArmLengthFold sequence (pants tri-fold second step).
+
+    v1.3: The middle-top board panel is FIXED (video design) — there is no
+    physical top panel to flip. After the bottom panel folds the lower 36cm
+    up, the arm grabs the waist edge and folds the top down directly.
+    Sequence: move to waist → grab → fold down → release → retract.
+    """
+    root = py_trees.composites.Sequence(
+        name="ArmLengthFold", memory=True)
+    root.add_children([
+        MockBoardAction("MoveToWaistEdge", ticks=2,
+                        detail="arm → garment waist edge (top)"),
+        MockBoardAction("CloseGripper", ticks=1,
+                        detail="gripper grabs waist edge"),
+        MockBoardAction("FoldTopDown", ticks=3,
+                        detail="fold top down over the folded lower part"),
+        MockBoardAction("OpenGripper", ticks=1,
+                        detail="gripper releases garment"),
+        MockBoardAction("RetractArm", ticks=2,
+                        detail="arm to home"),
+    ])
+    return root
+
+
 def create_tuck_sleeve_subtree(side):
     """Build the TuckSleeve sequence (long sleeves): nudge sleeve inward."""
     root = py_trees.composites.Sequence(
@@ -145,7 +170,10 @@ class BoardFoldIterator(py_trees.behaviour.Behaviour):
             children.append(create_tuck_sleeve_subtree("left"))
             children.append(create_tuck_sleeve_subtree("right"))
         for panel in plan.get("panels", []):
-            children.append(create_flip_panel_subtree(panel, slot))
+            if panel == "arm_fold":
+                children.append(create_arm_length_fold_subtree())
+            else:
+                children.append(create_flip_panel_subtree(panel, slot))
         for c in children:
             self._seq.add_child(c)
         self.logger.info(
