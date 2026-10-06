@@ -24,6 +24,17 @@
 `planning/board.py` 有 `BoardFoldSimulator`（顶点级折叠验证，和可视化同数学）。
 短袖：翻左 → 翻右 → 翻底；长袖先收袖；裤子先对折再上板。
 
+## 合成数据 / Synthetic Data (`synth/`)
+
+批量生成带标注的训练数据，给感知模型（衣服分类、关键点检测）做 sim-to-real：
+```bash
+python3 -m synth.generate --out data/synth --n 500 --seed 0
+```
+- 参数化衣服模型：用真实家庭尺寸（爸爸43/50、妈妈35/43、女儿34/36、儿子27/33cm）
+- 俯视渲染 + 域随机化（位置、旋转、皱纹、布料颜色、光照、背景）
+- 输出 COCO 格式：`images/*.png` + `annotations.json`（衣服9点/裤子5点）
+- 测试：`python3 tests/test_synth.py`
+
 ## 结构
 
 ```
