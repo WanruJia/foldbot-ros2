@@ -204,3 +204,43 @@ class BoardFoldSimulator:
         x_min, x_max, z_min, z_max = self.bounding_box()
         w, h = x_max - x_min, z_max - z_min
         return (w <= COL_W + tol) and (h <= MID_H + tol)
+
+
+def check_placement(keypoints, kind, tol_xy=0.03, tol_yaw_deg=10.0):
+    """Check if garment is placed correctly on the board before flipping.
+
+    Board version needs MUCH simpler perception than ABC: no fold lines,
+    just "is the garment centered on the board?" The panels do the folding.
+
+    keypoints: dict name -> (x, y, z) in board coords (from perception).
+    kind: 'shirt' | 'pants'.
+
+    Returns {'ok': bool, 'dx': float, 'dz': float, 'dyaw_deg': float}:
+      dx/dz = correction to apply (board coords, meters).
+      ok = True if within tolerance (no correction needed).
+    """
+    import math
+    if kind == "shirt":
+        # Center from shoulders + hems
+        pts = [keypoints[k] for k in
+               ("shoulder_l", "shoulder_r", "hem_l", "hem_r")]
+        # Yaw from shoulder line
+        sl, sr = keypoints["shoulder_l"], keypoints["shoulder_r"]
+        yaw = math.degrees(math.atan2(sr[2] - sl[2], sr[0] - sl[0]))
+        target = (0.0, -0.02)  # board center for shirts
+    else:
+        # Center from waist + cuffs
+        pts = [keypoints[k] for k in
+               ("waist_l", "waist_r", "cuff_l", "cuff_r")]
+        wl, wr = keypoints["waist_l"], keypoints["waist_r"]
+        yaw = math.degrees(math.atan2(wr[2] - wl[2], wr[0] - wl[0]))
+        target = (0.0, 0.10)  # shifted for length
+    cx = sum(p[0] for p in pts) / len(pts)
+    cz = sum(p[2] for p in pts) / len(pts)
+    dx, dz = target[0] - cx, target[1] - cz
+    # Normalize yaw to [-90, 90] (garment is symmetric)
+    dyaw = ((yaw + 90) % 180) - 90
+    ok = (abs(dx) <= tol_xy and abs(dz) <= tol_xy
+          and abs(dyaw) <= tol_yaw_deg)
+    return {"ok": ok, "dx": round(dx, 4), "dz": round(dz, 4),
+            "dyaw_deg": round(dyaw, 1)}

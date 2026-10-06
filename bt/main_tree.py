@@ -15,7 +15,10 @@ from bt.sort_subtree import create_sort_subtree
 
 
 def create_main_tree(succeed_on_attempt=1, kind="random", owner="random",
-                     use_board=False):
+                     use_board=True):
+    """FoldBot main tree. Board-based folding is the primary method (v2.0):
+    the arm grabs panel edges and flips — no precise fabric manipulation.
+    use_board=False selects the legacy ABC direct-fold (high dexterity)."""
     pick, _ = create_pick_subtree(succeed_on_attempt=succeed_on_attempt)
     perceive = create_perceive_subtree(kind=kind, owner=owner)
     fold = create_board_fold_subtree() if use_board else create_fold_subtree()

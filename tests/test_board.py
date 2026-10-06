@@ -5,6 +5,7 @@ sys.path.insert(0, ".")
 from planning.board import (
     plan_board_folds, panel_push_pose, hinge_slot_for_owner,
     PANEL_LEFT, PANEL_RIGHT, PANEL_BOTTOM, BoardFoldSimulator,
+    check_placement,
 )
 from bt.board_actions import (
     create_place_on_board_subtree, create_flip_panel_subtree,
@@ -107,6 +108,28 @@ def test_board_tree_e2e():
     print("PASS test_board_tree_e2e (use_board=True)")
 
 
+def test_check_placement():
+    # Shirt centered: ok. Offset shirt: correction returned.
+    kp_ok = {
+        "shoulder_l": (-0.175, 0, -0.20), "shoulder_r": (0.175, 0, -0.20),
+        "hem_l": (-0.195, 0, 0.16), "hem_r": (0.195, 0, 0.16),
+    }
+    r = check_placement(kp_ok, "shirt")
+    assert r["ok"], r
+    kp_off = {k: (x + 0.08, y, z) for k, (x, y, z) in kp_ok.items()}
+    r = check_placement(kp_off, "shirt")
+    assert not r["ok"] and abs(r["dx"] + 0.08) < 1e-6, r
+    # Pants
+    kp_p = {
+        "waist_l": (-0.20, 0, 0.0), "waist_r": (0.20, 0, 0.0),
+        "cuff_l": (-0.18, 0, 0.70), "cuff_r": (0.18, 0, 0.70),
+    }
+    r = check_placement(kp_p, "pants")
+    assert not r["ok"]  # center z=0.35 vs target 0.10
+    assert abs(r["dz"] - (0.10 - 0.35)) < 1e-6, r
+    print("PASS test_check_placement")
+
+
 def test_fold_simulator():
     """BoardFoldSimulator: vertex-level fold math matches viz behavior.
 
@@ -170,6 +193,7 @@ if __name__ == "__main__":
     test_panel_push_pose()
     test_board_subtrees()
     test_board_tree_e2e()
+    test_check_placement()
     test_fold_simulator()
     print("\nAll board tests passed!")
 

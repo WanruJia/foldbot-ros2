@@ -15,7 +15,8 @@
 - **M3**: PickFromBasket 子树细化
 - **M4**: PerceiveAndPlan 子树细化
 - **M5**: FoldStep / SortToBin 子树细化
-- **Board**: 叠衣板（75×72cm，三列25cm，中间36+36）— 机械臂抓板边翻折
+- **Board**: 叠衣板（75×72cm，三列25cm，中间36+36）— **主线**，机械臂抓板边翻折
+  （v2.0 起默认；ABC 直接折布为备选 `use_board=False`，对机械臂灵巧度要求高）
 
 ## 叠衣板 / Folding Board
 
