@@ -16,8 +16,10 @@ Expands the M0 stub into the real perception → planning chain:
 M4 wires the M2 planner into the tree: the FoldPlan on the blackboard is now
 a real plan (3 folds for shirts, tri/bi/none for pants), not a fake 2-step.
 M6 wires the trained YOLOv8n detector behind perception="yolo":
-DetectKeypoints calls yolo_perceive(frame) and bbox_to_placement_kp(det),
-and the check_placement() result lands on the blackboard as "placement".
+DetectKeypoints calls yolo_perceive(frame), garment_yaw_in_bbox() for the
+garment's rotation inside the bbox, then bbox_to_placement_kp(det,
+yaw_deg=...), and the check_placement() result lands on the blackboard
+as "placement".
 The board mainline only needs placement, so PlanFolds always builds the
 board plan; the ABC fold plan is skipped whenever the keypoints are the
 4-point bbox set (no sleeves / a-b-c fold line / crotch — the bbox cannot
@@ -34,7 +36,8 @@ Honest limits (not hidden):
 import random
 import py_trees
 from perception.mock_perception import mock_perceive
-from perception.yolo_perception import yolo_perceive, bbox_to_placement_kp
+from perception.yolo_perception import (
+    yolo_perceive, bbox_to_placement_kp, garment_yaw_in_bbox)
 from planning.fold_planner import (
     classify_owner, detect_pants_length, pants_fold_mode,
     plan_folds, plan_pants_folds,
@@ -128,10 +131,12 @@ class DetectKeypoints(py_trees.behaviour.Behaviour):
 
     mock mode (default): canned keypoints via perception.mock_perception.
     yolo mode: yolo_perceive(frame) on the real frame path; the top
-    detection sets the garment kind, bbox_to_placement_kp() builds the
-    4 placement points (shoulders+hems / waist+cuffs), and the
-    check_placement() result goes on the blackboard as "placement".
-    No detections → FAILURE (nothing to fold).
+    detection sets the garment kind, garment_yaw_in_bbox() estimates the
+    garment's rotation inside the bbox (numpy PCA; None when the crop
+    cannot be segmented, falling back to yaw=0), bbox_to_placement_kp()
+    builds the 4 placement points (shoulders+hems / waist+cuffs, rotated
+    by the estimated yaw), and the check_placement() result goes on the
+    blackboard as "placement". No detections → FAILURE (nothing to fold).
     """
 
     def __init__(self, owner="random", perception="mock", kind="random",
@@ -178,13 +183,21 @@ class DetectKeypoints(py_trees.behaviour.Behaviour):
         det = dets[0]  # highest confidence first
         kind = det["kind"]
         bb.garment_kind = kind  # detection overrides the mock classifier
-        kp_tup = bbox_to_placement_kp(det, kind, self._px_per_m)
+        try:
+            yaw = garment_yaw_in_bbox(frame, det["bbox"])
+        except (ImportError, OSError, ValueError) as e:
+            # Frame unreadable or numpy/Pillow missing: do not invent a
+            # rotation; the bbox path degrades to yaw=0 as before.
+            self.logger.warning(
+                f"[DetectKeypoints] yaw from bbox unavailable ({e}); yaw=0")
+            yaw = None
+        kp_tup = bbox_to_placement_kp(det, kind, self._px_per_m, yaw_deg=yaw)
         bb.placement = check_placement(kp_tup, kind)
         bb.keypoints = _placement_tup_to_dict(kp_tup)
         bb.perception = PerceptionResult(kind=kind, owner="")
         self.logger.info(
             f"[DetectKeypoints] yolo: {kind} conf={det['conf']:.2f} "
-            f"placement_ok={bb.placement['ok']}")
+            f"yaw_deg={yaw} placement_ok={bb.placement['ok']}")
         return py_trees.common.Status.SUCCESS
 
 

@@ -15,6 +15,15 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
   → check_placement on blackboard; mock stays default). yolo mode needs
   image_path + px_per_m calibration; ABC fold_plan is skipped in yolo mode
   (bbox has no sleeves/a/b/c/crotch — not invented).
+- 2026-10-11: Yaw from bbox landed. perception.garment_yaw_in_bbox()
+  segments the garment inside the YOLO bbox (border-sampled background,
+  Otsu, numpy PCA as the minAreaRect long axis — no cv2 needed) and returns
+  yaw in [-90, 90) matching check_placement()'s convention; bbox_to_
+  placement_kp(..., yaw_deg=...) rotates the 4 placement keypoints so
+  check_placement()'s keypoint-based yaw observes the real rotation.
+  Returns None (falls back to yaw=0) when the crop can't be segmented
+  honestly: uniform color, tiny bbox, or near-square blob. 15 new tests in
+  tests/test_yolo_yaw.py, all pass; full suite green.
 - Code changes since last GitHub push (a429b5a) not yet pushed.
 
 ## Priority queue (top = next)
@@ -26,8 +35,14 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
 2. DONE 2026-10-10: YOLO wired into bt/perceive_subtree.py behind
    perception="yolo" (6 new tests in tests/test_yolo_wiring.py, all pass).
    yolo mode requires image_path + px_per_m; mock stays default for tests.
-3. Yaw from bbox: minAreaRect on the detected garment contour inside the bbox,
-   feed yaw into check_placement() (currently keypoint-based).
+3. DONE 2026-10-11: Yaw from bbox. perception.garment_yaw_in_bbox()
+   segments the garment contour inside the bbox (border-sampled background
+   + Otsu + numpy PCA for the long axis; numpy-only, no cv2) and returns
+   yaw in [-90, 90) in check_placement()'s convention. bbox_to_placement_
+   kp(..., yaw_deg=...) rotates the 4 placement keypoints about the bbox
+   center, feeding the real yaw into check_placement() (still keypoint-
+   based). Returns None → yaw=0 fallback when segmentation is impossible
+   (uniform crop, tiny bbox, near-square blob). 15 tests, all pass.
 4. Owner classification for 4 family members. Decide: real-size thresholds
    (needs camera calibration) vs training owner classes. Do not invent.
 5. Push code to GitHub via gh.py. PUSH ALLOWLIST ONLY: bt/, perception/*.py,
@@ -50,3 +65,7 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
 - 2026-10-10: M6 — YOLO perception wired into the BT (perception="yolo");
   mock stays default. yolo mode needs image_path + px_per_m calibration.
   All tests pass (incl. 6 new wiring tests).
+- 2026-10-11: yaw-from-bbox (garment_yaw_in_bbox + yaw_deg on
+  bbox_to_placement_kp); check_placement() now observes real garment
+  rotation from the contour inside the bbox. 15 new tests, full suite
+  green.

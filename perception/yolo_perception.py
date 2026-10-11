@@ -17,8 +17,10 @@ with perception/eval_real.py and look at the zero-detection images first.
 Pipeline wiring (done 2026-10-10, M6): bt/perceive_subtree.py
 create_perceive_subtree(perception="yolo", image_path=..., px_per_m=...)
 wires this in: CaptureImage puts the real frame path on the blackboard,
-DetectKeypoints calls yolo_perceive(frame) then bbox_to_placement_kp(det)
-and the check_placement() result lands on the blackboard as "placement";
+DetectKeypoints calls yolo_perceive(frame), garment_yaw_in_bbox() for the
+garment's rotation inside the bbox, then bbox_to_placement_kp(det,
+yaw_deg=...) and the check_placement() result lands on the blackboard as
+"placement";
 ClassifyOwnerNode keeps using classify_owner(). Mock stays the default
 for tests and hardware-less runs.
 
@@ -80,7 +82,142 @@ def yolo_perceive(image_path, conf=0.25, imgsz=416, model_path=None):
     return dets
 
 
-def bbox_to_placement_kp(det, kind, px_per_m=None):
+def _numpy():
+    """Lazy numpy import (keeps this module import-light)."""
+    try:
+        import numpy as np
+    except ImportError as e:
+        raise ImportError(
+            "this function needs numpy; run it where numpy is installed."
+        ) from e
+    return np
+
+
+def _otsu_threshold(values):
+    """Otsu threshold for a 1-D array of non-negative values (numpy only)."""
+    np = _numpy()
+    vals = np.asarray(values, dtype=np.float64).ravel()
+    if vals.size == 0:
+        raise ValueError("otsu: empty values")
+    vmin, vmax = float(vals.min()), float(vals.max())
+    if vmax <= vmin:
+        return vmax
+    hist, edges = np.histogram(vals, bins=64, range=(vmin, vmax))
+    centers = (edges[:-1] + edges[1:]) / 2.0
+    total = hist.sum()
+    w = np.cumsum(hist) / total
+    mu = np.cumsum(hist * centers) / total
+    mu_t = mu[-1]
+    denom = w * (1.0 - w)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        sigma_b2 = np.where(denom > 0, (mu_t * w - mu) ** 2 / denom, 0.0)
+    return float(centers[int(np.argmax(sigma_b2))])
+
+
+def garment_yaw_in_bbox(image, bbox, pad=8, min_foreground=20):
+    """Estimate the garment's yaw from the image region inside its bbox.
+
+    Segments the garment from the board background by sampling the crop
+    border as background, thresholding the color-distance map with Otsu,
+    then taking the foreground pixels' principal axis (PCA plays the role
+    of minAreaRect's long axis here; numpy-only, no cv2 needed).
+
+    image: numpy array (H,W) or (H,W,3/4), or a file path (needs Pillow).
+    bbox: (x1, y1, x2, y2) pixels, the YOLO detection.
+
+    Returns yaw_deg in [-90, 90): the garment's rigid rotation relative to
+    upright (shoulders/waist horizontal), matching check_placement()'s yaw
+    convention (board x = image x, board z = image y). Assumes the garment
+    is taller than it is wide (shirt torso / pants length); the width axis
+    follows by symmetry.
+
+    Returns None when the crop cannot be segmented honestly: uniform color,
+    degenerate/tiny bbox, too few foreground pixels, or a near-square blob
+    whose long axis is unstable. Callers must fall back to yaw=0 rather
+    than invent a rotation.
+
+    Raises:
+        ImportError: numpy (or Pillow, for a path) not installed.
+        OSError / ValueError: unreadable image or malformed bbox.
+    """
+    np = _numpy()
+    if isinstance(image, np.ndarray):
+        arr = image
+    else:
+        try:
+            from PIL import Image
+        except ImportError as e:
+            raise ImportError(
+                "garment_yaw_in_bbox() needs a numpy array, or Pillow to "
+                "read an image path.") from e
+        arr = np.asarray(Image.open(image).convert("RGB"))
+    if arr.ndim == 3:
+        arr = (arr[..., 0] * 0.299 + arr[..., 1] * 0.587
+               + arr[..., 2] * 0.114)  # luma
+    arr = np.asarray(arr, dtype=np.float64)
+    h, w = arr.shape[:2]
+    x1, y1, x2, y2 = (float(v) for v in bbox)
+    if not (x2 > x1 and y2 > y1):
+        raise ValueError(f"degenerate bbox: {bbox!r}")
+    cx1, cy1 = max(0, int(x1) - pad), max(0, int(y1) - pad)
+    cx2, cy2 = min(w, int(x2) + pad), min(h, int(y2) + pad)
+    if cx2 - cx1 < 8 or cy2 - cy1 < 8:
+        return None  # too tiny to segment honestly
+    crop = arr[cy1:cy2, cx1:cx2]
+    # Background = median color of the crop border (garment is centered).
+    border = np.concatenate([crop[0, :], crop[-1, :],
+                            crop[:, 0], crop[:, -1]])
+    bg = float(np.median(border))
+    dist = np.abs(crop - bg)
+    thr = _otsu_threshold(dist)
+    fg = dist > thr
+    n = int(fg.sum())
+    if n < min_foreground:
+        return None  # garment indistinguishable from background
+    ys, xs = np.nonzero(fg)
+    xs = xs.astype(np.float64) + cx1
+    ys = ys.astype(np.float64) + cy1
+    x0, y0 = xs.mean(), ys.mean()
+    xx = ((xs - x0) ** 2).sum()
+    yy = ((ys - y0) ** 2).sum()
+    xy = ((xs - x0) * (ys - y0)).sum()
+    # 2x2 PCA via closed form; long axis = largest eigenvalue.
+    trace, det = xx + yy, xx * yy - xy * xy
+    disc = max(trace * trace / 4.0 - det, 0.0) ** 0.5
+    l1, l2 = trace / 2.0 + disc, trace / 2.0 - disc
+    if l1 + l2 <= 0:
+        return None
+    if (l1 - l2) / (l1 + l2) < 0.1:
+        return None  # near-square blob: long axis is unstable
+    vx, vy = xy, l1 - xx  # eigenvector for l1 of [[xx,xy],[xy,yy]]
+    if vx == 0 and vy == 0:
+        vx, vy = 1.0, 0.0
+    long_axis_deg = (np.degrees(np.arctan2(vy, vx)) + 180.0) % 180.0
+    # Upright garment: long axis vertical (90 deg in image coords);
+    # yaw is the rigid rotation away from upright.
+    yaw = long_axis_deg - 90.0
+    return float(((yaw + 90.0) % 180.0) - 90.0)
+
+
+def _rotate_about_center(corners, angle_deg):
+    """Rotate (x, y) points about their centroid by angle_deg.
+
+    Same (x, y-down) convention as check_placement()'s yaw, so a rotated
+    shoulder/waist line reports exactly angle_deg there.
+    """
+    import math
+    th = math.radians(angle_deg)
+    c, s = math.cos(th), math.sin(th)
+    cx = sum(p[0] for p in corners) / len(corners)
+    cy = sum(p[1] for p in corners) / len(corners)
+    out = []
+    for x, y in corners:
+        dx, dy = x - cx, y - cy
+        out.append((cx + dx * c - dy * s, cy + dx * s + dy * c))
+    return out
+
+
+def bbox_to_placement_kp(det, kind, px_per_m=None, yaw_deg=None):
     """Derive the keypoints check_placement() needs from a detection bbox.
 
     check_placement() only needs garment center + yaw, computed from 4
@@ -92,14 +229,20 @@ def bbox_to_placement_kp(det, kind, px_per_m=None):
         pants: waist_l=(x1,y1)   waist_r=(x2,y1)
                cuff_l=(x1,y2)    cuff_r=(x2,y2)
 
+    yaw_deg: optional garment yaw from garment_yaw_in_bbox() (degrees,
+        check_placement() convention). When given, the 4 corners are
+        rotated about the bbox center by yaw_deg, so check_placement()'s
+        keypoint-based yaw computation observes the real rotation.
+        None (default) keeps the old behavior: yaw 0 by construction.
+
     Returns {name: (x, y, z)} tuples matching check_placement()'s contract.
 
     Known limitations (documented, not hidden):
     - Units are PIXELS unless px_per_m is given. check_placement()'s
       tolerances are in meters, so pass px_per_m from camera calibration
       (or the known board size in frame) before comparing against them.
-    - Yaw is 0 by construction: an axis-aligned bbox cannot observe
-      garment rotation. Fine for roughly-squared placements on the board;
+    - The 4 points are the (possibly rotated) bbox rectangle, not measured
+      garment landmarks. Fine for board folding (center + yaw only);
       do not use this for the ABC fold-line path, which needs real
       keypoints.
     """
@@ -111,6 +254,9 @@ def bbox_to_placement_kp(det, kind, px_per_m=None):
     else:
         names = ("waist_l", "waist_r", "cuff_l", "cuff_r")
     corners = [(x1, y1), (x2, y1), (x1, y2), (x2, y2)]  # image x->board x, y->board z
+    if yaw_deg is not None:
+        yaw_deg = float(yaw_deg)  # TypeError/ValueError on garbage: loud
+        corners = _rotate_about_center(corners, yaw_deg)
     kp = {}
     for name, (ix, iy) in zip(names, corners):
         if px_per_m:
