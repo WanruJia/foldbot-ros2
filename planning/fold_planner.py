@@ -34,35 +34,131 @@ def _pt(x, y, z):
     return Point3D(x=x, y=y, z=z)
 
 
+# 实测肩宽/腰宽原型 (2026-10-05, Wanru 量的人体衣物真实尺寸, 米):
+#   shirt:  dad 0.43 / mom 0.35 / daughter 0.34 / son 0.27~0.32 (多件实测区间)
+#   pants:  dad 0.56 / mom 0.48 / daughter 0.40 / son 0.32
+# 注意 mom/daughter 衬衫肩宽只差 1 cm —— 小于 bbox/关键点测量噪声,
+# 所以阈值分类在边界附近本质上是模糊的, 见 owner_margin()。
+OWNER_WIDTHS = {
+    "shirt": {"dad": 0.43, "mom": 0.35, "daughter": 0.34,
+              "son": (0.27, 0.32)},
+    "pants": {"dad": 0.56, "mom": 0.48, "daughter": 0.40, "son": 0.32},
+}
+
+# 决策边界 (升序) = 相邻原型中点, 与 classify_owner() 的阈值同一份数据:
+#   shirt: 0.33 = mid(儿子最大0.32, 女儿0.34); 0.345 = mid(0.34, 0.35);
+#          0.39 = mid(0.35, 0.43)
+#   pants: 0.36 = mid(0.32, 0.40); 0.44 = mid(0.40, 0.48);
+#          0.52 = mid(0.48, 0.56)
+OWNER_BOUNDARIES = {
+    "shirt": (0.33, 0.345, 0.39),
+    "pants": (0.36, 0.44, 0.52),
+}
+
+# 测量值到最近决策边界小于该值 (米) 即视为模糊, 不应默默当成确定分类
+OWNER_AMBIGUOUS_MARGIN = 0.01
+
+
+def _width_metric(kind, k):
+    """The single scalar classify_owner decides on (meters)."""
+    if kind == "shirt":
+        return math.hypot(k["shoulder_r"]["x"] - k["shoulder_l"]["x"],
+                          k["shoulder_r"]["z"] - k["shoulder_l"]["z"]), "肩宽"
+    return math.hypot(k["waist_r"]["x"] - k["waist_l"]["x"],
+                      k["waist_r"]["z"] - k["waist_l"]["z"]), "腰宽"
+
+
+def _interval_dist(m, proto):
+    """Distance from m to an owner prototype (scalar or (lo, hi) range)."""
+    if isinstance(proto, tuple):
+        lo, hi = proto
+        if lo <= m <= hi:
+            return 0.0
+        return min(abs(m - lo), abs(m - hi))
+    return abs(m - proto)
+
+
+def _interval_mid(proto):
+    return (proto[0] + proto[1]) / 2.0 if isinstance(proto, tuple) \
+        else float(proto)
+
+
+def _canonical_kind(kind):
+    """Established contract (kept from the original classify_owner):
+    kind == "shirt" -> "shirt"; anything else (e.g. the board test's "tee")
+    is measured like pants. Documented here so the leniency is deliberate,
+    not an accident of if/else fall-through."""
+    return "shirt" if kind == "shirt" else "pants"
+
+
 def classify_owner(kind, k):
     """Classify garment owner from keypoint measurements.
     kind: 'shirt' | 'pants'. k: dict of {'x','z'} keypoints.
     Returns (owner, metric, metric_name).
 
-    Shirt thresholds calibrated 2026-10-05 from Wanru's real measurements:
-    dad 43 / mom 35 / daughter 34 / son 27-32 cm (midpoints as cutoffs).
+    Thresholds are OWNER_BOUNDARIES, calibrated 2026-10-05 from Wanru's
+    real measurements: dad 43 / mom 35 / daughter 0.34 / son 27-32 cm
+    (midpoints as cutoffs).
+
+    Honest limits (not hidden):
+    - In yolo mode the "shoulder width" fed here is the detection BBOX
+      width, i.e. full garment width with sleeves — systematically WIDER
+      than the calibrated true shoulder width. Owner calls on bbox keypoints
+      are therefore provisional (biased upward for shirts) until a
+      sleeve-insensitive width or bbox-calibrated thresholds exist.
+      We do not silently rescale: there is no honest data for the factor.
+    - mom vs daughter shirts differ by 1 cm; a margin below
+      OWNER_AMBIGUOUS_MARGIN means the winner is a guess, not a fact —
+      use owner_margin() to check instead of trusting the label.
     """
-    if kind == "shirt":
-        m = math.hypot(k["shoulder_r"]["x"] - k["shoulder_l"]["x"],
-                       k["shoulder_r"]["z"] - k["shoulder_l"]["z"])
-        name = "肩宽"
-        if m >= 0.39:
-            return "dad", m, name
-        if m >= 0.345:
-            return "mom", m, name
-        if m >= 0.33:
-            return "daughter", m, name
-        return "son", m, name
-    m = math.hypot(k["waist_r"]["x"] - k["waist_l"]["x"],
-                   k["waist_r"]["z"] - k["waist_l"]["z"])
-    name = "腰宽"
-    if m >= 0.52:
+    kind = _canonical_kind(kind)
+    m, name = _width_metric(kind, k)
+    b0, b1, b2 = OWNER_BOUNDARIES[kind]
+    if m >= b2:
         return "dad", m, name
-    if m >= 0.44:
+    if m >= b1:
         return "mom", m, name
-    if m >= 0.36:
+    if m >= b0:
         return "daughter", m, name
     return "son", m, name
+
+
+def owner_margin(kind, metric):
+    """Distance (meters) from a width measurement to the nearest decision
+    boundary. 0.0 = exactly on a boundary (a coin flip). A small positive
+    value (< OWNER_AMBIGUOUS_MARGIN) means the classify_owner() label is
+    ambiguous and should be treated as a guess, not a fact.
+
+    kind: 'shirt' | 'pants'. metric: width in meters (same units as
+    classify_owner's metric — pass px_per_m-scaled meters, not pixels).
+    Non-"shirt" kinds are measured like pants, matching classify_owner.
+    """
+    kind = _canonical_kind(kind)
+    return min(abs(float(metric) - b) for b in OWNER_BOUNDARIES[kind])
+
+
+def classify_owner_candidates(kind, k):
+    """Ranked [(owner, distance_to_prototype_m)] for a measurement.
+
+    candidates[0] is always the classify_owner() winner — same boundary
+    table, by construction, so the two views can never contradict. The
+    rest are ranked by distance to the owner prototype interval (range
+    prototypes like son's shirts use interval distance; ties broken
+    toward the larger garment for determinism). Useful when the margin
+    is small: candidates[1] is the honest alternative instead of a
+    silently wrong single label. Non-"shirt" kinds are measured like
+    pants, matching classify_owner.
+    """
+    kind = _canonical_kind(kind)
+    m, _ = _width_metric(kind, k)
+    protos = OWNER_WIDTHS[kind]
+    winner = classify_owner(kind, k)[0]
+    head = (winner, _interval_dist(m, protos[winner]))
+    rest = sorted(
+        ((o, _interval_dist(m, p)) for o, p in protos.items()
+         if o != winner),
+        key=lambda t: (round(t[1], 9), -_interval_mid(protos[t[0]]), t[0]))
+    return [head] + rest
 
 
 def detect_pants_length(k):

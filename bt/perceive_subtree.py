@@ -39,7 +39,9 @@ from perception.mock_perception import mock_perceive
 from perception.yolo_perception import (
     yolo_perceive, bbox_to_placement_kp, garment_yaw_in_bbox)
 from planning.fold_planner import (
-    classify_owner, detect_pants_length, pants_fold_mode,
+    classify_owner, owner_margin, classify_owner_candidates,
+    OWNER_AMBIGUOUS_MARGIN,
+    detect_pants_length, pants_fold_mode,
     plan_folds, plan_pants_folds,
 )
 from planning.board import plan_board_folds, check_placement
@@ -206,6 +208,12 @@ class ClassifyOwnerNode(py_trees.behaviour.Behaviour):
 
     classify_owner only needs the width pair (shoulder_l/r or waist_l/r),
     which exists in both mock keypoints and yolo bbox keypoints.
+
+    The winner is logged with its boundary margin; a margin below
+    OWNER_AMBIGUOUS_MARGIN (10 mm — e.g. mom vs daughter shirts, 1 cm
+    apart) is logged as AMBIGUOUS rather than trusted silently. yolo-mode
+    bbox widths overestimate true shoulder width (sleeves included), so
+    the yolo-path label is provisional — see classify_owner's docstring.
     """
 
     def __init__(self, name="ClassifyOwner"):
@@ -215,12 +223,21 @@ class ClassifyOwnerNode(py_trees.behaviour.Behaviour):
         bb = _bb_write()
         kind, kp = bb.garment_kind, bb.keypoints
         owner, metric, metric_name = classify_owner(kind, kp)
+        margin = owner_margin(kind, metric)
         # overwrite the mock owner with the real classifier output
         bb.perception.owner = owner
         bb.perception.metric = metric
         bb.perception.metric_name = metric_name
-        self.logger.info(
-            f"[ClassifyOwner] {metric_name}={metric:.3f} → owner={owner} (real)")
+        if margin < OWNER_AMBIGUOUS_MARGIN:
+            alt = classify_owner_candidates(kind, kp)[1][0]
+            self.logger.warning(
+                f"[ClassifyOwner] {metric_name}={metric:.3f} → owner={owner} "
+                f"AMBIGUOUS (margin={margin*1000:.1f}mm < "
+                f"{OWNER_AMBIGUOUS_MARGIN*1000:.0f}mm; alt={alt})")
+        else:
+            self.logger.info(
+                f"[ClassifyOwner] {metric_name}={metric:.3f} → owner={owner} "
+                f"(real, margin={margin*1000:.1f}mm)")
         return py_trees.common.Status.SUCCESS
 
 
