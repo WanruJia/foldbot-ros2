@@ -80,8 +80,17 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
    planning/, execution/, msgs/, tests/, docs/, dashboard/, README.md, ROADMAP.md.
    NEVER push: data/, synth/cutouts/, *.pt, __pycache__/, *.pyc, her real
    clothing photos. Repo is public.
-6. Board viz (~/workspace/your_files/foldbot-board.html): verify reset()
-   restores both posAttr.array and basePos.
+   2026-10-13 note: local .git was lost in a VM refresh (dir is no longer a git
+   repo); pushes continue via gh.py's GitHub-API tree-push (verified remote tree
+   == allowlist, 34 files, before pushing).
+6. DONE 2026-10-13: Board viz (~/workspace/your_files/foldbot-board.html):
+   verified + fixed reset(): it restored posAttr.array from initPos but NOT
+   basePos, which bakeFold() mutates permanently — so reset-then-replay folded
+   from stale baked positions (wrong geometry on the 2nd playthrough).
+   reset() now copies initPos into both posAttr.array and basePos
+   (vertPanel derives from initPos, stays valid). Inline scripts node --check OK;
+   fix semantics spot-checked. board.html lives in goal files/, NOT the repo —
+   nothing to push for it.
 7. Pants pipeline: leg-merging + waist-grab via edge/contour (no keypoints,
    per her decision). Adult pants: 3-fold sequence already specified.
 8. Later: INT8 quantization for edge deployment; grasp-retry + task-preemption
@@ -104,4 +113,9 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
   training — 5 garments can't train owners); margin/ambiguity layer
   (owner_margin, classify_owner_candidates, OWNER_WIDTHS/OWNER_BOUNDARIES);
   ClassifyOwnerNode warns AMBIGUOUS < 10 mm. 5 new tests, full suite
-  green.
+  green. Pushed dbfbdee.
+- 2026-10-13: board-viz reset() fix — reset now restores basePos as well as
+  posAttr.array (bakeFold() mutates basePos; without this, reset+replay folded
+  from stale baked positions). board.html is goal-file only, not in the repo.
+  Repo tests 66/66 pass. ROADMAP updated + pushed (local .git lost in VM
+  refresh; push via gh.py API).
