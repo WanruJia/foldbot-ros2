@@ -117,5 +117,5 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
 - 2026-10-13: board-viz reset() fix — reset now restores basePos as well as
   posAttr.array (bakeFold() mutates basePos; without this, reset+replay folded
   from stale baked positions). board.html is goal-file only, not in the repo.
-  Repo tests 66/66 pass. Pushed 0a2222a (local .git lost in VM
-  refresh; push via gh.py API).
+  Repo tests 66/66 pass. Pushed (local .git lost in VM refresh; push via
+  gh.py API).
