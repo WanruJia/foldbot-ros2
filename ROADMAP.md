@@ -52,8 +52,29 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
 
 ## Priority queue (top = next)
 
-1. [NEEDS HER] Real-photo validation. She photographs 15-20 garments on the real
-   board under real light -> run `python3 -m perception.eval_real --imgdir <dir>`.
+1. [NEEDS HER — IN PROGRESS] Real-photo validation + fine-tune. She photographs 15-20
+   garments on the real board under real light -> run `python3 -m perception.eval_real --imgdir <dir>`.
+   2026-10-13: all 15 real photos received (data/real_photos/, private, never pushed).
+   First eval (synthetic-only weights): 15/15 detected, 26 detections, mean conf 0.596 —
+   BUT kind classification failed: all 26 predicted "shirt", pants never predicted
+   (jeans got "shirt 0.94" full-frame box); mean box area 1.34M px^2 (~69% of frame).
+   Synthetic 0.995 mAP50 did NOT transfer.
+   Fine-tune (CPU, ultralytics, ~/workspace/venvs/foldbot): built data/yolo_real (12 train /
+   3 val, GrabCut tight boxes via synth/make_real_labels.py; 6 boxes hand-corrected after
+   montage review — auto-seg fails where the peach foam mat matches the tan board HSV range).
+   Recipe that won: from best_synth.pt, 40 epochs mixed (48 synth + 12 real, AUTO optimizer,
+   freeze backbone) then 30 epochs real-only. Old weights backed up as
+   data/yolo_runs/foldbot_nano/weights/best_synth.pt (local only).
+   Final eval_real on all 15: 13/15 top-1 kind accuracy (was 8/15), ZERO missed images,
+   per-class pants 20 / shirt 11 (pants now predicted), mean conf 0.501,
+   mean box area 0.57M px^2 (57% tighter). Remaining errors, reported honestly:
+   (a) daughter_longpants_03 — black pants, HELD-OUT val garment, called shirt 0.554
+   (genuine unseen-garment gap); (b) son_shortsleeve_01 — gray heather tee confused as
+   pants 0.767 (color confusion). Lesson learned the hard way: one bad auto-label
+   (pink shirt boxed at the wrong corner) poisoned 160 epochs of training and resisted
+   90 epochs of correction — Ultralytics label .cache files must be deleted after any
+   label fix, and every auto box must pass montage review before training.
+   real data.
    Look at zero-detection images first. If bad: photograph MORE source garments
    (esp. mom's + more pants), not hyperparameter tuning.
 2. DONE 2026-10-10: YOLO wired into bt/perceive_subtree.py behind
