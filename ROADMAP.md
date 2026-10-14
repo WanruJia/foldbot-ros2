@@ -50,6 +50,14 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
   thresholds exist. 5 new tests in tests/test_owner_margin.py
   (182-width agreement sweep included); full suite green.
 
+- 2026-10-14: pants leg-merging + waist-grab landed (perception/pants_
+  shape.py, numpy-only edge/contour, no keypoints per her decision):
+  inseam-gap leg split -> outer-edge grasp + midline-mirrored fold target;
+  top-band waist edge -> grab endpoints. Legs=None (already folded /
+  no clean gap) makes the iterator SKIP the side fold instead of folding
+  air; failures degrade to generic grasps with a warning. 14 new tests;
+  full suite 80/80 green.
+
 ## Priority queue (top = next)
 
 1. [NEEDS HER — IN PROGRESS] Real-photo validation + fine-tune. She photographs 15-20
@@ -112,8 +120,30 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
    (vertPanel derives from initPos, stays valid). Inline scripts node --check OK;
    fix semantics spot-checked. board.html lives in goal files/, NOT the repo —
    nothing to push for it.
-7. Pants pipeline: leg-merging + waist-grab via edge/contour (no keypoints,
-   per her decision). Adult pants: 3-fold sequence already specified.
+7. DONE 2026-10-14: Pants pipeline — leg-merging + waist-grab via
+   edge/contour (no keypoints, per her decision). New module
+   perception/pants_shape.py (numpy-only): segment_garment() (border-
+   sampled background + Otsu, same honest approach as garment_yaw_in_
+   bbox), find_leg_split() (two-run rows from the bottom = legs; crotch
+   row above; grasp = outer edge of left leg near cuffs, fold target =
+   mirror across the inseam midline), find_waist_edge() (top wide band;
+   endpoints = arm grab targets), analyze_pants() (bbox-crop entry point),
+   pants_shape_board() (crop px -> board meters via px_per_m; frame->board
+   origin offset stays with the arm's camera calibration, never invented).
+   Honest skips: legs=None when no clean inseam gap is visible (already
+   side-folded pants, pressed-flat blobs) — BoardFoldIterator then SKIPS
+   the SideFold instead of folding air; segmentation failure degrades to
+   generic grasps with a warning, never an invented split. Wired:
+   DetectKeypoints (yolo pants mode) publishes "pants_shape" on the
+   blackboard; create_side_fold_subtree()/create_arm_length_fold_subtree()
+   take it for contour-accurate grasp details. 14 new tests in
+   tests/test_pants_shape.py; full suite 80/80 green. KNOWN LIMITS
+   (documented in module): assumes waist-up crop (PlaceOnBoard places it
+   so); a 180-degree-rotated garment would mislabel cuffs as waist —
+   garment_yaw_in_bbox() only resolves [-90, 90), so this ambiguity is
+   real and left to the camera setup. Adult pants tri-fold (side fold +
+   bottom panel + arm length fold) was already specified; this item
+   supplied the perception behind the two arm grasps.
 8. Later: INT8 quantization for edge deployment; grasp-retry + task-preemption
    ideas (cf. Dyna Robotics Taku, Redwood City).
 
@@ -140,3 +170,14 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
   from stale baked positions). board.html is goal-file only, not in the repo.
   Repo tests 66/66 pass. Pushed (local .git lost in VM refresh; push via
   gh.py API).
+- 2026-10-13: YOLO fine-tune on her 15 real board photos (she shot them
+  ~11:45–12:02 PDT, approved with '好', 12 train / 3 val, 30 epochs,
+  ft → ft11 series, best = runs/detect/data/yolo_runs/foldbot_real_ft11).
+  Kind classification on real photos: BEFORE — all 26 boxes 'shirt', 0/7 pants,
+  avg conf 0.6; AFTER — 13/15 top-1 correct, 6/7 pants (pants conf 0.65–0.80),
+  val mAP50 0.912 (P 0.615 / R 1.0, noisy on 3 val images). Remaining errors:
+  daughter_longpants_03 → shirt (0.554), son_shortsleeve_01 → pants (0.767).
+  HONEST CAVEAT: 15 photos still tiny; model memorizes her board/background.
+  More photos with varied positions/backgrounds needed to generalize.
+  Weights + data NEVER pushed (public-repo allowlist: no *.pt, no data/,
+  no real clothing photos).

@@ -84,19 +84,29 @@ def create_flip_panel_subtree(panel, slot="adult"):
     return root
 
 
-def create_arm_length_fold_subtree():
+def create_arm_length_fold_subtree(pants_shape=None):
     """Build the ArmLengthFold sequence (pants tri-fold second step).
 
     v1.3: The middle-top board panel is FIXED (video design) — there is no
     physical top panel to flip. After the bottom panel folds the lower 36cm
     up, the arm grabs the waist edge and folds the top down directly.
     Sequence: move to waist → grab → fold down → release → retract.
+
+    pants_shape: optional pants_shape_board() result (DetectKeypoints in
+    yolo mode). When it carries a contour-found waist edge, the grab
+    detail names the real endpoints; otherwise the generic wording.
     """
+    waist = (pants_shape or {}).get("waist")
+    if waist:
+        x1, x2 = waist["x1"], waist["x2"]
+        detail = (f"arm → waist edge ({x1[0]:.3f},{x1[2]:.3f})–"
+                  f"({x2[0]:.3f},{x2[2]:.3f}) [contour]")
+    else:
+        detail = "arm → garment waist edge (top)"
     root = py_trees.composites.Sequence(
         name="ArmLengthFold", memory=True)
     root.add_children([
-        MockBoardAction("MoveToWaistEdge", ticks=2,
-                        detail="arm → garment waist edge (top)"),
+        MockBoardAction("MoveToWaistEdge", ticks=2, detail=detail),
         MockBoardAction("CloseGripper", ticks=1,
                         detail="gripper grabs waist edge"),
         MockBoardAction("FoldTopDown", ticks=3,
@@ -124,14 +134,30 @@ def create_tuck_sleeve_subtree(side):
     return root
 
 
-def create_side_fold_subtree():
-    """Build the pants SideFold sequence: cuff-to-cuff leg fold."""
+def create_side_fold_subtree(pants_shape=None):
+    """Build the pants SideFold sequence: leg-merging fold (no keypoints).
+
+    pants_shape: optional pants_shape_board() result (DetectKeypoints in
+    yolo mode). When given and the legs are NOT separately visible
+    (already side-folded, or no clean inseam gap), returns None — the
+    iterator skips the side fold instead of folding air. When the legs
+    are visible, the grasp detail names the contour-found outer edge of
+    the left leg and the fold target mirrored across the pants midline.
+    """
+    legs = (pants_shape or {}).get("legs")
+    if pants_shape is not None and legs is None:
+        return None  # legs already merged / not visible: nothing to fold
+    if legs:
+        g, t = legs["grasp"], legs["fold_target"]
+        detail = (f"arm → left-leg outer edge ({g[0]:.3f},{g[2]:.3f}) "
+                  f"[contour], fold over midline → ({t[0]:.3f},{t[2]:.3f})")
+    else:
+        detail = "arm → left leg outer edge"
     root = py_trees.composites.Sequence(name="SideFold", memory=True)
     root.add_children([
-        MockBoardAction("MoveToCuff", ticks=2,
-                        detail="arm → left cuff"),
+        MockBoardAction("MoveToLegEdge", ticks=2, detail=detail),
         MockBoardAction("CloseGripper", ticks=1,
-                        detail="gripper closed on cuff"),
+                        detail="gripper closed on leg edge"),
         MockBoardAction("FoldLegOver", ticks=3,
                         detail="fold left leg over right leg"),
         MockBoardAction("Release", ticks=1,
@@ -156,7 +182,15 @@ class BoardFoldIterator(py_trees.behaviour.Behaviour):
     def initialise(self):
         bb = py_trees.blackboard.Client(name="board_fold_iter")
         bb.register_key(key="board_plan", access=py_trees.common.Access.READ)
+        bb.register_key(key="pants_shape", access=py_trees.common.Access.READ)
         plan = getattr(bb, "board_plan", None)
+        # pants_shape is only written by DetectKeypoints (None in mock
+        # mode, contour analysis in yolo pants mode); absent when the
+        # perceive subtree never ran.
+        try:
+            pshape = bb.pants_shape
+        except KeyError:
+            pshape = None
         self._seq = py_trees.composites.Sequence(
             name="BoardFoldSteps", memory=True)
         if not plan:
@@ -165,13 +199,19 @@ class BoardFoldIterator(py_trees.behaviour.Behaviour):
         slot = plan.get("slot", "adult")
         children = [create_place_on_board_subtree(plan["place"])]
         if plan.get("side_fold_first"):
-            children.insert(0, create_side_fold_subtree())
+            side = create_side_fold_subtree(pshape)
+            if side is None:
+                self.logger.info(
+                    "[BoardFoldGarment] legs not separately visible — "
+                    "skipping SideFold")
+            else:
+                children.insert(0, side)
         if plan.get("tuck_sleeves"):
             children.append(create_tuck_sleeve_subtree("left"))
             children.append(create_tuck_sleeve_subtree("right"))
         for panel in plan.get("panels", []):
             if panel == "arm_fold":
-                children.append(create_arm_length_fold_subtree())
+                children.append(create_arm_length_fold_subtree(pshape))
             else:
                 children.append(create_flip_panel_subtree(panel, slot))
         for c in children:

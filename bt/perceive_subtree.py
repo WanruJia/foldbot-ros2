@@ -19,7 +19,10 @@ M6 wires the trained YOLOv8n detector behind perception="yolo":
 DetectKeypoints calls yolo_perceive(frame), garment_yaw_in_bbox() for the
 garment's rotation inside the bbox, then bbox_to_placement_kp(det,
 yaw_deg=...), and the check_placement() result lands on the blackboard
-as "placement".
+as "placement". For pants, perception.pants_shape.analyze_pants() runs
+contour-based leg-split + waist-edge analysis on the bbox crop and the
+arm-ready board-meter targets land as "pants_shape" (legs=None when no
+clean inseam gap is visible, so the fold iterator skips the side fold).
 The board mainline only needs placement, so PlanFolds always builds the
 board plan; the ABC fold plan is skipped whenever the keypoints are the
 4-point bbox set (no sleeves / a-b-c fold line / crotch — the bbox cannot
@@ -38,6 +41,7 @@ import py_trees
 from perception.mock_perception import mock_perceive
 from perception.yolo_perception import (
     yolo_perceive, bbox_to_placement_kp, garment_yaw_in_bbox)
+from perception.pants_shape import analyze_pants, pants_shape_board
 from planning.fold_planner import (
     classify_owner, owner_margin, classify_owner_candidates,
     OWNER_AMBIGUOUS_MARGIN,
@@ -58,6 +62,7 @@ def _bb_write():
     bb.register_key(key="perception", access=py_trees.common.Access.WRITE)
     bb.register_key(key="fold_plan", access=py_trees.common.Access.WRITE)
     bb.register_key(key="board_plan", access=py_trees.common.Access.WRITE)
+    bb.register_key(key="pants_shape", access=py_trees.common.Access.WRITE)
     return bb
 
 
@@ -154,6 +159,7 @@ class DetectKeypoints(py_trees.behaviour.Behaviour):
 
     def update(self):
         bb = _bb_write()
+        bb.pants_shape = None  # yolo pants mode overwrites with analysis
         if self._perception == "yolo":
             return self._update_yolo(bb)
         kind = bb.garment_kind
@@ -197,6 +203,28 @@ class DetectKeypoints(py_trees.behaviour.Behaviour):
         bb.placement = check_placement(kp_tup, kind)
         bb.keypoints = _placement_tup_to_dict(kp_tup)
         bb.perception = PerceptionResult(kind=kind, owner="")
+        if kind == "pants":
+            # Contour-based leg split + waist edge for the board pants
+            # pipeline (no keypoints, per her decision). Any failure
+            # degrades to generic grasps — never an invented split.
+            try:
+                raw = analyze_pants(frame, bbox=det["bbox"], pad=8)
+                if raw["ok"]:
+                    bb.pants_shape = pants_shape_board(raw, self._px_per_m)
+                    legs = bb.pants_shape["legs"]
+                    self.logger.info(
+                        "[DetectKeypoints] pants shape: legs="
+                        f"{'split' if legs else 'merged (skip side fold)'}, "
+                        f"waist={'found' if bb.pants_shape['waist'] else 'missing'} "
+                        "[contour]")
+                else:
+                    self.logger.warning(
+                        "[DetectKeypoints] pants crop not segmentable — "
+                        "generic grasps")
+            except (ImportError, OSError, ValueError) as e:
+                self.logger.warning(
+                    f"[DetectKeypoints] pants shape unavailable ({e}) — "
+                    "generic grasps")
         self.logger.info(
             f"[DetectKeypoints] yolo: {kind} conf={det['conf']:.2f} "
             f"yaw_deg={yaw} placement_ok={bb.placement['ok']}")
