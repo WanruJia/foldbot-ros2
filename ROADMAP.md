@@ -168,8 +168,8 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
 8. Later: INT8 quantization for edge deployment (DEFERRED while the model is
    provisional — it still memorizes her board/background; quantizing now would
    lock in a bad artifact). Grasp-retry DONE 2026-10-14 for the board
-   mainline (see done log); the pick subtree keeps py_trees' built-in Retry
-   (works, tested) — unifying the two retry decorators is a future cleanup.
+   mainline (see done log); the pick subtree's silent py_trees Retry was
+   unified into RetryWithLog on 2026-10-14 (see done log).
    Task preemption DONE 2026-10-14 for the board mainline (second half, see
    done log); a re-perceive / replan loop after a preemption is still open
    (see the 2026-10-14 done-log entry — now implemented and pushed).
@@ -271,3 +271,18 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
   files; the 3 pytest-only files fail on missing pytest — pre-existing
   env gap, untouched). Pushed 64f5a26 (remote tree 43 files,
   allowlist-clean, verified).
+
+- 2026-10-14: retry-decorator unification (closes the item-8 "future
+  cleanup"): bt/pick_subtree.py's GraspWithRetry now uses
+  bt.retry_decorator.RetryWithLog instead of the silent
+  py_trees.decorators.Retry — same 3-attempt semantics, but retries are
+  now attempt-counted (attempts_used), logged per attempt at INFO / on
+  give-up at WARNING, and expose the on_retry re-observe hook. Both retry
+  paths in the tree (pick grasp + the four board grasp pairs) are now one
+  decorator. docstrings updated; tests/test_m3.py structure assertion
+  updated to RetryWithLog, plus 2 new unification tests
+  (test_grasp_retry_attempts_honest — attempts_used matches VerifyGrasp
+  on both recovery and give-up; test_grasp_on_retry_hook — hook fires
+  once before the re-attempt). Full suite 117/117 green via the foldbot
+  venv's pytest. Pushed <SHA> (remote tree <N> files, allowlist-clean,
+  verified).

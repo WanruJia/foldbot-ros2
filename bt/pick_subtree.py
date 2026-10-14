@@ -6,7 +6,7 @@ Expands the M0 stub into individual arm/gripper action nodes with a
   PickFromBasket (Sequence, memory=True)
   ├── MoveToBasket
   ├── DescendToGarment
-  ├── GraspWithRetry (Retry, 3 attempts)
+  ├── GraspWithRetry (RetryWithLog, 3 attempts)
   │   └── GraspSequence (Sequence)
   │       ├── CloseGripper
   │       ├── LiftSlightly
@@ -15,11 +15,18 @@ Expands the M0 stub into individual arm/gripper action nodes with a
   ├── ReleaseGarment
   └── RetractArm
 
+The grasp retry uses bt.retry_decorator.RetryWithLog — the same honest
+retry as the board grasp pairs (item 8 cleanup 2026-10-14: the silent
+py_trees.decorators.Retry this node used before is retired; retries are
+now attempt-counted, logged, and hookable everywhere).
+
 M3: nodes are still mocks (log + succeed after N ticks). Real robot:
 replace each MockArmAction with a ROS 2 action client (MoveIt2 /
 gripper_command). VerifyGrasp would read a force/torque or vacuum sensor.
 """
 import py_trees
+
+from bt.retry_decorator import RetryWithLog
 
 
 class MockArmAction(py_trees.behaviour.Behaviour):
@@ -135,11 +142,12 @@ def create_pick_subtree(succeed_on_attempt=1):
     verify = VerifyGrasp(succeed_on_attempt=succeed_on_attempt)
     grasp_seq.add_children([CloseGripper(), LiftSlightly(), verify])
 
-    # Retry the whole grasp sequence up to 3 times.
-    # Sequence memory=True: progresses normally; on FAILURE initialise() resets
-    # it so the next retry starts from CloseGripper again.
-    grasp_retry = py_trees.decorators.Retry(
-        name="GraspWithRetry", child=grasp_seq, num_failures=3)
+    # Retry the whole grasp sequence up to 3 times with the honest,
+    # attempt-counted decorator shared by the board grasp pairs
+    # (Sequence memory=True: progresses normally; on FAILURE initialise()
+    # resets it so the next retry starts from CloseGripper again).
+    grasp_retry = RetryWithLog(
+        name="GraspWithRetry", child=grasp_seq, max_attempts=3)
 
     pick = py_trees.composites.Sequence(name="PickFromBasket", memory=True)
     pick.add_children([

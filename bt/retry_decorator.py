@@ -1,7 +1,13 @@
 """Honest grasp-retry decorator for the FoldBot behavior tree (item 8, first half).
 
-Why this exists alongside py_trees' built-in Retry (already used by
-bt/pick_subtree.py's GraspWithRetry):
+This is the tree's single retry decorator: 2026-10-14 the silent
+py_trees.decorators.Retry in bt/pick_subtree.py's GraspWithRetry was
+replaced with it (item 8 cleanup), so every retry path now counts
+attempts, logs honestly, and supports the on_retry re-observe hook.
+
+Why it exists (the built-in Retry retries silently and exposes no
+attempt count; there is no hook to re-observe between attempts; when
+it gives up, nothing says so in the logs):
   - the built-in retries silently and exposes no attempt count;
   - there is no hook to re-observe between attempts;
   - when it gives up, nothing says so in the logs.
