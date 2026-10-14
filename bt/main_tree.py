@@ -12,11 +12,13 @@ from bt.perceive_subtree import create_perceive_subtree
 from bt.fold_subtree import create_fold_subtree
 from bt.board_actions import create_board_fold_subtree
 from bt.sort_subtree import create_sort_subtree
+from bt.preemption import PreemptibleSubtree
 
 
 def create_main_tree(succeed_on_attempt=1, kind="random", owner="random",
                      use_board=True, perception="mock", image_path=None,
-                     px_per_m=None, model_path=None, conf=0.25):
+                     px_per_m=None, model_path=None, conf=0.25,
+                     preemption=False):
     """FoldBot main tree. Board-based folding is the primary method (v2.0):
     the arm grabs panel edges and flips — no precise fabric manipulation.
     use_board=False selects the legacy ABC direct-fold (high dexterity).
@@ -30,6 +32,13 @@ def create_main_tree(succeed_on_attempt=1, kind="random", owner="random",
                                        model_path=model_path, conf=conf)
     fold = create_board_fold_subtree() if use_board else create_fold_subtree()
     sort = create_sort_subtree()
+    if preemption:
+        # Guard the long fold sequence: a "preempt_request" on the blackboard
+        # (operator stop / new garment) aborts it on the next tick — arms
+        # park, the abort is recorded, and the tree reports FAILURE instead
+        # of sorting a half-folded garment. Default off: mock runs keep the
+        # exact pre-item-8 behaviour.
+        fold = PreemptibleSubtree(name="PreemptibleFold", child=fold)
     root = py_trees.composites.Sequence(name="FoldBotMain", memory=True)
     root.add_children([pick, perceive, fold, sort])
     return root

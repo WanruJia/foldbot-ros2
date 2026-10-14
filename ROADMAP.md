@@ -146,10 +146,11 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
    supplied the perception behind the two arm grasps.
 8. Later: INT8 quantization for edge deployment (DEFERRED while the model is
    provisional — it still memorizes her board/background; quantizing now would
-   lock in a bad artifact); task-preemption ideas (cf. Dyna Robotics Taku,
-   Redwood City) still open. Grasp-retry DONE 2026-10-14 for the board
+   lock in a bad artifact). Grasp-retry DONE 2026-10-14 for the board
    mainline (see done log); the pick subtree keeps py_trees' built-in Retry
    (works, tested) — unifying the two retry decorators is a future cleanup.
+   Task preemption DONE 2026-10-14 for the board mainline (second half, see
+   done log); a re-perceive / replan loop after a preemption is still open.
 
 ## Done log
 
@@ -203,4 +204,24 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
   tests/test_retry_decorator.py; test_board.py + test_pants_shape.py structure
   assertions updated for the new wrappers; full suite 88/88 green.
   INT8 quantization deferred until the model generalizes (provisional now);
-  task preemption still open.
+  task preemption still open. Pushed 21fc2d3 (remote tree 38 files,
+  allowlist-clean: 36 retained + retry_decorator.py + test_retry_decorator.py).
+- 2026-10-14: task preemption for the board mainline (item 8, second half):
+  new bt/preemption.py — PreemptibleSubtree wraps the fold subtree (opt-in
+  via create_main_tree(preemption=True); default off so mock runs keep the
+  exact pre-item-8 behaviour) and honours a blackboard "preempt_request"
+  on the next tick: stops the running fold child, parks the arms via the
+  on_park hook (mock logs; real robot commands the safe park pose), records
+  preempted=True + preempt_reason (an abort is never silent), and returns
+  FAILURE so the main Sequence does NOT sort a half-folded garment into a
+  family bin. Honest edges: a request arriving after the fold already
+  reached SUCCESS reports the real outcome and clears the stale flag (no
+  leak into the next garment); a pre-start request aborts with FAILURE
+  (nothing ran); initialise() resets the preemption record per garment.
+  7 new tests in tests/test_preemption.py (mid-fold abort, pre-start abort,
+  late-request honesty, no-preemption transparency, main-tree wiring +
+  integration: preempted cycle FAILS and SortToBin never runs); full suite
+  95/95 green. Pushed PUSH_SHA (remote tree 40 files, allowlist-clean).
+  Still open: re-perceive / replan loop after a preemption; INT8 deferred
+  until the model generalizes. (This push also syncs the 11:49 run's
+  grasp-retry done-log line, whose single-file ROADMAP update had failed.)
