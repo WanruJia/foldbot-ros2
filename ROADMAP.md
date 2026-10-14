@@ -269,4 +269,5 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
   contour waist (pants) over the bbox width, with the fallback still
   visibly provisional. 11 new tests; full suite green (13 script-runnable
   files; the 3 pytest-only files fail on missing pytest — pre-existing
-  env gap, untouched). Push via gh.py API pending.
+  env gap, untouched). Pushed 64f5a26 (remote tree 43 files,
+  allowlist-clean, verified).
