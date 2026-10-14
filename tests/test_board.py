@@ -69,14 +69,18 @@ def test_panel_push_pose():
 
 
 def test_board_subtrees():
-    # Each builder returns a py_trees Sequence with the right children
+    # Each builder returns a py_trees Sequence with the right children.
+    # Grasp pairs (move + close) are wrapped in RetryWithLog (3 attempts).
+    from bt.retry_decorator import RetryWithLog
     place = create_place_on_board_subtree({"x": 0, "z": 0, "yaw": 0})
     assert place.name == "PlaceOnBoard"
-    assert len(place.children) == 6  # pick, close, move, place, open, retract
+    assert len(place.children) == 5  # retry-pick, move, place, open, retract
+    assert isinstance(place.children[0], RetryWithLog)
 
     flip = create_flip_panel_subtree(PANEL_LEFT, "adult")
     assert flip.name == "FlipPanel:left"
-    assert len(flip.children) == 7  # grab edge, flip up, pause, return, release, retract
+    assert len(flip.children) == 6  # retry-grasp, flip up, pause, return, release, retract
+    assert isinstance(flip.children[0], RetryWithLog)
 
     tuck = create_tuck_sleeve_subtree("left")
     assert tuck.name == "TuckSleeve:left"
@@ -84,11 +88,13 @@ def test_board_subtrees():
 
     side = create_side_fold_subtree()
     assert side.name == "SideFold"
-    assert len(side.children) == 5
+    assert len(side.children) == 4  # retry-grasp, fold over, release, retract
+    assert isinstance(side.children[0], RetryWithLog)
 
     armfold = create_arm_length_fold_subtree()
     assert armfold.name == "ArmLengthFold"
-    assert len(armfold.children) == 5  # move, grab, fold down, release, retract
+    assert len(armfold.children) == 4  # retry-grasp, fold down, release, retract
+    assert isinstance(armfold.children[0], RetryWithLog)
     print("PASS test_board_subtrees")
 
 

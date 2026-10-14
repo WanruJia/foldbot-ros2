@@ -158,18 +158,18 @@ def test_side_fold_builder_skips_when_merged():
     assert create_side_fold_subtree({"legs": None, "waist": None}) is None
     generic = create_side_fold_subtree(None)
     assert generic.name == "SideFold"
-    assert "contour" not in generic.children[0]._detail
+    assert "contour" not in generic.children[0].decorated.children[0]._detail
     shaped = create_side_fold_subtree(_board_shape(legs=True))
     assert shaped.name == "SideFold"
-    assert "contour" in shaped.children[0]._detail, shaped.children[0]._detail
+    assert "contour" in shaped.children[0].decorated.children[0]._detail, shaped.children[0].decorated.children[0]._detail
     print("PASS test_side_fold_builder_skips_when_merged")
 
 
 def test_arm_fold_builder_uses_waist():
     generic = create_arm_length_fold_subtree(None)
-    assert "contour" not in generic.children[0]._detail
+    assert "contour" not in generic.children[0].decorated.children[0]._detail
     shaped = create_arm_length_fold_subtree(_board_shape(legs=True))
-    d = shaped.children[0]._detail
+    d = shaped.children[0].decorated.children[0]._detail
     assert "contour" in d and "0.060" in d and "0.140" in d, d
     print("PASS test_arm_fold_builder_uses_waist")
 

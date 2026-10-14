@@ -144,8 +144,12 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
    real and left to the camera setup. Adult pants tri-fold (side fold +
    bottom panel + arm length fold) was already specified; this item
    supplied the perception behind the two arm grasps.
-8. Later: INT8 quantization for edge deployment; grasp-retry + task-preemption
-   ideas (cf. Dyna Robotics Taku, Redwood City).
+8. Later: INT8 quantization for edge deployment (DEFERRED while the model is
+   provisional — it still memorizes her board/background; quantizing now would
+   lock in a bad artifact); task-preemption ideas (cf. Dyna Robotics Taku,
+   Redwood City) still open. Grasp-retry DONE 2026-10-14 for the board
+   mainline (see done log); the pick subtree keeps py_trees' built-in Retry
+   (works, tested) — unifying the two retry decorators is a future cleanup.
 
 ## Done log
 
@@ -181,3 +185,22 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
   More photos with varied positions/backgrounds needed to generalize.
   Weights + data NEVER pushed (public-repo allowlist: no *.pt, no data/,
   no real clothing photos).
+- 2026-10-14: pants leg-merging + waist-grab via edge/contour (item 7):
+  new perception/pants_shape.py (numpy-only; leg split from two-run rows,
+  waist edge from top band; honest legs=None skip + generic-grasp
+  degradation), wired into DetectKeypoints (yolo pants -> "pants_shape" on
+  blackboard) and BoardFoldIterator (skips SideFold when legs not visible;
+  contour grasp details). 14 new tests, full suite 80/80 green. Pushed
+  8d229a6 (remote tree 36 files, allowlist-clean).
+- 2026-10-14: grasp-retry for the board mainline (item 8, first half): new
+  bt/retry_decorator.py — RetryWithLog (honest attempt counting via
+  attempts_used, per-attempt INFO logs, WARNING on give-up, optional
+  on_retry hook so the real robot can re-observe between attempts; returns
+  FAILURE only after max_attempts — never reports unobserved success).
+  All four board grasp steps wrap their (move → close gripper) pair:
+  RetryPickGrasp / RetryPanelGrasp / RetryLegGrasp / RetryWaistGrasp,
+  3 attempts each. Mock path passes through on attempt 1. 8 new tests in
+  tests/test_retry_decorator.py; test_board.py + test_pants_shape.py structure
+  assertions updated for the new wrappers; full suite 88/88 green.
+  INT8 quantization deferred until the model generalizes (provisional now);
+  task preemption still open.

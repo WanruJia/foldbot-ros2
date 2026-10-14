@@ -8,10 +8,15 @@ Replaces fabric-manipulation FoldSteps with rigid board operations:
 
 Each FlipPanel is 3 primitives vs 6 for a fabric FoldStep, and all motions
 are rigid (no deformable grasping).
+
+Every grasp step (pick / panel edge / leg edge / waist edge) is wrapped in
+bt.retry_decorator.RetryWithLog (3 attempts): a missed grasp re-approaches
+instead of failing the garment, and a persistent miss fails honestly.
 """
 import py_trees
 
 from planning.board import panel_push_pose
+from bt.retry_decorator import RetryWithLog
 
 
 class MockBoardAction(py_trees.behaviour.Behaviour):
@@ -35,14 +40,31 @@ class MockBoardAction(py_trees.behaviour.Behaviour):
         return py_trees.common.Status.SUCCESS
 
 
+def _grasp_with_retry(retry_name, grasp_name, move_name, move_detail,
+                      close_detail, max_attempts=3):
+    """Wrap a (move → close gripper) grasp pair in an honest retry.
+
+    On the real robot a missed panel/leg/waist grasp is the common failure;
+    retrying the approach beats failing the whole garment. After
+    max_attempts the node reports FAILURE (and the give-up is logged) —
+    the tree never pretends the grasp succeeded.
+    """
+    grasp = py_trees.composites.Sequence(name=grasp_name, memory=True)
+    grasp.add_children([
+        MockBoardAction(move_name, ticks=2, detail=move_detail),
+        MockBoardAction("CloseGripper", ticks=1, detail=close_detail),
+    ])
+    return RetryWithLog(name=retry_name, child=grasp,
+                        max_attempts=max_attempts)
+
+
 def create_place_on_board_subtree(place):
     """Build the PlaceOnBoard sequence."""
     root = py_trees.composites.Sequence(name="PlaceOnBoard", memory=True)
     root.add_children([
-        MockBoardAction("MoveToPick", ticks=2,
-                        detail="arm → garment pick pose"),
-        MockBoardAction("CloseGripper", ticks=1,
-                        detail="gripper closed"),
+        _grasp_with_retry(
+            "RetryPickGrasp", "PickGrasp", "MoveToPick",
+            "arm → garment pick pose", "gripper closed"),
         MockBoardAction("MoveToBoard", ticks=2,
                         detail=f"arm → board ({place['x']:.2f},{place['z']:.2f})"),
         MockBoardAction("PlaceAndAlign", ticks=2,
@@ -66,10 +88,10 @@ def create_flip_panel_subtree(panel, slot="adult"):
     root = py_trees.composites.Sequence(
         name=f"FlipPanel:{panel}", memory=True)
     root.add_children([
-        MockBoardAction("MoveToPanelEdge", ticks=2,
-                        detail=f"arm → {panel} panel edge ({pose['x']:.2f},{pose['z']:.2f})"),
-        MockBoardAction("CloseGripper", ticks=1,
-                        detail=f"gripper grabs {panel} panel edge"),
+        _grasp_with_retry(
+            "RetryPanelGrasp", "PanelGrasp", "MoveToPanelEdge",
+            f"arm → {panel} panel edge ({pose['x']:.2f},{pose['z']:.2f})",
+            f"gripper grabs {panel} panel edge"),
         MockBoardAction("FlipPanelUp", ticks=3,
                         detail=f"lift {panel} panel up and over (garment folds)"),
         MockBoardAction("Pause", ticks=1,
@@ -106,9 +128,9 @@ def create_arm_length_fold_subtree(pants_shape=None):
     root = py_trees.composites.Sequence(
         name="ArmLengthFold", memory=True)
     root.add_children([
-        MockBoardAction("MoveToWaistEdge", ticks=2, detail=detail),
-        MockBoardAction("CloseGripper", ticks=1,
-                        detail="gripper grabs waist edge"),
+        _grasp_with_retry(
+            "RetryWaistGrasp", "WaistGrasp", "MoveToWaistEdge",
+            detail, "gripper grabs waist edge"),
         MockBoardAction("FoldTopDown", ticks=3,
                         detail="fold top down over the folded lower part"),
         MockBoardAction("OpenGripper", ticks=1,
@@ -155,9 +177,9 @@ def create_side_fold_subtree(pants_shape=None):
         detail = "arm → left leg outer edge"
     root = py_trees.composites.Sequence(name="SideFold", memory=True)
     root.add_children([
-        MockBoardAction("MoveToLegEdge", ticks=2, detail=detail),
-        MockBoardAction("CloseGripper", ticks=1,
-                        detail="gripper closed on leg edge"),
+        _grasp_with_retry(
+            "RetryLegGrasp", "LegGrasp", "MoveToLegEdge",
+            detail, "gripper closed on leg edge"),
         MockBoardAction("FoldLegOver", ticks=3,
                         detail="fold left leg over right leg"),
         MockBoardAction("Release", ticks=1,
