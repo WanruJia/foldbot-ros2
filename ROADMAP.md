@@ -221,7 +221,7 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
   7 new tests in tests/test_preemption.py (mid-fold abort, pre-start abort,
   late-request honesty, no-preemption transparency, main-tree wiring +
   integration: preempted cycle FAILS and SortToBin never runs); full suite
-  95/95 green. Pushed PUSH_SHA (remote tree 40 files, allowlist-clean).
+  95/95 green. Pushed 601715d (remote tree 40 files, allowlist-clean).
   Still open: re-perceive / replan loop after a preemption; INT8 deferred
   until the model generalizes. (This push also syncs the 11:49 run's
   grasp-retry done-log line, whose single-file ROADMAP update had failed.)
