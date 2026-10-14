@@ -101,11 +101,13 @@ def classify_owner(kind, k):
     (midpoints as cutoffs).
 
     Honest limits (not hidden):
-    - In yolo mode the "shoulder width" fed here is the detection BBOX
-      width, i.e. full garment width with sleeves — systematically WIDER
-      than the calibrated true shoulder width. Owner calls on bbox keypoints
-      are therefore provisional (biased upward for shirts) until a
-      sleeve-insensitive width or bbox-calibrated thresholds exist.
+    - In yolo mode the raw keypoints come from the detection BBOX, whose
+      width includes sleeves — systematically WIDER than the calibrated
+      true shoulder width. The BT's ClassifyOwnerNode therefore prefers a
+      contour measurement when one exists: the sleeve-insensitive torso
+      width (perception.garment_torso_width_in_bbox) for shirts, or the
+      contour waist width from perception.pants_shape for pants. When
+      neither exists, the bbox width is used and the label is provisional.
       We do not silently rescale: there is no honest data for the factor.
     - mom vs daughter shirts differ by 1 cm; a margin below
       OWNER_AMBIGUOUS_MARGIN means the winner is a guess, not a fact —

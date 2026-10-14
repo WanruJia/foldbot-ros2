@@ -40,7 +40,8 @@ import random
 import py_trees
 from perception.mock_perception import mock_perceive
 from perception.yolo_perception import (
-    yolo_perceive, bbox_to_placement_kp, garment_yaw_in_bbox)
+    yolo_perceive, bbox_to_placement_kp, garment_yaw_in_bbox,
+    garment_torso_width_in_bbox)
 from perception.pants_shape import analyze_pants, pants_shape_board
 from planning.fold_planner import (
     classify_owner, owner_margin, classify_owner_candidates,
@@ -63,6 +64,7 @@ def _bb_write():
     bb.register_key(key="fold_plan", access=py_trees.common.Access.WRITE)
     bb.register_key(key="board_plan", access=py_trees.common.Access.WRITE)
     bb.register_key(key="pants_shape", access=py_trees.common.Access.WRITE)
+    bb.register_key(key="torso_width_m", access=py_trees.common.Access.WRITE)
     return bb
 
 
@@ -160,6 +162,7 @@ class DetectKeypoints(py_trees.behaviour.Behaviour):
     def update(self):
         bb = _bb_write()
         bb.pants_shape = None  # yolo pants mode overwrites with analysis
+        bb.torso_width_m = None  # yolo shirt mode overwrites when measured
         if self._perception == "yolo":
             return self._update_yolo(bb)
         kind = bb.garment_kind
@@ -203,6 +206,29 @@ class DetectKeypoints(py_trees.behaviour.Behaviour):
         bb.placement = check_placement(kp_tup, kind)
         bb.keypoints = _placement_tup_to_dict(kp_tup)
         bb.perception = PerceptionResult(kind=kind, owner="")
+        if kind == "shirt":
+            # Sleeve-insensitive torso width for the owner classifier: the
+            # bbox width includes sleeves and overestimates true shoulder
+            # width. Any failure degrades to the bbox width (provisional),
+            # never an invented measurement.
+            try:
+                tw = garment_torso_width_in_bbox(frame, det["bbox"])
+                if tw is not None:
+                    bb.torso_width_m = tw / self._px_per_m
+                    self.logger.info(
+                        "[DetectKeypoints] shirt torso width "
+                        f"{bb.torso_width_m:.3f} m (contour, "
+                        f"{tw:.0f}px bbox width "
+                        f"{det['bbox'][2]-det['bbox'][0]:.0f}px)")
+                else:
+                    self.logger.warning(
+                        "[DetectKeypoints] shirt torso not measurable "
+                        "on the contour — owner label from bbox width "
+                        "(provisional)")
+            except (ImportError, OSError, ValueError) as e:
+                self.logger.warning(
+                    f"[DetectKeypoints] torso width unavailable ({e}) — "
+                    "owner label from bbox width (provisional)")
         if kind == "pants":
             # Contour-based leg split + waist edge for the board pants
             # pipeline (no keypoints, per her decision). Any failure
@@ -231,17 +257,53 @@ class DetectKeypoints(py_trees.behaviour.Behaviour):
         return py_trees.common.Status.SUCCESS
 
 
+def _owner_measure_keypoints(kind, kp, torso_width_m=None, pants_shape=None):
+    """Choose the width measurement classify_owner() sees.
+
+    Contour-measured widths (genuinely measured on this frame) replace the
+    bbox width, which overestimates shirt shoulder width (sleeves
+    included) and pants waist width (bbox spans leg spread) relative to
+    the calibrated thresholds. Returns (measure_kp, provenance), where
+    measure_kp carries only the width pair classify_owner() reads.
+
+    The fallbacks are honest, not hidden: when no contour measurement
+    exists (segmentation failed, or mock keypoints with no contour data),
+    the perceived keypoints are used as-is and provenance says the label
+    is provisional.
+    """
+    import math
+    if kind == "shirt" and torso_width_m:
+        half = torso_width_m / 2.0
+        return ({"shoulder_l": {"x": -half, "z": 0.0},
+                 "shoulder_r": {"x": half, "z": 0.0}},
+                "contour torso width (sleeve-insensitive)")
+    if kind != "shirt" and isinstance(pants_shape, dict):
+        waist = pants_shape.get("waist")
+        if waist and "x1" in waist and "x2" in waist:
+            x1, x2 = waist["x1"], waist["x2"]
+            width = math.hypot(x1[0] - x2[0], x1[2] - x2[2])
+            if width > 0:
+                half = width / 2.0
+                return ({"waist_l": {"x": -half, "z": 0.0},
+                         "waist_r": {"x": half, "z": 0.0}},
+                        "contour waist width (pants_shape)")
+    return kp, "bbox width (provisional)"
+
+
 class ClassifyOwnerNode(py_trees.behaviour.Behaviour):
     """Classify owner with the REAL planner (not mocked).
 
     classify_owner only needs the width pair (shoulder_l/r or waist_l/r),
-    which exists in both mock keypoints and yolo bbox keypoints.
+    which exists in both mock keypoints and yolo bbox keypoints. In yolo
+    mode the raw kp is replaced by a contour measurement when one exists:
+    the sleeve-insensitive torso width for shirts (torso_width_m on the
+    blackboard) or the contour waist width for pants (pants_shape); the
+    provenance is logged so a bbox-width fallback stays visibly
+    provisional.
 
     The winner is logged with its boundary margin; a margin below
     OWNER_AMBIGUOUS_MARGIN (10 mm — e.g. mom vs daughter shirts, 1 cm
-    apart) is logged as AMBIGUOUS rather than trusted silently. yolo-mode
-    bbox widths overestimate true shoulder width (sleeves included), so
-    the yolo-path label is provisional — see classify_owner's docstring.
+    apart) is logged as AMBIGUOUS rather than trusted silently.
     """
 
     def __init__(self, name="ClassifyOwner"):
@@ -250,22 +312,27 @@ class ClassifyOwnerNode(py_trees.behaviour.Behaviour):
     def update(self):
         bb = _bb_write()
         kind, kp = bb.garment_kind, bb.keypoints
-        owner, metric, metric_name = classify_owner(kind, kp)
+        mkp, provenance = _owner_measure_keypoints(
+            kind, kp,
+            torso_width_m=getattr(bb, "torso_width_m", None),
+            pants_shape=getattr(bb, "pants_shape", None))
+        owner, metric, metric_name = classify_owner(kind, mkp)
         margin = owner_margin(kind, metric)
         # overwrite the mock owner with the real classifier output
         bb.perception.owner = owner
         bb.perception.metric = metric
         bb.perception.metric_name = metric_name
         if margin < OWNER_AMBIGUOUS_MARGIN:
-            alt = classify_owner_candidates(kind, kp)[1][0]
+            alt = classify_owner_candidates(kind, mkp)[1][0]
             self.logger.warning(
                 f"[ClassifyOwner] {metric_name}={metric:.3f} → owner={owner} "
                 f"AMBIGUOUS (margin={margin*1000:.1f}mm < "
-                f"{OWNER_AMBIGUOUS_MARGIN*1000:.0f}mm; alt={alt})")
+                f"{OWNER_AMBIGUOUS_MARGIN*1000:.0f}mm; alt={alt}) "
+                f"[{provenance}]")
         else:
             self.logger.info(
                 f"[ClassifyOwner] {metric_name}={metric:.3f} → owner={owner} "
-                f"(real, margin={margin*1000:.1f}mm)")
+                f"(margin={margin*1000:.1f}mm) [{provenance}]")
         return py_trees.common.Status.SUCCESS
 
 

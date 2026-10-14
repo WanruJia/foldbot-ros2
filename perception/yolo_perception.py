@@ -23,6 +23,9 @@ yaw_deg=...) and the check_placement() result lands on the blackboard as
 "placement";
 ClassifyOwnerNode keeps using classify_owner(). Mock stays the default
 for tests and hardware-less runs.
+garment_torso_width_in_bbox() (2026-10-14) measures a sleeve-insensitive
+torso width on the garment contour for the owner classifier, replacing
+the bbox-width fallback whenever the crop segments honestly.
 
 This module has zero third-party imports at load time; ultralytics is
 imported lazily inside yolo_perceive() so unit tests run anywhere.
@@ -114,6 +117,93 @@ def _otsu_threshold(values):
     return float(centers[int(np.argmax(sigma_b2))])
 
 
+def _segment_crop(image, bbox, pad, min_foreground):
+    """Shared garment/background segmentation for the bbox contour helpers.
+
+    Samples the padded crop's border as background, thresholds the
+    color-distance map with Otsu, and returns the foreground mask.
+
+    Returns (fg, cx1, cy1): fg is a bool array over the padded crop,
+    (cx1, cy1) the crop origin in full-image pixels. Returns None when
+    the crop cannot be segmented honestly (uniform color, degenerate/tiny
+    bbox, too few foreground pixels) — callers must fall back, never
+    invent a measurement.
+
+    Raises:
+        ImportError: numpy (or Pillow, for a path) not installed.
+        OSError / ValueError: unreadable image or malformed bbox.
+    """
+    np = _numpy()
+    if isinstance(image, np.ndarray):
+        arr = image
+    else:
+        try:
+            from PIL import Image
+        except ImportError as e:
+            raise ImportError(
+                "contour helpers need a numpy array, or Pillow to read "
+                "an image path.") from e
+        arr = np.asarray(Image.open(image).convert("RGB"))
+    if arr.ndim == 3:
+        arr = (arr[..., 0] * 0.299 + arr[..., 1] * 0.587
+               + arr[..., 2] * 0.114)  # luma
+    arr = np.asarray(arr, dtype=np.float64)
+    h, w = arr.shape[:2]
+    x1, y1, x2, y2 = (float(v) for v in bbox)
+    if not (x2 > x1 and y2 > y1):
+        raise ValueError(f"degenerate bbox: {bbox!r}")
+    cx1, cy1 = max(0, int(x1) - pad), max(0, int(y1) - pad)
+    cx2, cy2 = min(w, int(x2) + pad), min(h, int(y2) + pad)
+    if cx2 - cx1 < 8 or cy2 - cy1 < 8:
+        return None  # too tiny to segment honestly
+    crop = arr[cy1:cy2, cx1:cx2]
+    # Background = median color of the crop border (garment is centered).
+    border = np.concatenate([crop[0, :], crop[-1, :],
+                            crop[:, 0], crop[:, -1]])
+    bg = float(np.median(border))
+    dist = np.abs(crop - bg)
+    thr = _otsu_threshold(dist)
+    fg = dist > thr
+    if int(fg.sum()) < min_foreground:
+        return None  # garment indistinguishable from background
+    return fg, cx1, cy1
+
+
+def _pca_long_axis(fg):
+    """Long-axis angle of a bool foreground mask (crop coordinates).
+
+    2x2 PCA via closed form; the long axis is the largest-variance axis.
+    Returns (angle_deg, ux, uy): angle in [0, 180), plus the unit vector.
+    Returns None when the blob is near-square (long axis unstable) or
+    empty — the same honesty gate garment_yaw_in_bbox() uses.
+    """
+    np = _numpy()
+    ys, xs = np.nonzero(fg)
+    n = xs.size
+    if n == 0:
+        return None
+    xs = xs.astype(np.float64)
+    ys = ys.astype(np.float64)
+    x0, y0 = xs.mean(), ys.mean()
+    xx = ((xs - x0) ** 2).sum()
+    yy = ((ys - y0) ** 2).sum()
+    xy = ((xs - x0) * (ys - y0)).sum()
+    # 2x2 PCA via closed form; long axis = largest eigenvalue.
+    trace, det = xx + yy, xx * yy - xy * xy
+    disc = max(trace * trace / 4.0 - det, 0.0) ** 0.5
+    l1, l2 = trace / 2.0 + disc, trace / 2.0 - disc
+    if l1 + l2 <= 0:
+        return None
+    if (l1 - l2) / (l1 + l2) < 0.1:
+        return None  # near-square blob: long axis is unstable
+    vx, vy = xy, l1 - xx  # eigenvector for l1 of [[xx,xy],[xy,yy]]
+    if vx == 0 and vy == 0:
+        vx, vy = 1.0, 0.0
+    norm = (vx * vx + vy * vy) ** 0.5
+    angle = (np.degrees(np.arctan2(vy, vx)) + 180.0) % 180.0
+    return angle, vx / norm, vy / norm
+
+
 def garment_yaw_in_bbox(image, bbox, pad=8, min_foreground=20):
     """Estimate the garment's yaw from the image region inside its bbox.
 
@@ -140,63 +230,101 @@ def garment_yaw_in_bbox(image, bbox, pad=8, min_foreground=20):
         ImportError: numpy (or Pillow, for a path) not installed.
         OSError / ValueError: unreadable image or malformed bbox.
     """
-    np = _numpy()
-    if isinstance(image, np.ndarray):
-        arr = image
-    else:
-        try:
-            from PIL import Image
-        except ImportError as e:
-            raise ImportError(
-                "garment_yaw_in_bbox() needs a numpy array, or Pillow to "
-                "read an image path.") from e
-        arr = np.asarray(Image.open(image).convert("RGB"))
-    if arr.ndim == 3:
-        arr = (arr[..., 0] * 0.299 + arr[..., 1] * 0.587
-               + arr[..., 2] * 0.114)  # luma
-    arr = np.asarray(arr, dtype=np.float64)
-    h, w = arr.shape[:2]
-    x1, y1, x2, y2 = (float(v) for v in bbox)
-    if not (x2 > x1 and y2 > y1):
-        raise ValueError(f"degenerate bbox: {bbox!r}")
-    cx1, cy1 = max(0, int(x1) - pad), max(0, int(y1) - pad)
-    cx2, cy2 = min(w, int(x2) + pad), min(h, int(y2) + pad)
-    if cx2 - cx1 < 8 or cy2 - cy1 < 8:
-        return None  # too tiny to segment honestly
-    crop = arr[cy1:cy2, cx1:cx2]
-    # Background = median color of the crop border (garment is centered).
-    border = np.concatenate([crop[0, :], crop[-1, :],
-                            crop[:, 0], crop[:, -1]])
-    bg = float(np.median(border))
-    dist = np.abs(crop - bg)
-    thr = _otsu_threshold(dist)
-    fg = dist > thr
-    n = int(fg.sum())
-    if n < min_foreground:
-        return None  # garment indistinguishable from background
-    ys, xs = np.nonzero(fg)
-    xs = xs.astype(np.float64) + cx1
-    ys = ys.astype(np.float64) + cy1
-    x0, y0 = xs.mean(), ys.mean()
-    xx = ((xs - x0) ** 2).sum()
-    yy = ((ys - y0) ** 2).sum()
-    xy = ((xs - x0) * (ys - y0)).sum()
-    # 2x2 PCA via closed form; long axis = largest eigenvalue.
-    trace, det = xx + yy, xx * yy - xy * xy
-    disc = max(trace * trace / 4.0 - det, 0.0) ** 0.5
-    l1, l2 = trace / 2.0 + disc, trace / 2.0 - disc
-    if l1 + l2 <= 0:
+    seg = _segment_crop(image, bbox, pad, min_foreground)
+    if seg is None:
         return None
-    if (l1 - l2) / (l1 + l2) < 0.1:
-        return None  # near-square blob: long axis is unstable
-    vx, vy = xy, l1 - xx  # eigenvector for l1 of [[xx,xy],[xy,yy]]
-    if vx == 0 and vy == 0:
-        vx, vy = 1.0, 0.0
-    long_axis_deg = (np.degrees(np.arctan2(vy, vx)) + 180.0) % 180.0
+    fg, _, _ = seg
+    axis = _pca_long_axis(fg)
+    if axis is None:
+        return None
+    long_axis_deg = axis[0]
     # Upright garment: long axis vertical (90 deg in image coords);
     # yaw is the rigid rotation away from upright.
     yaw = long_axis_deg - 90.0
     return float(((yaw + 90.0) % 180.0) - 90.0)
+
+
+def garment_torso_width_in_bbox(image, bbox, band=(0.30, 0.70), pad=8,
+                                min_foreground=20, min_band_rows=5):
+    """Sleeve-insensitive torso width of a shirt inside its YOLO bbox.
+
+    Segments the garment the same honest way as garment_yaw_in_bbox()
+    (border-sampled background + Otsu), rotates the mask so the garment's
+    long axis is vertical (PCA, numpy-only), then measures the foreground
+    run length along x for each row in the mid-torso band (rows
+    band[0]..band[1] of the crop height) and returns the MEDIAN row width
+    in pixels.
+
+    Why this exists: the YOLO bbox includes sleeves, so the bbox width
+    systematically overestimates the shoulder width that
+    planning.fold_planner.classify_owner()'s thresholds were calibrated on
+    (2026-10-05, real tape measurements). The mid-torso band excludes the
+    shoulder/sleeve flare at the top and hem curl at the bottom, so the
+    median row width there approximates the true shoulder width without
+    inventing a rescale factor.
+
+    Returns None when nothing honest can be measured: segmentation
+    failure (same conditions as garment_yaw_in_bbox), an unstable long
+    axis (near-square blob), or fewer than min_band_rows band rows with
+    foreground. Callers must fall back to the bbox width and keep the
+    owner label provisional — never invent a width.
+
+    Raises:
+        ImportError: numpy (or Pillow, for a path) not installed.
+        OSError / ValueError: unreadable image or malformed bbox.
+
+    Honest limits:
+    - Assumes the garment is placed shoulder-up so the band's top end is
+      below the shoulder line (PlaceOnBoard places it so). The band is
+      measured from the foreground's top along the garment's long axis
+      (the PCA vector's y component is always non-negative in image
+      coordinates, so for a near-upright garment "top" is the shoulders).
+      For a garment lying far off upright, which end is the shoulders is
+      ambiguous (same [-90, 90) ambiguity as garment_yaw_in_bbox).
+    - Median over the band is robust to sleeve stubs poking into the edge
+      of a few rows, but sleeves reaching below band[0] (very long sleeves
+      on a short torso) still read wide — the AMBIGUOUS margin warning in
+      ClassifyOwnerNode stays the real guard there.
+    - Median spans holes (neckline): rows where the neckline splits the
+      run are mostly above the band, but keep band below the neckline on
+      garments with a deep collar.
+    """
+    np = _numpy()
+    seg = _segment_crop(image, bbox, pad, min_foreground)
+    if seg is None:
+        return None
+    fg, _, _ = seg
+    axis = _pca_long_axis(fg)
+    if axis is None:
+        return None
+    angle_deg = axis[0]
+    # Rotate foreground coordinates so the long axis is vertical. Working
+    # on coordinates (not a rotated mask) means nothing is clipped.
+    th = np.radians(90.0 - angle_deg)
+    c, s = np.cos(th), np.sin(th)
+    ys, xs = np.nonzero(fg)
+    xs = xs.astype(np.float64)
+    ys = ys.astype(np.float64)
+    dx, dy = xs - xs.mean(), ys - ys.mean()
+    xu = dx * c - dy * s  # short-axis coordinate (width direction)
+    yu = dx * s + dy * c  # long-axis coordinate ("height" direction)
+    ymin, ymax = float(yu.min()), float(yu.max())
+    if ymax <= ymin:
+        return None
+    blo, bhi = ymin + band[0] * (ymax - ymin), ymin + band[1] * (ymax - ymin)
+    in_band = (yu >= blo) & (yu <= bhi)
+    if not bool(in_band.any()):
+        return None
+    rows = np.floor(yu[in_band]).astype(np.intp)
+    xw = xu[in_band]
+    widths = []
+    for r in np.unique(rows):
+        sel = xw[rows == r]
+        if sel.size >= 2:
+            widths.append(float(sel.max() - sel.min() + 1))
+    if len(widths) < min_band_rows:
+        return None
+    return float(np.median(widths))
 
 
 def _rotate_about_center(corners, angle_deg):

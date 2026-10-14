@@ -50,6 +50,27 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
   thresholds exist. 5 new tests in tests/test_owner_margin.py
   (182-width agreement sweep included); full suite green.
 
+- 2026-10-14: the sleeve-width KNOWN LIMIT (10-12) is now FIXED by
+  contour measurement instead of the provisional bbox fallback:
+  perception.garment_torso_width_in_bbox() (new; shares
+  _segment_crop/_pca_long_axis with the refactored garment_yaw_in_bbox —
+  same honesty gates, all 15 yaw tests still green) rotates foreground
+  coordinates (not a mask, so nothing is clipped) to upright and returns
+  the median row width over the mid-torso band (0.30–0.70 of the
+  long-axis extent; symmetric band, so the PCA reference-end ambiguity
+  does not matter). bt ClassifyOwnerNode now prefers contour
+  measurements via _owner_measure_keypoints(): shirts use torso_width_m
+  from the blackboard, pants use the contour waist from pants_shape when
+  present; either falls back to the bbox width and stays visibly
+  provisional in the logs. 11 new tests in
+  tests/test_owner_width_contour.py (synthetic sleeve-flare shirt reads
+  the 90px torso, not the 200px bbox; sideways garment exercises the
+  coordinate-rotation path; full yolo-tree integration: contour →
+  "son" 0.18m vs bbox-fallback "dad" 0.40m). Full suite green except the
+  3 pytest-only files, which need pytest installed (pre-existing env
+  gap; those files were untouched). Remaining honest limits: the band
+  assumes shoulder-up placement; sleeves reaching below band[0] still
+  read wide — the <10mm AMBIGUOUS warning stays the guard.
 - 2026-10-14: pants leg-merging + waist-grab landed (perception/pants_
   shape.py, numpy-only edge/contour, no keypoints per her decision):
   inseam-gap leg split -> outer-edge grasp + midline-mirrored fold target;
@@ -240,3 +261,12 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
   cycle recovers and still sorts. Full suite 104/104 green. Pushed
   e590630 (remote tree 42 files, allowlist-clean, verified).
   Still open: INT8 quantization deferred until the model generalizes.
+
+- 2026-10-14: contour-measured owner widths (item 4 follow-up, closes the
+  2026-10-12 sleeve-width KNOWN LIMIT): perception.garment_torso_width_in_
+  bbox() — numpy-only sleeve-insensitive torso width from the contour;
+  bt _owner_measure_keypoints() prefers it (shirts) and the pants_shape
+  contour waist (pants) over the bbox width, with the fallback still
+  visibly provisional. 11 new tests; full suite green (13 script-runnable
+  files; the 3 pytest-only files fail on missing pytest — pre-existing
+  env gap, untouched). Push via gh.py API pending.
