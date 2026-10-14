@@ -26,8 +26,9 @@ When the flag is observed while the fold child is RUNNING, the wrapper:
      never silent;
   4. returns FAILURE so the main Sequence does NOT proceed to SortToBin.
      Sorting an interrupted, half-folded garment into a family bin would be
-     a lie the tree must not tell. A full re-perceive / replan loop after a
-     preemption is future work (see ROADMAP item 8).
+     a lie the tree must not tell. A bounded re-perceive / replan loop
+     after a preemption lives in bt/replan.py (ReplanOnPreempt), wired via
+     create_main_tree(recovery=True).
 
 Honesty contract:
   - The wrapper never reports a fold as done when it was aborted.

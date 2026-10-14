@@ -151,6 +151,19 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
    (works, tested) — unifying the two retry decorators is a future cleanup.
    Task preemption DONE 2026-10-14 for the board mainline (second half, see
    done log); a re-perceive / replan loop after a preemption is still open.
+   CLOSED 2026-10-14: re-perceive / replan loop landed (bt/replan.py,
+   wired via create_main_tree(recovery=True)): ReplanOnPreempt wraps each
+   fold attempt in PreemptibleSubtree; on a preemption abort it re-runs
+   the perceive subtree (CaptureImage → ClassifyGarment → DetectKeypoints
+   → ClassifyOwner → PlanFolds) to re-observe the garment in its
+   post-abort state and re-folds on the fresh plan — legs merged by the
+   interrupted attempt read legs=None, so the SideFold is skipped instead
+   of folding air. Bounded by max_replans (default 1); a genuine
+   (non-preemption) fold failure is NOT retried; a failed re-perceive
+   (yolo: no detections) reports FAILURE honestly. 9 new tests in
+   tests/test_replan.py (real-subtree abort → re-perceive → SUCCESS;
+   exhaustion → FAILURE; integration: a preempted mock cycle still
+   completes and sorts); full suite 104/104 green.
 
 ## Done log
 
