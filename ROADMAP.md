@@ -150,20 +150,8 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
    mainline (see done log); the pick subtree keeps py_trees' built-in Retry
    (works, tested) — unifying the two retry decorators is a future cleanup.
    Task preemption DONE 2026-10-14 for the board mainline (second half, see
-   done log); a re-perceive / replan loop after a preemption is still open.
-   CLOSED 2026-10-14: re-perceive / replan loop landed (bt/replan.py,
-   wired via create_main_tree(recovery=True)): ReplanOnPreempt wraps each
-   fold attempt in PreemptibleSubtree; on a preemption abort it re-runs
-   the perceive subtree (CaptureImage → ClassifyGarment → DetectKeypoints
-   → ClassifyOwner → PlanFolds) to re-observe the garment in its
-   post-abort state and re-folds on the fresh plan — legs merged by the
-   interrupted attempt read legs=None, so the SideFold is skipped instead
-   of folding air. Bounded by max_replans (default 1); a genuine
-   (non-preemption) fold failure is NOT retried; a failed re-perceive
-   (yolo: no detections) reports FAILURE honestly. 9 new tests in
-   tests/test_replan.py (real-subtree abort → re-perceive → SUCCESS;
-   exhaustion → FAILURE; integration: a preempted mock cycle still
-   completes and sorts); full suite 104/104 green.
+   done log); a re-perceive / replan loop after a preemption is still open
+   (see the 2026-10-14 done-log entry — now implemented and pushed).
 
 ## Done log
 
@@ -238,3 +226,17 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
   Still open: re-perceive / replan loop after a preemption; INT8 deferred
   until the model generalizes. (This push also syncs the 11:49 run's
   grasp-retry done-log line, whose single-file ROADMAP update had failed.)
+
+- 2026-10-14: re-perceive / replan loop after preemption (item 8 CLOSED):
+  new bt/replan.py — ReplanOnPreempt wraps each fold attempt in
+  PreemptibleSubtree; on a preemption abort it re-runs the perceive
+  subtree to re-observe the garment in its post-abort state and re-folds
+  on the fresh plan (legs merged by the interrupted attempt read
+  legs=None → SideFold skipped, never folds air). Bounded: max_replans=1
+  default; genuine non-preemption fold failures are NOT retried; a failed
+  re-perceive reports FAILURE honestly. Wired via
+  create_main_tree(recovery=True) (preemption=True path unchanged).
+  9 new tests in tests/test_replan.py incl. integration: a preempted mock
+  cycle recovers and still sorts. Full suite 104/104 green. Pushed
+  e590630 (remote tree 42 files, allowlist-clean, verified).
+  Still open: INT8 quantization deferred until the model generalizes.
