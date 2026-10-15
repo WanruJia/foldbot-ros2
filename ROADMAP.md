@@ -297,6 +297,15 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
   (verified JSON parses). Pushed 8e81800 (remote tree 43 files,
   allowlist-clean).
 
+- 2026-10-15 (02:49 PDT hourly run): dashboard refresh — dashboard/progress.json
+  was stale at tests 117/117 (last_run 2026-10-14) and missing the 10-14
+  evening quartile-fix daily-log entry; now tests 118/118 (last_run
+  2026-10-15), 15 daily_log entries, M0–M13 done / M14 photos [NEEDS HER]
+  / M15 INT8 deferred, updated 2026-10-15. dashboard/inline.py re-embedded
+  into index.html (verified JSON parses). Pushed <sha> (remote tree 43
+  files, allowlist-clean, verified). Top queue item #1 still [NEEDS HER]:
+  no new garment photos since 10-13; INT8 stays deferred.
+
 - 2026-10-14: retry-decorator unification (closes the item-8 "future
   cleanup"): bt/pick_subtree.py's GraspWithRetry now uses
   bt.retry_decorator.RetryWithLog instead of the silent
