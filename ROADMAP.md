@@ -272,6 +272,13 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
   env gap, untouched). Pushed 64f5a26 (remote tree 43 files,
   allowlist-clean, verified).
 
+- 2026-10-14: dashboard refresh: dashboard/progress.json was stale at
+  2026-10-05 (5 log entries, all bt_nodes "stub") — brought current:
+  14 daily-log entries through 10-14, 16 milestones (M0–M13 done; M14 more
+  real photos [NEEDS HER]; M15 INT8 deferred), bt_nodes all ✅ 实现,
+  tests 117/117. dashboard/inline.py re-embedded into index.html
+  (verified JSON parses). Pushed (see below).
+
 - 2026-10-14: retry-decorator unification (closes the item-8 "future
   cleanup"): bt/pick_subtree.py's GraspWithRetry now uses
   bt.retry_decorator.RetryWithLog instead of the silent
@@ -284,5 +291,5 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
   (test_grasp_retry_attempts_honest — attempts_used matches VerifyGrasp
   on both recovery and give-up; test_grasp_on_retry_hook — hook fires
   once before the re-attempt). Full suite 117/117 green via the foldbot
-  venv's pytest. Pushed <SHA> (remote tree <N> files, allowlist-clean,
+  venv's pytest. Pushed 5e57df1 (remote tree 43 files, allowlist-clean,
   verified).
