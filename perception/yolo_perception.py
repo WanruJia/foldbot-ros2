@@ -252,16 +252,19 @@ def garment_torso_width_in_bbox(image, bbox, band=(0.30, 0.70), pad=8,
     (border-sampled background + Otsu), rotates the mask so the garment's
     long axis is vertical (PCA, numpy-only), then measures the foreground
     run length along x for each row in the mid-torso band (rows
-    band[0]..band[1] of the crop height) and returns the MEDIAN row width
-    in pixels.
+    band[0]..band[1] of the crop height) and returns the LOWER-QUARTILE
+    (0.25) row width in pixels.
 
     Why this exists: the YOLO bbox includes sleeves, so the bbox width
     systematically overestimates the shoulder width that
     planning.fold_planner.classify_owner()'s thresholds were calibrated on
     (2026-10-05, real tape measurements). The mid-torso band excludes the
-    shoulder/sleeve flare at the top and hem curl at the bottom, so the
-    median row width there approximates the true shoulder width without
-    inventing a rescale factor.
+    shoulder/sleeve flare at the top and hem curl at the bottom, and the
+    0.25-quantile (instead of the median) keeps sleeve flare that reaches
+    into the lower part of the band from lifting the reading: on a clean
+    torso the row widths are nearly constant so the quartile equals the
+    median, but sleeve rows that run wide only shift it once they cover
+    more than three quarters of the band — no invented rescale factor.
 
     Returns None when nothing honest can be measured: segmentation
     failure (same conditions as garment_yaw_in_bbox), an unstable long
@@ -281,14 +284,19 @@ def garment_torso_width_in_bbox(image, bbox, band=(0.30, 0.70), pad=8,
       coordinates, so for a near-upright garment "top" is the shoulders).
       For a garment lying far off upright, which end is the shoulders is
       ambiguous (same [-90, 90) ambiguity as garment_yaw_in_bbox).
-    - Median over the band is robust to sleeve stubs poking into the edge
-      of a few rows, but sleeves reaching below band[0] (very long sleeves
-      on a short torso) still read wide — the AMBIGUOUS margin warning in
-      ClassifyOwnerNode stays the real guard there.
-    - Median spans holes (neckline): rows where the neckline splits the
-      run are mostly above the band, but keep band below the neckline on
-      garments with a deep collar.
+    - Lower-quartile over the band is robust to sleeve stubs poking into
+      the edge of a few rows AND to sleeve flare reaching well into the
+      band, but sleeves covering more than ~3/4 of the band rows (very
+      long sleeves on a short torso) still read wide — the AMBIGUOUS
+      margin warning in ClassifyOwnerNode stays the real guard there.
+    - The quartile spans holes (neckline): rows where the neckline splits
+      the run are mostly above the band, but keep band below the neckline
+      on garments with a deep collar.
     """
+    # Lower quartile (not median): sleeve rows run WIDE, so a statistic
+    # below the median ignores sleeve flare that intrudes into the band
+    # while matching the median on a clean torso (constant row widths).
+    TORSO_WIDTH_QUANTILE = 0.25
     np = _numpy()
     seg = _segment_crop(image, bbox, pad, min_foreground)
     if seg is None:
@@ -324,7 +332,7 @@ def garment_torso_width_in_bbox(image, bbox, band=(0.30, 0.70), pad=8,
             widths.append(float(sel.max() - sel.min() + 1))
     if len(widths) < min_band_rows:
         return None
-    return float(np.median(widths))
+    return float(np.quantile(widths, TORSO_WIDTH_QUANTILE))
 
 
 def _rotate_about_center(corners, angle_deg):

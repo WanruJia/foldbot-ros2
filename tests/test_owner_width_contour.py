@@ -32,6 +32,18 @@ def _shirt(h=500, w=400):
     return img
 
 
+def _shirt_long_sleeves(h=500, w=400):
+    """Sleeves reaching deep into the measurement band (rows 60-290 of a
+    60-460 torso; the 0.30-0.70 band is rows ~180-340, so the flare covers
+    ~69% of the band). The old median read ~190 here; the 0.25-quantile
+    must still read the 90px torso."""
+    img = np.full((h, w), BG, dtype=np.uint8)
+    img[60:461, 190:280] = FG            # torso: 90 wide, 400 tall
+    img[60:291, 140:190] = FG            # long sleeve flare, left
+    img[60:291, 280:330] = FG            # long sleeve flare, right
+    return img
+
+
 def _shirt_sideways(h=500, w=400):
     """Same shirt lying on its side (long axis horizontal)."""
     img = np.full((h, w), BG, dtype=np.uint8)
@@ -49,6 +61,17 @@ def test_torso_width_ignores_sleeves():
     assert abs(tw - 90.0) <= 2.0, tw     # torso width, not bbox width
     assert tw < 200.0 * 0.7, tw
     print("PASS test_torso_width_ignores_sleeves")
+
+
+def test_torso_width_deep_sleeve_flare():
+    # Sleeve flare covers ~69% of the band rows (would fool the median).
+    img = _shirt_long_sleeves()
+    bbox = (135, 55, 335, 465)           # full bbox: 190px wide (sleeves in)
+    tw = garment_torso_width_in_bbox(img, bbox)
+    assert tw is not None, "segmentation should succeed"
+    assert abs(tw - 90.0) <= 3.0, tw     # torso width, not flare width
+    assert tw < 120.0, tw                # well below the 190px flare
+    print("PASS test_torso_width_deep_sleeve_flare")
 
 
 def test_torso_width_sideways_garment():
@@ -228,6 +251,7 @@ def test_yolo_shirt_owner_falls_back_to_bbox():
 
 if __name__ == "__main__":
     test_torso_width_ignores_sleeves()
+    test_torso_width_deep_sleeve_flare()
     test_torso_width_sideways_garment()
     test_torso_width_uniform_returns_none()
     test_torso_width_near_square_returns_none()

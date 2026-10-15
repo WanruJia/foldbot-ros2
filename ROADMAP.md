@@ -56,20 +56,24 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
   _segment_crop/_pca_long_axis with the refactored garment_yaw_in_bbox —
   same honesty gates, all 15 yaw tests still green) rotates foreground
   coordinates (not a mask, so nothing is clipped) to upright and returns
-  the median row width over the mid-torso band (0.30–0.70 of the
+  the lower-quartile (0.25) row width over the mid-torso band (0.30–0.70 of the
   long-axis extent; symmetric band, so the PCA reference-end ambiguity
-  does not matter). bt ClassifyOwnerNode now prefers contour
+  does not matter) — 2026-10-14 evening run: quartile instead of median so
+  sleeve flare reaching into the band no longer lifts the reading until it
+  covers >3/4 of the band rows (synthetic check: old median 190px vs new
+  90px on deep-flare fixture). bt ClassifyOwnerNode now prefers contour
   measurements via _owner_measure_keypoints(): shirts use torso_width_m
   from the blackboard, pants use the contour waist from pants_shape when
   present; either falls back to the bbox width and stays visibly
-  provisional in the logs. 11 new tests in
+  provisional in the logs. 12 new tests in
   tests/test_owner_width_contour.py (synthetic sleeve-flare shirt reads
-  the 90px torso, not the 200px bbox; sideways garment exercises the
+  the 90px torso, not the 200px bbox; deep-flare fixture: sleeve flare over
+  ~69% of the band reads 90px, not 190px; sideways garment exercises the
   coordinate-rotation path; full yolo-tree integration: contour →
   "son" 0.18m vs bbox-fallback "dad" 0.40m). Full suite green except the
   3 pytest-only files, which need pytest installed (pre-existing env
   gap; those files were untouched). Remaining honest limits: the band
-  assumes shoulder-up placement; sleeves reaching below band[0] still
+  assumes shoulder-up placement; sleeves covering more than ~3/4 of the band rows still
   read wide — the <10mm AMBIGUOUS warning stays the guard.
 - 2026-10-14: pants leg-merging + waist-grab landed (perception/pants_
   shape.py, numpy-only edge/contour, no keypoints per her decision):
@@ -272,12 +276,26 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
   env gap, untouched). Pushed 64f5a26 (remote tree 43 files,
   allowlist-clean, verified).
 
+- 2026-10-14: torso-width sleeve-flare robustness (item 4 follow-up):
+  perception.garment_torso_width_in_bbox() now takes the 0.25-quantile
+  (not the median) of the per-row band widths. On a clean torso the
+  quartile equals the median (constant row widths), but sleeve flare
+  reaching deep into the band no longer lifts the reading until it
+  covers >3/4 of the band rows — verified on a synthetic fixture with
+  flare over ~69% of the band (old median read 190px, new quartile reads
+  90px). 1 new test (test_torso_width_deep_sleeve_flare); full suite
+  118/118 green via the foldbot venv's pytest. Remaining honest limit:
+  flare over >3/4 of the band still reads wide; the <10mm AMBIGUOUS
+  margin warning in ClassifyOwnerNode stays the guard. Pushed (remote
+  tree 43 files, allowlist-clean, verified).
+
 - 2026-10-14: dashboard refresh: dashboard/progress.json was stale at
   2026-10-05 (5 log entries, all bt_nodes "stub") — brought current:
   14 daily-log entries through 10-14, 16 milestones (M0–M13 done; M14 more
   real photos [NEEDS HER]; M15 INT8 deferred), bt_nodes all ✅ 实现,
   tests 117/117. dashboard/inline.py re-embedded into index.html
-  (verified JSON parses). Pushed (see below).
+  (verified JSON parses). Pushed 8e81800 (remote tree 43 files,
+  allowlist-clean).
 
 - 2026-10-14: retry-decorator unification (closes the item-8 "future
   cleanup"): bt/pick_subtree.py's GraspWithRetry now uses
