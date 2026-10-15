@@ -302,7 +302,7 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
   evening quartile-fix daily-log entry; now tests 118/118 (last_run
   2026-10-15), 15 daily_log entries, M0–M13 done / M14 photos [NEEDS HER]
   / M15 INT8 deferred, updated 2026-10-15. dashboard/inline.py re-embedded
-  into index.html (verified JSON parses). Pushed <sha> (remote tree 43
+  into index.html (verified JSON parses). Pushed 6bd107e (remote tree 43
   files, allowlist-clean, verified). Top queue item #1 still [NEEDS HER]:
   no new garment photos since 10-13; INT8 stays deferred.
 
