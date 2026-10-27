@@ -75,16 +75,30 @@ class CaptureImage(py_trees.behaviour.Behaviour):
     blackboard so DetectKeypoints can run yolo_perceive on it.
     """
 
-    def __init__(self, perception="mock", image_path=None, name="CaptureImage"):
+    def __init__(self, perception="mock", image_path=None, name="CaptureImage",
+                 frame_source=None):
         super().__init__(name)
         self._perception = perception
         self._image_path = image_path
+        self._frame_source = frame_source
+
+    def initialise(self):
+        if self._frame_source is not None:
+            self._frame_source.request()
 
     def update(self):
         bb = _bb_write()
         if self._perception == "yolo":
-            bb.frame_path = self._image_path
-            self.logger.info(f"[CaptureImage] frame: {self._image_path} (yolo)")
+            try:
+                frame = (self._frame_source.poll() if self._frame_source is not None
+                         else self._image_path)
+            except (TimeoutError, OSError, ValueError) as error:
+                self.feedback_message = str(error)
+                return py_trees.common.Status.FAILURE
+            if frame is None:
+                return py_trees.common.Status.RUNNING
+            bb.frame_path = frame
+            self.logger.info(f"[CaptureImage] frame: {frame} (yolo)")
         else:
             bb.frame_id = f"frame_{random.randint(1000, 9999)}"
             self.logger.info(
@@ -393,7 +407,7 @@ class PlanFoldsNode(py_trees.behaviour.Behaviour):
 
 def create_perceive_subtree(kind="random", owner="random", perception="mock",
                             image_path=None, px_per_m=None, model_path=None,
-                            conf=0.25):
+                            conf=0.25, frame_source=None):
     """Build the PerceiveAndPlan subtree.
 
     perception="mock" (default): canned keypoints; tests and hardware-less
@@ -408,7 +422,7 @@ def create_perceive_subtree(kind="random", owner="random", perception="mock",
         raise ValueError(
             f"perception must be 'mock'|'yolo', got {perception!r}")
     if perception == "yolo":
-        if image_path is None:
+        if image_path is None and frame_source is None:
             raise ValueError("yolo mode needs image_path (real camera frame)")
         if px_per_m is None:
             raise ValueError(
@@ -416,7 +430,8 @@ def create_perceive_subtree(kind="random", owner="random", perception="mock",
                 "thresholds and placement tolerances are in meters")
     root = py_trees.composites.Sequence(name="PerceiveAndPlan", memory=True)
     root.add_children([
-        CaptureImage(perception=perception, image_path=image_path),
+        CaptureImage(perception=perception, image_path=image_path,
+                 frame_source=frame_source),
         ClassifyGarment(kind=kind),
         DetectKeypoints(owner=owner, perception=perception, kind=kind,
                         px_per_m=px_per_m, model_path=model_path, conf=conf),

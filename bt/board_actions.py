@@ -15,6 +15,7 @@ instead of failing the garment, and a persistent miss fails honestly.
 """
 import py_trees
 
+from execution.actions import bind_primitives
 from planning.board import panel_push_pose
 from bt.retry_decorator import RetryWithLog
 
@@ -197,8 +198,9 @@ class BoardFoldIterator(py_trees.behaviour.Behaviour):
       board_plan: dict from planning.board.plan_board_folds()
     """
 
-    def __init__(self, name="BoardFoldGarment"):
+    def __init__(self, name="BoardFoldGarment", backend=None):
         super().__init__(name)
+        self._backend = backend
         self._seq = None
 
     def initialise(self):
@@ -238,6 +240,10 @@ class BoardFoldIterator(py_trees.behaviour.Behaviour):
                 children.append(create_flip_panel_subtree(panel, slot))
         for c in children:
             self._seq.add_child(c)
+        if self._backend is not None:
+            bind_primitives(self._seq, self._backend,
+                            {"stage": "board", "board_plan": plan,
+                             "pants_shape": pshape})
         self.logger.info(
             f"[BoardFoldGarment] {len(children)} steps "
             f"(slot={slot}, panels={plan.get('panels', [])})")
@@ -257,6 +263,6 @@ class BoardFoldIterator(py_trees.behaviour.Behaviour):
             self._seq.stop(py_trees.common.Status.INVALID)
 
 
-def create_board_fold_subtree():
+def create_board_fold_subtree(backend=None):
     """Entry point: board-based fold subtree (use_board=True)."""
-    return BoardFoldIterator()
+    return BoardFoldIterator(backend=backend)

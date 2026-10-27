@@ -61,3 +61,12 @@ python3 bt/main_tree.py  # 跑一遍主树，看节点状态流转
 ## 设计文档
 
 `docs/` 下有完整的 ROS 2 行为树设计文档（PDF）。
+
+## ROS 2 Runtime
+
+Use ROS 2 for live camera frames, asynchronous robot actions, task start/cancel,
+and status publication. Planning and behaviour-tree decisions stay ordinary Python.
+The optional `ros2/` colcon packages preserve the existing mock/test workflow.
+See [ROS 2 integration](docs/ros2.md) for build/run instructions, coordinate
+conventions, cancellation semantics, and the robot-specific action-server contract.
+The adapters do not include a configured robot driver or calibrated transforms.

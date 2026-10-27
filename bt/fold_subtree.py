@@ -19,7 +19,11 @@ M5: still mocks (log + succeed). Real robot: each primitive becomes a
 MoveIt2 Cartesian path / gripper action; ExecuteFold streams the fold arc
 from planning.fold_math.fold_point_vert.
 """
+from dataclasses import asdict
+
 import py_trees
+
+from execution.actions import bind_primitives
 
 
 class MockFoldAction(py_trees.behaviour.Behaviour):
@@ -67,8 +71,9 @@ def create_fold_step_subtree(step, idx):
 class FoldStepsIterator(py_trees.behaviour.Behaviour):
     """Read the FoldPlan from the blackboard and run each step's subtree."""
 
-    def __init__(self, name="FoldGarment"):
+    def __init__(self, name="FoldGarment", backend=None):
         super().__init__(name)
+        self._backend = backend
         self._seq = None
         self._n = 0
 
@@ -81,7 +86,12 @@ class FoldStepsIterator(py_trees.behaviour.Behaviour):
         self._seq = py_trees.composites.Sequence(
             name="FoldSteps", memory=True)
         for i, s in enumerate(steps):
-            self._seq.add_children([create_fold_step_subtree(s, i)])
+            subtree = create_fold_step_subtree(s, i)
+            if self._backend is not None:
+                bind_primitives(subtree, self._backend,
+                                {"stage": "fold", "step_index": i,
+                                 "fold_step": asdict(s)})
+            self._seq.add_child(subtree)
         self.logger.info(f"[FoldGarment] executing {self._n} fold steps")
         # setup the dynamically built subtree
         self._seq.setup_with_descendants()
@@ -100,5 +110,5 @@ class FoldStepsIterator(py_trees.behaviour.Behaviour):
             self._seq.stop(py_trees.common.Status.INVALID)
 
 
-def create_fold_subtree():
-    return FoldStepsIterator()
+def create_fold_subtree(backend=None):
+    return FoldStepsIterator(backend=backend)

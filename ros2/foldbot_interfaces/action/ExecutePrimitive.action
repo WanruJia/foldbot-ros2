@@ -1,0 +1,8 @@
+string command
+string frame_id
+string context_json
+---
+bool success
+string message
+---
+string phase

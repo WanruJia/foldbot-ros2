@@ -132,12 +132,14 @@ class RetractArm(MockArmAction):
         super().__init__("RetractArm", ticks=2)
 
 
-def create_pick_subtree(succeed_on_attempt=1):
+def create_pick_subtree(succeed_on_attempt=1, backend=None):
     """Build the PickFromBasket subtree.
 
     succeed_on_attempt: VerifyGrasp succeeds on this attempt (1 = first try).
     Use 2 or 3 in tests to exercise the retry path.
     """
+    if backend is not None:
+        return _create_hardware_pick(backend)
     grasp_seq = py_trees.composites.Sequence(name="GraspSequence", memory=True)
     verify = VerifyGrasp(succeed_on_attempt=succeed_on_attempt)
     grasp_seq.add_children([CloseGripper(), LiftSlightly(), verify])
@@ -157,5 +159,27 @@ def create_pick_subtree(succeed_on_attempt=1):
         MoveToFoldZone(),
         ReleaseGarment(),
         RetractArm(),
+    ])
+    return pick, verify
+
+
+def _create_hardware_pick(backend):
+    def action(name, on_success=None):
+        return backend.action(name, {"stage": "pick"}, on_success=on_success)
+
+    def released():
+        bb = py_trees.blackboard.Client(name="hardware_pick")
+        bb.register_key(key="garment_ready", access=py_trees.common.Access.WRITE)
+        bb.garment_ready = True
+
+    verify = action("VerifyGrasp")
+    grasp = py_trees.composites.Sequence(name="GraspSequence", memory=True)
+    grasp.add_children([action("CloseGripper"), action("LiftSlightly"), verify])
+    pick = py_trees.composites.Sequence(name="PickFromBasket", memory=True)
+    pick.add_children([
+        action("MoveToBasket"), action("DescendToGarment"),
+        RetryWithLog(name="GraspWithRetry", child=grasp, max_attempts=3),
+        action("MoveToFoldZone"), action("ReleaseGarment", released),
+        action("RetractArm"),
     ])
     return pick, verify

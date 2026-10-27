@@ -1,0 +1,4 @@
+#!/usr/bin/env python3
+from execution.ros_node import main
+
+main()

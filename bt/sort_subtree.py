@@ -90,7 +90,9 @@ class StackInBin(py_trees.behaviour.Behaviour):
         return py_trees.common.Status.SUCCESS
 
 
-def create_sort_subtree():
+def create_sort_subtree(backend=None):
+    if backend is not None:
+        return _create_hardware_sort(backend)
     root = py_trees.composites.Sequence(name="SortToBin", memory=True)
     root.add_children([
         GraspFoldedGarment(),
@@ -98,5 +100,43 @@ def create_sort_subtree():
         StackInBin(),
         MockSortAction("ReleaseGarment", ticks=1, detail="open gripper"),
         MockSortAction("RetractArm", ticks=2, detail="arm to home"),
+    ])
+    return root
+
+
+def _create_hardware_sort(backend):
+    def context():
+        bb = py_trees.blackboard.Client(name="hardware_sort_read")
+        bb.register_key(key="perception", access=py_trees.common.Access.READ)
+        bb.register_key(key="bin_counts", access=py_trees.common.Access.READ)
+        owner = bb.perception.owner
+        if owner not in ("dad", "mom", "daughter", "son"):
+            raise ValueError("sorting requires a known owner")
+        try:
+            count = bb.bin_counts.get(owner, 0)
+        except KeyError:
+            count = 0
+        return {"stage": "sort", "owner": owner,
+                "stack_height_m": 0.055 + count * LAYER_H}
+
+    def released():
+        owner = context()["owner"]
+        bb = py_trees.blackboard.Client(name="hardware_sort_commit")
+        bb.register_key(key="bin_counts", access=py_trees.common.Access.WRITE)
+        bb.register_key(key="sorted_owner", access=py_trees.common.Access.WRITE)
+        try:
+            counts = dict(bb.bin_counts)
+        except KeyError:
+            counts = {}
+        counts[owner] = counts.get(owner, 0) + 1
+        bb.bin_counts = counts
+        bb.sorted_owner = owner
+
+    root = py_trees.composites.Sequence(name="SortToBin", memory=True)
+    root.add_children([
+        backend.action(name, context,
+                       on_success=released if name == "ReleaseGarment" else None)
+        for name in ("GraspFoldedGarment", "MoveToOwnerBin", "StackInBin",
+                     "ReleaseGarment", "RetractArm")
     ])
     return root

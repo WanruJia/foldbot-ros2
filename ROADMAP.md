@@ -5,6 +5,13 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
 
 ## Honest status (2026-10-09)
 
+- 2026-10-27: ROS 2 boundary adapters added: optional primitive action backend
+  for pick, board/ABC folding, and sorting; fresh stamped camera frames;
+  start/cancel services and JSON status topic; colcon interface/runtime packages.
+  Mock execution remains the default. See docs/ros2.md. Hardware deployment
+  still requires a robot-specific primitive server, calibrated camera/TF frames,
+  and real ROS middleware validation; no real motion or safe parking is claimed.
+
 - YOLOv8n trained 2026-10-06 on 500 composites from her 5 real garment photos:
   val mAP50 = 0.995. BUT train and val came from the SAME 5 cutouts, so this is
   memorization, not generalization. Do not trust on hardware until validated on
