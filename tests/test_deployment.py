@@ -75,10 +75,9 @@ class TestDeployment(unittest.TestCase):
         self.assertIsNone(start_readiness_error(True, now - 100_000_000, now, 1))
 
     def test_setup_and_launcher_have_valid_shell_syntax(self):
-        subprocess.run([
-            "bash", "-n", str(ROOT / "deploy/ubuntu24/setup.sh"),
-            str(ROOT / "deploy/ubuntu24/run.sh"),
-        ], check=True)
+        for script in sorted((ROOT / "deploy/ubuntu24").glob("*.sh")):
+            with self.subTest(script=script.name):
+                subprocess.run(["bash", "-n", str(script)], check=True)
 
     def test_cpu_inference_reuses_loaded_model(self):
         _load_model.cache_clear()

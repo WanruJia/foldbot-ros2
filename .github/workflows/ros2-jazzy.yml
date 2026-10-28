@@ -20,32 +20,5 @@ jobs:
         shell: bash
     steps:
       - uses: actions/checkout@v4
-      - name: Install build and test dependencies
-        run: |
-          apt-get update
-          apt-get install -y python3-colcon-common-extensions python3-rosdep \
-            python3-pytest python3-yaml shellcheck
-          source /opt/ros/jazzy/setup.bash
-          if [[ ! -e /etc/ros/rosdep/sources.list.d/20-default.list ]]; then
-            rosdep init
-          fi
-          rosdep update --rosdistro jazzy
-          rosdep install --from-paths ros2 --ignore-src --rosdistro jazzy -y
-      - name: Check deployment scripts
-        run: shellcheck --severity=warning --exclude=SC1090,SC1091 deploy/ubuntu24/*.sh
-      - name: Build ROS packages
-        run: |
-          source /opt/ros/jazzy/setup.bash
-          colcon build --base-paths ros2 --symlink-install
-      - name: Verify installed launch and generated interface
-        run: |
-          source /opt/ros/jazzy/setup.bash
-          source install/setup.bash
-          python3 -c 'from foldbot_interfaces.action import ExecutePrimitive; from cv_bridge import CvBridge'
-          ros2 launch foldbot_runtime foldbot.launch.py --show-args
-      - name: Run available unit and middleware tests
-        run: |
-          source /opt/ros/jazzy/setup.bash
-          source install/setup.bash
-          python3 -m pytest -q --ignore=tests/test_synth.py \
-            -k 'not test_class_schema and not test_yolo_perceive_parses_and_sorts and not test_yolo_perceive_no_ultralytics'
+      - name: Build and validate deployment
+        run: bash deploy/ubuntu24/validate_ros.sh
