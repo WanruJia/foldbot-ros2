@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.venv*/
+/build/
+/install/
+/log/
+/data/
+/synth/cutouts/
+*.pt
+*.onnx
+.DS_Store

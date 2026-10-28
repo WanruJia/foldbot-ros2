@@ -1,0 +1,12 @@
+/foldbot/runtime:
+  ros__parameters:
+    model_path: ""
+    px_per_m: 0.0
+    image_topic: /camera/image_raw
+    board_frame: board
+    primitive_action: /foldbot/execute_primitive
+    tick_hz: 10.0
+    command_timeout: 60.0
+    camera_timeout: 5.0
+    max_frame_age: 1.0
+    use_sim_time: false

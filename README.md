@@ -70,3 +70,7 @@ The optional `ros2/` colcon packages preserve the existing mock/test workflow.
 See [ROS 2 integration](docs/ros2.md) for build/run instructions, coordinate
 conventions, cancellation semantics, and the robot-specific action-server contract.
 The adapters do not include a configured robot driver or calibrated transforms.
+
+For the selected x86-64 Ubuntu 24.04 / ROS 2 Jazzy machine, follow the
+[mini-PC deployment guide](docs/mini_pc.md). It includes CPU-only setup,
+persistent configuration, read-only diagnostics, and an optional idle-only service.

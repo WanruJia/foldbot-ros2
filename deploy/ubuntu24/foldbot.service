@@ -1,0 +1,18 @@
+[Unit]
+Description=FoldBot ROS 2 runtime (starts idle, never starts a folding cycle)
+After=network-online.target
+
+[Service]
+Type=simple
+Environment=ROS_DOMAIN_ID=42
+Environment=ROS_AUTOMATIC_DISCOVERY_RANGE=LOCALHOST
+EnvironmentFile=-%h/.config/foldbot/runtime.env
+ExecStart=/usr/bin/bash "%h/foldbot-ros2/deploy/ubuntu24/run.sh"
+KillSignal=SIGINT
+TimeoutStopSec=15
+Restart=no
+NoNewPrivileges=true
+UMask=0077
+
+[Install]
+WantedBy=default.target

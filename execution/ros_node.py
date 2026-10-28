@@ -11,10 +11,54 @@ from execution.camera import FreshFrameSource
 from execution.ros_backend import RosBackend
 
 
-def _preflight_model(model_path):
-    from ultralytics import YOLO
+CONFIG_DEFAULTS = {
+    "model_path": "", "px_per_m": 0.0,
+    "image_topic": "/camera/image_raw", "board_frame": "board",
+    "primitive_action": "execute_primitive", "tick_hz": 10.0,
+    "command_timeout": 60.0, "camera_timeout": 5.0,
+    "max_frame_age": 1.0,
+}
 
-    YOLO(model_path)
+
+def validate_config(config):
+    """Validate deployment settings before constructing hardware clients."""
+    unknown = set(config) - set(CONFIG_DEFAULTS) - {"use_sim_time"}
+    if unknown:
+        raise ValueError(f"unknown parameters: {', '.join(sorted(unknown))}")
+    settings = {**CONFIG_DEFAULTS, **config}
+    for name in ("px_per_m", "tick_hz", "command_timeout",
+                 "camera_timeout", "max_frame_age"):
+        value = settings[name]
+        if (isinstance(value, bool) or not isinstance(value, (int, float))
+                or not math.isfinite(value) or value <= 0):
+            raise ValueError(f"{name} must be finite and positive")
+    for name in ("model_path", "image_topic", "board_frame", "primitive_action"):
+        if not isinstance(settings[name], str) or not settings[name].strip():
+            raise ValueError(f"{name} must be a nonempty string")
+    if not Path(settings["model_path"]).is_file():
+        raise ValueError("model_path must name your local YOLO weights")
+    if "use_sim_time" in settings and not isinstance(settings["use_sim_time"], bool):
+        raise ValueError("use_sim_time must be a boolean")
+    return settings
+
+
+def start_readiness_error(server_ready, image_stamp_ns, now_ns, max_frame_age):
+    """Reject a cycle before picking if its executor or camera is unavailable."""
+    if not server_ready:
+        return "robot primitive action server is unavailable"
+    if (image_stamp_ns is None or
+            not 0 <= now_ns - image_stamp_ns <= max_frame_age * 1_000_000_000):
+        return "no recent camera image with a valid ROS timestamp"
+    return None
+
+
+def _preflight_model(model_path):
+    import numpy as np
+    from perception.yolo_perception import _load_model
+
+    model = _load_model(str(Path(model_path).resolve()))
+    model.predict(np.zeros((416, 416, 3), dtype=np.uint8),
+                  imgsz=416, device="cpu", verbose=False)
 
 
 def create_node():
@@ -30,24 +74,10 @@ def create_node():
     class FoldBotNode(Node):
         def __init__(self):
             super().__init__("runtime", namespace="foldbot")
-            defaults = {
-                "model_path": "", "px_per_m": 0.0,
-                "image_topic": "/camera/image_raw", "board_frame": "board",
-                "primitive_action": "execute_primitive", "tick_hz": 10.0,
-                "command_timeout": 60.0, "camera_timeout": 5.0,
-                "max_frame_age": 1.0,
-            }
-            for name, value in defaults.items():
+            for name, value in CONFIG_DEFAULTS.items():
                 self.declare_parameter(name, value)
-            self.config = {name: self.get_parameter(name).value for name in defaults}
-            for name in ("px_per_m", "tick_hz", "command_timeout",
-                         "camera_timeout", "max_frame_age"):
-                if not math.isfinite(self.config[name]) or self.config[name] <= 0:
-                    raise ValueError(f"{name} must be finite and positive")
-            if not self.config["model_path"] or not Path(self.config["model_path"]).is_file():
-                raise ValueError("model_path must name your local YOLO weights")
-            if not self.config["board_frame"]:
-                raise ValueError("board_frame must identify a calibrated board frame")
+            self.config = validate_config({
+                name: self.get_parameter(name).value for name in CONFIG_DEFAULTS})
             _preflight_model(self.config["model_path"])
             self._temporary = tempfile.TemporaryDirectory(prefix="foldbot-camera-")
             self._bridge = CvBridge()
@@ -62,8 +92,9 @@ def create_node():
             self._tree = None
             self._state = "idle"
             self._detail = ""
+            self._last_image_ns = None
             self._images = self.create_subscription(
-                ImageMessage, self.config["image_topic"], self.frames.receive,
+                ImageMessage, self.config["image_topic"], self._receive_image,
                 qos_profile_sensor_data)
             self._status = self.create_publisher(
                 String, "status", QoSProfile(
@@ -72,6 +103,11 @@ def create_node():
             self._cancel_service = self.create_service(Trigger, "cancel", self._cancel)
             self._timer = self.create_timer(1.0 / self.config["tick_hz"], self._tick)
             self._publish()
+
+        def _receive_image(self, message):
+            stamp = message.header.stamp
+            self._last_image_ns = stamp.sec * 1_000_000_000 + stamp.nanosec
+            self.frames.receive(message)
 
         def _save_image(self, message):
             pixels = self._bridge.imgmsg_to_cv2(message, desired_encoding="rgb8")
@@ -84,6 +120,12 @@ def create_node():
                 response.success = False
                 response.message = ("task already running" if self._state == "running"
                                     else "motion inhibited; verify controller stop before restart")
+                return response
+            reason = start_readiness_error(
+                self.backend.client.server_is_ready(), self._last_image_ns,
+                self.get_clock().now().nanoseconds, self.config["max_frame_age"])
+            if reason:
+                response.success, response.message = False, reason
                 return response
             try:
                 root = create_main_tree(

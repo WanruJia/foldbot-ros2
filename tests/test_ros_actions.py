@@ -23,6 +23,7 @@ try:
     from rclpy.action import ActionServer, GoalResponse
     from rclpy.executors import SingleThreadedExecutor
     from std_srvs.srv import Trigger
+    from sensor_msgs.msg import Image as ImageMessage
     from cv_bridge import CvBridge
 except ImportError:
     ROS_AVAILABLE = False
@@ -363,6 +364,21 @@ class TestRosMiddleware(unittest.TestCase):
                 executor.add_node(probe)
                 start = probe.create_client(Trigger, "start")
                 self.assertTrue(start.wait_for_service(timeout_sec=2))
+                pending = start.call_async(Trigger.Request())
+                executor.spin_until_future_complete(pending, timeout_sec=3)
+                self.assertTrue(pending.done())
+                self.assertFalse(pending.result().success)
+                self.assertEqual(runtime._state, "idle")
+                images = probe.create_publisher(ImageMessage, "/camera/image_raw", 10)
+                deadline = time.monotonic() + 5
+                while time.monotonic() < deadline:
+                    image = ImageMessage()
+                    image.header.stamp = probe.get_clock().now().to_msg()
+                    images.publish(image)
+                    executor.spin_once(timeout_sec=0.05)
+                    if (runtime.backend.client.server_is_ready() and
+                            runtime._last_image_ns is not None):
+                        break
                 pending = start.call_async(Trigger.Request())
                 executor.spin_until_future_complete(pending, timeout_sec=3)
                 self.assertTrue(pending.done())

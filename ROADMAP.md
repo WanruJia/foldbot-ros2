@@ -5,6 +5,13 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
 
 ## Honest status (2026-10-09)
 
+- 2026-10-27: selected deployment target: x86-64 Ubuntu 24.04 + ROS 2 Jazzy.
+  Added CPU-only setup/build scripts, persistent mini-PC parameter YAML,
+  read-only deployment diagnostics, optional idle-only user service, and Jazzy CI.
+  Task starts require recent camera data and a discoverable primitive server;
+  YOLO is cached and warmed up on CPU before tasks. See docs/mini_pc.md.
+  Native Ubuntu setup and hardware motion remain to be verified on that machine.
+
 - 2026-10-27: ROS 2 boundary adapters added: optional primitive action backend
   for pick, board/ABC folding, and sorting; fresh stamped camera frames;
   start/cancel services and JSON status topic; colcon interface/runtime packages.

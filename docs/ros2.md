@@ -98,6 +98,10 @@ emergency stop**: use hardware safety interlocks and a controller watchdog.
 
 ## Build And Run
 
+For the selected x86-64 Ubuntu 24.04 mini PC, use the
+[automated setup and deployment workflow](mini_pc.md). The manual commands below
+remain available for other supported development environments.
+
 Use a supported ROS 2 Linux deployment environment, for example Ubuntu 24.04 with
 ROS 2 Jazzy. Keep the whole repository intact: the runtime CMake package installs
 the existing Python modules from the repository root.
@@ -132,6 +136,9 @@ ros2 service call /foldbot/cancel std_srvs/srv/Trigger '{}'
 scale, invalid timing parameters, or a missing weights file prevent startup.
 YOLO loading is preflighted before accepting tasks, so a missing inference
 library or unreadable weights cannot first be discovered after picking.
+Preflight includes CPU inference warmup, and the same model stays cached for
+later captures. Restart after replacing weights. Start requests also require a
+recent camera image and discovery of the primitive action server before picking.
 Additional node parameters: `tick_hz` (10), `command_timeout` (60 seconds),
 `camera_timeout` (5 seconds), `max_frame_age` (1 second), `primitive_action`
 (`execute_primitive`). Use `ros2 run foldbot_runtime foldbot_node --ros-args -p ...`

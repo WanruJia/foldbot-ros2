@@ -30,6 +30,7 @@ the bbox-width fallback whenever the crop segments honestly.
 This module has zero third-party imports at load time; ultralytics is
 imported lazily inside yolo_perceive() so unit tests run anywhere.
 """
+from functools import lru_cache
 import os
 
 REPO_ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
@@ -39,11 +40,19 @@ DEFAULT_MODEL = os.path.join(
 CLASSES = {0: "shirt", 1: "pants"}
 
 
+@lru_cache(maxsize=1)
+def _load_model(model_path):
+    """Keep one model resident for repeated CPU inference."""
+    from ultralytics import YOLO  # lazy: keeps this module import-light
+
+    return YOLO(model_path)
+
+
 def _detect(model_path, image_path, conf, imgsz):
     """Run the model. Separated so tests can monkeypatch it."""
-    from ultralytics import YOLO  # lazy: keeps this module import-light
-    model = YOLO(model_path)
-    return model.predict(image_path, conf=conf, imgsz=imgsz, verbose=False)[0]
+    model = _load_model(os.path.realpath(model_path))
+    return model.predict(image_path, conf=conf, imgsz=imgsz,
+                         device="cpu", verbose=False)[0]
 
 
 def yolo_perceive(image_path, conf=0.25, imgsz=416, model_path=None):
