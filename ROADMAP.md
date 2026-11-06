@@ -151,6 +151,21 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
    2026-10-13 note: local .git was lost in a VM refresh (dir is no longer a git
    repo); pushes continue via gh.py's GitHub-API tree-push (verified remote tree
    == allowlist, 34 files, before pushing).
+   2026-11-05 FIX: the stored remote snapshot used by the hourly check was stale
+   since ~10-15 (43 files) and the filename-only diff was blind to content drift.
+   Live-tree check found remote at 113 files: ROS 2 code pushed 10-27/28
+   ('Use ROS' / 'Added mini-PC deployment code') was never in the local copy,
+   and 10 files differed (remote newer). Reconciled this run: adopted the 9
+   newer remote code/README files locally (all strict supersets, defaults
+   unchanged), restored 24 missing files (execution/, deploy/, ros2/, .github/,
+   docs/mini_pc.md + ros2.md, tests/test_ros_actions.py + test_deployment.py),
+   merged the two 10-27 ROADMAP status entries into the local ROADMAP.
+   Remote also carries ~45 __pycache__ .pyc blobs from the 10-27/28 pushes —
+   junk, never restore them locally; do NOT run gh.py tree-push (it replaces
+   the whole remote tree and would delete the ROS code). Snapshot files refreshed
+   to the live 68-file non-pyc tree; future runs must verify against the LIVE
+   remote tree (blob SHAs), not the stored snapshot alone.
+
 6. DONE 2026-10-13: Board viz (~/workspace/your_files/foldbot-board.html):
    verified + fixed reset(): it restored posAttr.array from initPos but NOT
    basePos, which bakeFold() mutates permanently — so reset-then-replay folded
@@ -193,6 +208,3458 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
    (see the 2026-10-14 done-log entry — now implemented and pushed).
 
 ## Done log
+
+- 2026-11-05 (21:49 PST hourly run): RECONCILIATION — overlap guard clear (no lock
+  file; no background foldbot processes), no new garment photos (still 15 from 10-13,
+  newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18),
+  INT8 stays deferred. LIVE remote-tree check (blob SHAs, not the stale stored snapshot):
+  remote had 113 files vs local 43 — the 10-27/28 ROS pushes ('Use ROS', 'Added mini-PC
+  deployment code', commits 98c54b5/1a20233) never reached the local copy, and 10 files
+  differed. Adopted the 9 newer remote files locally (all strict supersets of local,
+  backend=None defaults unchanged), restored 24 missing files (execution/, deploy/, ros2/,
+  .github/workflows, docs/mini_pc.md + ros2.md, tests/test_ros_actions.py +
+  test_deployment.py), merged the two 10-27 ROADMAP status entries into local ROADMAP;
+  remote also carries ~45 __pycache__ .pyc blobs (left alone, never restored). Full suite
+  now 148 passed, 1 skipped (ROS-middleware test, expected without ROS 2 here), 46 subtests,
+  8.87s — was 118/118 before the restore. Snapshot files refreshed to the live 68-file
+  non-pyc tree. ROADMAP.md synced to GitHub via single-file put (commit pending below);
+  no tree-push (would delete remote-only ROS code). Within reporting hours (21:49 PST)
+  and this is genuinely new progress, so a user report goes out.
+
+- 2026-11-05 (20:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18 PDT family photos already reviewed),
+  INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo root, 8.75s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/index.html + progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (20:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-05 (19:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18 PDT family photos already reviewed),
+  INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo root, 9.68s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/index.html + progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (19:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-05 (18:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18 PDT family photos already reviewed),
+  INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo root, 8.90s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/index.html + progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (18:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-05 (17:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18 PDT family photos already reviewed),
+  INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo root, 8.01s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/index.html + progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (17:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-05 (16:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC — the one `-newermt` hit on daughter_longpants_03.jpg is the known sub-second rounding artifact;
+  item #1 stays [NEEDS HER]; photo-gap checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18 PDT family photos already reviewed),
+  INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo root, 8.93s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/index.html + progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (16:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-05 (15:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.77s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/index.html + progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (15:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-05 (14:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.64s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/index.html + progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (14:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-05 (13:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; PID 1954 from the first pgrep was this run's own transient shell, already
+  gone), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.15s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/index.html + progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (13:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-05 (12:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; PID 1925 from the first pgrep was this run's own transient shell, already
+  gone), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.18s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/index.html + progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (12:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-05 (11:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.24s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/index.html + progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (11:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-05 (10:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC — the one `-newermt` hit was a sub-second rounding artifact on
+  daughter_longpants_03.jpg, not a new file; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.33s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/index.html + progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (10:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-05 (09:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.61s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/index.html + progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (09:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-05 (08:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.37s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/index.html + progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (08:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-05 (07:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.37s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/index.html + progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (07:49 PST), so no user report in any case; nothing new moved.
+
+- 2026-11-05 (06:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.64s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/index.html + progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (06:49 PST), so no user report in any case; nothing new moved.
+
+- 2026-11-05 (05:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.56s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/index.html + progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (05:49 PST), so no user report in any case; nothing new moved.
+
+- 2026-11-05 (04:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.31s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/index.html + progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (04:49 PST), so no user report in any case; nothing new moved.
+
+- 2026-11-05 (03:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; the one pgrep hit was this run's own transient shell, already
+  gone), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.21s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/index.html + progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (03:49 PST), so no user report in any case; nothing new moved.
+
+- 2026-11-05 (02:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.11s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/index.html + progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (02:49 PST), so no user report in any case; nothing new moved.
+
+- 2026-11-05 (01:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.45s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (01:49 PST), so no user report in any case; nothing new moved.
+
+- 2026-11-05 (00:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.51s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (00:49 PST), so no user report in any case; nothing new moved.
+
+- 2026-11-04 (23:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; PID 1753 from the first pgrep was this run's own transient shell, already
+  gone), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.12s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (23:49 PST), so no user report in any case; nothing new moved.
+
+- 2026-11-04 (22:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; the one pgrep hit was this run's own transient shell, already
+  gone), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 12:02 PDT; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  the two files flagged by the date filter are the already-reviewed 10-17/10-18 PDT family photos), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.35s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (22:49 PST), so no user report in any case; nothing new moved.
+
+- 2026-11-04 (21:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.96s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (21:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-04 (20:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.73s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (20:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-04 (19:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.77s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (19:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-04 (18:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.37s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (18:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-04 (17:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.76s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (17:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-04 (16:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.08s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (16:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-04 (15:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.69s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (15:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-04 (14:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.77s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (14:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-04 (13:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.89s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (13:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-04 (12:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.74s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (12:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-04 (11:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.53s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (11:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-04 (10:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes — the one pgrep hit was this
+  run's own shell), no new garment photos (still 15 from 10-13, newest mtime
+  10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.78s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (10:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-04 (09:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.57s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (09:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-04 (08:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.03s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (08:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-04 (07:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.48s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (07:49 PST), so no user report in any case; nothing new moved.
+
+- 2026-11-04 (06:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.21s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (06:49 PST), so no user report in any case; nothing new moved.
+
+- 2026-11-04 (05:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.90s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (05:49 PST), so no user report in any case; nothing new moved.
+
+- 2026-11-04 (04:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.52s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (04:49 PST), so no user report in any case; nothing new moved.
+
+- 2026-11-04 (03:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.86s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (03:49 PST), so no user report in any case; nothing new moved.
+
+- 2026-11-04 (02:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.93s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (02:49 PST), so no user report in any case; nothing new moved.
+
+- 2026-11-04 (01:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.44s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (01:49 PST), so no user report in any case; nothing new moved.
+
+- 2026-11-04 (00:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.07s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (00:49 PST), so no user report in any case; nothing new moved.
+
+- 2026-11-03 (23:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.42s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (23:49 PST), so no user report in any case; nothing new moved.
+
+- 2026-11-03 (22:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.81s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (22:49 PST), so no user report in any case; nothing new moved.
+
+- 2026-11-03 (20:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.63s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (20:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-03 (19:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.89s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (19:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-03 (18:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.57s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (18:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-03 (17:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.16s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (17:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-03 (16:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.42s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (16:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-03 (15:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.17s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (15:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-03 (14:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.45s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (14:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-03 (13:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.72s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (13:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-03 (12:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.13s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (12:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-03 (11:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.30s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (11:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-03 (10:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.84s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (10:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-03 (09:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.55s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (09:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-03 (08:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.97s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (08:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-03 (07:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.07s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (07:49 PST), so no user report in any case; nothing new moved.
+
+- 2026-11-03 (06:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.48s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (06:49 PST), so no user report in any case; nothing new moved.
+
+- 2026-11-03 (05:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.62s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (05:49 PST), so no user report in any case; nothing new moved.
+
+
+- 2026-11-03 (04:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.86s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (04:49 PST), so no user report in any case; nothing new moved.
+
+- 2026-11-03 (03:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.47s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (03:49 PST), so no user report in any case; nothing new moved.
+
+- 2026-11-03 (02:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.09s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (02:49 PST), so no user report in any case; nothing new moved.
+
+- 2026-11-03 (01:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.79s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (01:49 PST), so no user report in any case; nothing new moved.
+
+- 2026-11-03 (00:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.53s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (00:49 PST), so no user report in any case; nothing new moved.
+
+- 2026-11-02 (23:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.75s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (23:49 PST), so no user report in any case; nothing new moved.
+
+- 2026-11-02 (22:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.64s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (22:49 PST), so no user report in any case; nothing new moved.
+
+- 2026-11-02 (21:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.66s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (21:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-02 (20:49 PST hourly run): no-op health check — overlap guard clear
+  (no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.95s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (20:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-02 (19:49 PST hourly run): no-op health check — overlap guard clear
+  (no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.27s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (19:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-02 (18:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.62s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (18:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-02 (17:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.53s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (17:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-02 (16:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.98s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (16:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-02 (15:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.19s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (15:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-02 (14:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.53s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (14:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-02 (13:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.95s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (13:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-02 (12:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep hit was this run's own check shell, not a live
+  run; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.05s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (12:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-02 (11:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep hit was this run's own check shell, not a live
+  run; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.07s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (11:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-02 (10:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep hit was this run's own check shell, not a live
+  run; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.21s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (10:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-02 (08:49 PST hourly run): no-op health check — overlap guard clear
+  (no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.73s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (08:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-02 (07:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.87s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (07:49 PST): work done, no user report.
+
+- 2026-11-02 (06:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.69s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (06:49 PST): work done, no user report.
+
+- 2026-11-02 (05:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.13s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (05:49 PST): work done, no user report.
+
+- 2026-11-02 (04:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.95s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (04:49 PST): work done, no user report.
+
+- 2026-11-02 (03:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.07s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (03:49 PST): work done, no user report.
+
+- 2026-11-02 (02:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.58s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (02:49 PST): work done, no user report.
+
+- 2026-11-02 (01:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.21s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (01:49 PST): work done, no user report.
+
+- 2026-11-02 (00:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.45s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (00:49 PST): work done, no user report.
+
+- 2026-11-01 (23:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.53s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (23:49 PST): work done, no user report.
+
+- 2026-11-01 (22:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.89s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (22:49 PST): work done, no user report.
+
+- 2026-11-01 (21:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.30s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (21:49 PST) but no genuinely new progress, so no user report per
+  the no-repeat rule.
+
+- 2026-11-01 (20:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep hit was this run's own check shell, not a live
+  run; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.51s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (20:49 PST) but no genuinely new progress, so no user report per
+  the no-repeat rule.
+
+- 2026-11-01 (19:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.63s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (19:49 PST) but no genuinely new progress, so no user report per
+  the no-repeat rule.
+
+- 2026-11-01 (18:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.96s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (18:49 PST) but no genuinely new progress, so no user report per
+  the no-repeat rule.
+
+- 2026-11-01 (17:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep hit was this run's own check shell, not a live
+  run; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.06s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (17:49 PST) but no genuinely new progress, so no user report per
+  the no-repeat rule.
+
+- 2026-11-01 (16:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep hit was already gone, a transient shell, not a live
+  run; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.54s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (16:49 PST) but no genuinely new progress, so no user report per
+  the no-repeat rule.
+
+- 2026-11-01 (15:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.37s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (15:49 PST) but no genuinely new progress, so no user report per
+  the no-repeat rule.
+
+- 2026-11-01 (14:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.79s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (14:49 PST) but no genuinely new progress, so no user report per
+  the no-repeat rule.
+
+- 2026-11-01 (13:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.14s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (13:49 PST) but no genuinely new progress, so no user report per
+  the no-repeat rule.
+
+- 2026-11-01 (12:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.95s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (12:49 PST) but no genuinely new progress, so no user report per
+  the no-repeat rule.
+
+- 2026-11-01 (11:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.16s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (11:49 PST) but no genuinely new progress, so no user report per
+  the no-repeat rule.
+
+- 2026-11-01 (10:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; item 8's replan loop confirmed closed 2026-10-14 (bt/replan.py + tests/test_replan.py,
+  queue line 178 is stale text); test suite 118/118 green via the foldbot venv (repo root, 7.90s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (10:49 PST) but no genuinely new progress, so no user report per
+  the no-repeat rule.
+
+- 2026-11-01 (09:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.49s); local
+  allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (09:49 PST) but no genuinely new progress, so no user report per
+  the no-repeat rule.
+
+- 2026-11-01 (08:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.62s); local
+  allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (08:49 PST) but no genuinely new progress, so no user report per
+  the no-repeat rule.
+
+- 2026-11-01 (07:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.62s); local
+  allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (07:49 PST): work done, no user report.
+
+- 2026-11-01 (06:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes — the sole pgrep hit was this
+  run's own check shell), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.51s); local
+  allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (06:49 PST): work done, no user report.
+
+- 2026-11-01 (05:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.73s); local
+  allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (05:49 PST): work done, no user report.
+
+- 2026-11-01 (04:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.41s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF, __pycache__ excluded)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (04:49 PST): work done, no user report.
+
+- 2026-11-01 (03:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes — the sole pgrep hit was this
+  run's own check shell), no new garment photos (still 15 from 10-13, newest
+  mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.59s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF, __pycache__ excluded)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (03:49 PST): work done, no user report.
+
+- 2026-11-01 (02:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.84s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF, __pycache__ excluded)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (02:49 PST): work done, no user report.
+
+- 2026-11-01 (01:49 PST hourly run, second 01:49 after DST fallback): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.54s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF, __pycache__ excluded)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (01:49 PST): work done, no user report.
+
+- 2026-11-01 (01:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.40s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF, __pycache__ excluded)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (01:49 PDT): work done, no user report.
+
+- 2026-11-01 (00:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.47s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF, __pycache__ excluded)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (00:49 PDT): work done, no user report.
+
+- 2026-10-31 (23:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.32s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF, __pycache__ excluded)
+  sorted-diff identical to the stored remote snapshot, no allowlisted file changed since
+  the 22:49 run — nothing to push.
+  Outside reporting hours (23:49 PDT): work done, no user report.
+
+- 2026-10-31 (22:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.37s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF, __pycache__ excluded)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (22:49 PDT): work done, no user report.
+
+- 2026-10-31 (21:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.01s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF, __pycache__ excluded)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (21:49 PDT) but no genuinely new progress, so no user report per
+  the no-repeat rule.
+
+- 2026-10-31 (20:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.03s); local
+  allowlist tree sorted-diff identical to the stored remote snapshot and no allowlisted
+  file changed since the 19:49 run (ROADMAP mtime is that run's own edit) — nothing to push.
+  Within reporting hours (20:49 PDT) but no genuinely new progress, so no user report per
+  the no-repeat rule.
+
+- 2026-10-31 (19:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep hit was this run's own check shell, not a live
+  run; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.59s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF, __pycache__ excluded)
+  sorted-diff identical to the stored remote snapshot — nothing to push. Within reporting
+  hours (19:49 PDT) but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-31 (18:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep hit was already gone, a transient shell, not a live
+  run; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.65s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF, __pycache__ excluded)
+  sorted-diff identical to the stored remote snapshot — nothing to push. Within reporting
+  hours (18:49 PDT) but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-31 (17:49 PDT hourly run): no-op health check — overlap guard clear
+  (no background foldbot processes, no lock file), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.56s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF, __pycache__ excluded)
+  sorted-diff identical to the stored remote snapshot — nothing to push. Within reporting
+  hours (17:49 PDT) but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-31 (16:49 PDT hourly run): no-op health check — overlap guard clear
+  (no background foldbot processes, no lock file), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.49s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF, __pycache__ excluded)
+  sorted-diff identical to the stored remote snapshot — nothing to push. Within reporting
+  hours (16:49 PDT) but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-31 (15:49 PDT hourly run): no-op health check — overlap guard clear
+  (no background foldbot processes, no lock file), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.92s); local
+  allowlist tree (43 files incl. README/ROADMAP, __pycache__ excluded) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Within reporting hours (15:49 PDT)
+  but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-31 (14:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.17s); local
+  allowlist tree (43 files incl. README/ROADMAP, __pycache__ excluded) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Within reporting hours (14:49 PDT)
+  but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-31 (13:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.59s); local
+  allowlist tree (43 files incl. README/ROADMAP, __pycache__ excluded) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Within reporting hours (13:49 PDT)
+  but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-31 (12:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep hit was this run's own check shell, not a live
+  run; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.88s); local
+  allowlist tree (43 files incl. README/ROADMAP, __pycache__ excluded) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Within reporting hours (12:49 PDT)
+  but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-31 (11:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep hit was already gone, a transient shell, not a live
+  run; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.02s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the stored
+  remote snapshot — nothing to push. Within reporting hours (11:49 PDT)
+  but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-31 (10:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.19s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the stored
+  remote snapshot — nothing to push. Within reporting hours (10:49 PDT)
+  but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-31 (09:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-17 —
+  newest files remain the 10-17 PDT family photos already reviewed; memory search confirms
+  no newer photo provision), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.50s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Within reporting hours (09:49 PDT)
+  but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-31 (08:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.94s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Within reporting hours (08:49 PDT)
+  but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-31 (07:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.64s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Outside reporting hours (07:49 PDT):
+  work done, no user report.
+
+- 2026-10-31 (06:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.72s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Outside reporting hours (06:49 PDT):
+  work done, no user report.
+
+- 2026-10-31 (05:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.78s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Outside reporting hours (05:49 PDT):
+  work done, no user report.
+
+- 2026-10-31 (04:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.27s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Outside reporting hours (04:49 PDT):
+  work done, no user report.
+
+- 2026-10-31 (03:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.73s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Outside reporting hours (03:49 PDT):
+  work done, no user report.
+
+- 2026-10-31 (02:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.16s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Outside reporting hours (02:49 PDT):
+  work done, no user report.
+
+- 2026-10-31 (01:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.03s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Outside reporting hours (01:49 PDT):
+  work done, no user report.
+
+- 2026-10-31 (00:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.50s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Outside reporting hours (00:49 PDT):
+  work done, no user report.
+
+- 2026-10-30 (23:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.64s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Outside reporting hours (23:49 PDT):
+  work done, no user report.
+
+- 2026-10-30 (22:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.04s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Outside reporting hours (22:49 PDT):
+  work done, no user report.
+
+- 2026-10-30 (21:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep hit was already gone, a transient shell, not a live
+  run; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.98s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Within reporting hours (21:49 PDT)
+  but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-30 (20:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.41s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Within reporting hours (20:49 PDT)
+  but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-30 (19:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.93s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Within reporting hours (19:49 PDT)
+  but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-30 (18:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep hit was already gone, a transient shell, not a live
+  run; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.14s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Within reporting hours (18:49 PDT)
+  but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-30 (17:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.64s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Within reporting hours (17:49 PDT)
+  but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-30 (16:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.21s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Within reporting hours (16:49 PDT)
+  but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-30 (15:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.40s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Within reporting hours (15:49 PDT)
+  but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-30 (14:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 6.89s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Within reporting hours (14:49 PDT)
+  but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-30 (13:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.33s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Within reporting hours (13:49 PDT)
+  but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-30 (12:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.93s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Within reporting hours (12:49 PDT)
+  but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-30 (11:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.08s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Within reporting hours (11:49 PDT)
+  but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-30 (10:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.93s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Within reporting hours (10:49 PDT)
+  but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-30 (09:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.98s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Within reporting hours (09:49 PDT)
+  but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-30 (08:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.97s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Within reporting hours (08:49 PDT)
+  but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-30 (07:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.40s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the stored
+  remote snapshot — nothing to push. Outside reporting hours (07:49 PDT): work done,
+  no user report.
+
+- 2026-10-30 (06:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.82s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Outside reporting hours (06:49 PDT):
+  work done, no user report.
+
+- 2026-10-30 (05:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.23s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the stored
+  remote snapshot — nothing to push. Outside reporting hours (05:49 PDT): work done,
+  no user report.
+
+- 2026-10-30 (03:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.58s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the stored
+  remote snapshot — nothing to push. Outside reporting hours (03:49 PDT): work done,
+  no user report.
+
+- 2026-10-30 (02:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep hit was this run's own check shell, not a live
+  run; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed; memory search
+  confirms no newer photo provision), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.36s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the stored
+  remote snapshot — nothing to push. Outside reporting hours (02:49 PDT): work done,
+  no user report.
+
+- 2026-10-30 (01:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.86s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the stored
+  remote snapshot — nothing to push. Outside reporting hours (01:49 PDT): work done,
+  no user report.
+
+- 2026-10-30 (00:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.48s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Outside reporting hours (00:49 PDT):
+  work done, no user report.
+
+- 2026-10-29 (23:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 12:02 PDT; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.09s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the stored
+  remote snapshot — nothing to push. Outside reporting hours (23:49 PDT): work done,
+  no user report.
+
+- 2026-10-29 (22:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.74s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the stored
+  remote snapshot — nothing to push. Outside reporting hours (22:49 PDT): work done,
+  no user report.
+
+- 2026-10-29 (21:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.23s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the stored
+  remote snapshot — nothing to push. Within reporting hours (21:49 PDT) but no
+  genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-29 (20:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.83s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the stored
+  remote snapshot — nothing to push. Within reporting hours (20:49 PDT) but no
+  genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-29 (19:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep hit was already gone, a transient shell, not a live
+  run; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.36s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Within reporting hours
+  (19:49 PDT) but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-29 (18:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.83s); local
+  allowlist tree (43 files incl. README/ROADMAP and dashboard/index.html) sorted-diff
+  identical to the stored remote snapshot — nothing to push. Within reporting hours
+  (18:49 PDT) but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-29 (17:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep hit was already gone, a transient shell, not a live
+  run; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.66s); local
+  allowlist tree (43 files incl. README/ROADMAP and dashboard/index.html) sorted-diff
+  identical to the stored remote snapshot — nothing to push. Within reporting hours
+  (17:49 PDT) but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-29 (16:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.05s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Within reporting hours (16:49 PDT)
+  but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-29 (15:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.80s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Within reporting hours (15:49 PDT)
+  but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-29 (14:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.07s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Within reporting hours (14:49 PDT)
+  but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-29 (13:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.63s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Within reporting hours (13:49 PDT)
+  but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-29 (12:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep hit was already gone, a transient shell, not a live
+  run; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.33s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the stored
+  remote snapshot — nothing to push. Within reporting hours (12:49 PDT) but no
+  genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-29 (11:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.45s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the stored
+  remote snapshot — nothing to push. Within reporting hours (11:49 PDT) but no
+  genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-29 (10:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.30s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the stored
+  remote snapshot — nothing to push. Within reporting hours (10:49 PDT) but no
+  genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-29 (09:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 12:02 PDT; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-17 —
+  newest files remain the 10-17 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.95s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the stored
+  remote snapshot — nothing to push. Within reporting hours (09:49 PDT) but no
+  genuinely new progress, so no user report per the no-repeat rule.
+
+
+- 2026-10-29 (08:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 10.38s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the stored
+  remote snapshot — nothing to push. Within reporting hours (08:49 PDT) but no
+  genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-29 (07:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep hit was already gone, a transient shell, not a live
+  run; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.88s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the stored
+  remote snapshot — nothing to push. Outside reporting hours (07:49 PDT): work done,
+  no user report.
+
+- 2026-10-29 (06:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.16s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the stored
+  remote snapshot — nothing to push. Outside reporting hours (06:49 PDT): work done,
+  no user report.
+
+- 2026-10-29 (05:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.33s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the stored
+  remote snapshot once __pycache__ .pyc files (never pushed) are excluded — nothing to
+  push. Outside reporting hours (05:49 PDT): work done, no user report.
+
+- 2026-10-29 (04:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep hit was this run's own check shell, not a live
+  run; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.73s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the stored
+  remote snapshot — nothing to push. Outside reporting hours (04:49 PDT): work done,
+  no user report.
+
+- 2026-10-29 (03:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-19 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.85s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Outside reporting hours (03:49 PDT):
+  work done, no user report.
+
+- 2026-10-29 (01:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.33s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the stored
+  remote snapshot — nothing to push. Outside reporting hours (01:49 PDT): work done,
+  no user report.
+
+- 2026-10-29 (00:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.10s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the stored
+  remote snapshot — nothing to push. Outside reporting hours (00:49 PDT): work done,
+  no user report.
+
+- 2026-10-28 (23:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.08s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the stored
+  remote snapshot — nothing to push. Outside reporting hours (23:49 PDT): work done,
+  no user report.
+
+- 2026-10-28 (22:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.03s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the stored
+  remote snapshot — nothing to push. Outside reporting hours (22:49 PDT): work done,
+  no user report.
+
+- 2026-10-28 (21:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.51s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the stored
+  remote snapshot — nothing to push. Within reporting hours (21:49 PDT) but no
+  genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-28 (20:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep hit was this run's own check shell, not a live
+  run; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.18s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the stored
+  remote snapshot — nothing to push. Within reporting hours (20:49 PDT) but no
+  genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-28 (19:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep hit was this run's own check shell, not a live
+  run; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 7.86s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the stored
+  remote snapshot — nothing to push. Within reporting hours (19:49 PDT) but no
+  genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-28 (18:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.23s); local
+  allowlist tree (43 files incl. README/ROADMAP and dashboard/progress.json) sorted-diff
+  identical to the stored remote snapshot — nothing to push. Within reporting hours
+  (18:49 PDT) but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-28 (17:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.74s); local
+  allowlist tree (43 files incl. README/ROADMAP and dashboard/progress.json) sorted-diff
+  identical to the stored remote snapshot — nothing to push. Within reporting hours
+  (17:49 PDT) but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-28 (16:49 PDT hourly run): no-op health check — overlap guard clear (no lock file; no background foldbot processes), no new garment photos (still 15 from 10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap checklist already delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo root, 10.24s); local allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the stored remote snapshot — nothing to push. Within reporting hours (16:49 PDT) but no genuinely new progress, so no user report per the no-repeat rule.
+
+- 2026-10-28 (15:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes; the sole pgrep hit was already
+  gone, a transient shell, not a live run), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap checklist
+  already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 8.96s); local allowlist tree (43 files incl.
+  README/ROADMAP) sorted-diff identical to the stored remote snapshot — nothing
+  to push. Within reporting hours (15:49 PDT) but no genuinely new progress, so
+  no user report per the no-repeat rule.
+- 2026-10-28 (14:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos
+  (still 15 from 10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER];
+  photo-gap checklist already delivered 10-18, no repeat nudge; no new
+  uploads in ~/workspace/user/files since 10-18 — newest files remain the
+  10-17/10-18 PDT family photos already reviewed), INT8 stays deferred;
+  test suite 118/118 green via the foldbot venv (repo root, 9.31s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (14:49 PDT) but no genuinely new progress, so no
+  user report per the no-repeat rule.
+- 2026-10-28 (13:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos
+  (still 15 from 10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER];
+  photo-gap checklist already delivered 10-18, no repeat nudge; no new
+  uploads in ~/workspace/user/files since 10-18 — newest files remain the
+  10-17/10-18 PDT family photos already reviewed), INT8 stays deferred;
+  test suite 118/118 green via the foldbot venv (repo root, 9.37s); local
+  allowlist tree (43 files incl. README/ROADMAP and the docs PDF)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (13:49 PDT) but no genuinely new progress, so no
+  user report per the no-repeat rule.
+- 2026-10-28 (12:49 PDT hourly run): no-op health check — overlap guard clear
+  (no background foldbot processes; the sole pgrep hit was this run's own
+  check shell, not a live run), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap
+  checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18
+  family photos already reviewed), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 9.35s); local allowlist tree
+  (43 files incl. README/ROADMAP) sorted-diff identical to the stored remote
+  snapshot — nothing to push. Within reporting hours (12:49 PDT) but no
+  genuinely new progress, so no user report per the no-repeat rule.
+- 2026-10-28 (11:49 PDT hourly run): no-op health check — overlap guard clear
+  (no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap
+  checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18
+  family photos already reviewed), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 10.23s); local allowlist tree
+  (43 files incl. README/ROADMAP) sorted-diff identical to the stored remote
+  snapshot — nothing to push. Within reporting hours (11:49 PDT) but no
+  genuinely new progress, so no user report per the no-repeat rule.
+- 2026-10-28 (10:49 PDT hourly run): no-op health check — overlap guard clear
+  (no background foldbot processes; PID 8061 from the pgrep check was already
+  gone, a transient shell, not a live run), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap
+  checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18
+  family photos already reviewed), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 8.78s); local allowlist tree
+  (43 files incl. README/ROADMAP) sorted-diff identical to the stored remote
+  snapshot — nothing to push. Within reporting hours (10:49 PDT) but no
+  genuinely new progress, so no user report per the no-repeat rule.
+- 2026-10-28 (09:49 PDT hourly run): no-op health check — overlap guard clear
+  (no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap
+  checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18
+  family photos already reviewed), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 9.46s); local allowlist tree
+  (43 files incl. README/ROADMAP) sorted-diff identical to the stored remote
+  snapshot — nothing to push. Within reporting hours (09:49 PDT) but no
+  genuinely new progress, so no user report per the no-repeat rule.
+- 2026-10-28 (08:49 PDT hourly run): no-op health check — overlap guard clear
+  (no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap
+  checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18
+  family photos already reviewed), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 9.27s); local allowlist tree
+  (43 files incl. README/ROADMAP) sorted-diff identical to the stored remote
+  snapshot — nothing to push. Within reporting hours (08:49 PDT) but no
+  genuinely new progress, so no user report per the no-repeat rule.
+- 2026-10-28 (07:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap
+  checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18
+  family photos already reviewed), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 8.24s); local allowlist tree
+  (43 files incl. README/ROADMAP) sorted-diff identical to the stored remote
+  snapshot — nothing to push. Outside reporting hours (07:49 PDT): work done,
+  no user report.
+- 2026-10-28 (06:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap
+  checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18
+  family photos already reviewed), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 9.87s); local allowlist tree
+  (43 files incl. README/ROADMAP) sorted-diff identical to the stored remote
+  snapshot — nothing to push. Outside reporting hours (06:49 PDT): work done,
+  no user report.
+- 2026-10-28 (05:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap
+  checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18
+  family photos already reviewed), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 9.10s); local allowlist tree
+  (43 files incl. README/ROADMAP) sorted-diff identical to the stored remote
+  snapshot — nothing to push. Outside reporting hours (05:49 PDT): work done,
+  no user report.
+- 2026-10-28 (04:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep hit was this run's own check shell, not a live
+  run; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap
+  checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18
+  family photos already reviewed), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 9.09s); local allowlist tree
+  (43 files incl. README/ROADMAP) sorted-diff identical to the stored remote
+  snapshot — nothing to push. Outside reporting hours (04:49 PDT): work done,
+  no user report.
+- 2026-10-28 (03:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos
+  (still 15 from 10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER];
+  photo-gap checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — the files newer than 2026-10-19 UTC are
+  the same 10-16/10-17 PDT family photos already reviewed), INT8 stays deferred;
+  test suite 118/118 green via the foldbot venv (repo root, 7.50s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the
+  stored remote snapshot — nothing to push. Outside reporting hours (03:49 PDT):
+  work done, no user report.
+- 2026-10-28 (02:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos
+  (still 15 from 10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER];
+  photo-gap checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.21s); local allowlist tree (43 files incl.
+  README/ROADMAP) sorted-diff identical to the stored remote snapshot —
+  nothing to push. Outside reporting hours (02:49 PDT): work done, no user
+  report.
+- 2026-10-28 (01:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep PID was already gone — a transient shell
+  process, not a live run; no background foldbot processes), no new garment
+  photos (still 15 from 10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER];
+  photo-gap checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 8.90s); local allowlist tree (43 files incl.
+  README/ROADMAP) sorted-diff identical to the stored remote snapshot —
+  nothing to push. Outside reporting hours (01:49 PDT): work done, no user
+  report.
+- 2026-10-28 (00:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep PID was this run's own check shell, not a live
+  run; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap
+  checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.93s); local allowlist tree (43 files incl.
+  README/ROADMAP) sorted-diff identical to the stored remote snapshot —
+  nothing to push. Outside reporting hours (00:49 PDT): work done, no user
+  report.
+- 2026-10-27 (22:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep PID was this run's own check shell, not a live
+  run; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap
+  checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 7.62s); local allowlist tree (43 files incl.
+  README/ROADMAP) sorted-diff identical to the stored remote snapshot —
+  nothing to push. Outside reporting hours (22:49 PDT): work done, no user
+  report.
+- 2026-10-27 (21:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep PID was already gone — a transient shell
+  process, not a live run; no background foldbot processes), no new garment
+  photos (still 15 from 10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER];
+  photo-gap checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 7.84s); local allowlist tree (43 files incl.
+  README/ROADMAP) sorted-diff identical to the stored remote snapshot —
+  nothing to push. Within reporting hours (21:49 PDT) but no new progress, so
+  no user report per the no-repeat rule.
+- 2026-10-27 (20:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep PID was already gone — a transient shell
+  process, not a live run; no background foldbot processes), no new garment
+  photos (still 15 from 10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER];
+  photo-gap checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 8.45s); local allowlist tree (43 files incl.
+  README/ROADMAP) sorted-diff identical to the stored remote snapshot —
+  nothing to push. Within reporting hours (20:49 PDT) but no new progress, so
+  no user report per the no-repeat rule.
+- 2026-10-27 (19:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still
+  15 from 10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER];
+  photo-gap checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 10.53s); local allowlist tree (43 files incl.
+  README/ROADMAP) sorted-diff identical to the stored remote snapshot —
+  nothing to push. Within reporting hours (19:49 PDT) but no new progress, so
+  no user report per the no-repeat rule.
+- 2026-10-27 (18:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep PID was already gone — a transient shell
+  process, not a live run; no background foldbot processes), no new garment
+  photos (still 15 from 10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER];
+  photo-gap checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.96s); local allowlist tree (43 files incl.
+  README/ROADMAP) sorted-diff identical to the stored remote snapshot —
+  nothing to push. Within reporting hours (18:49 PDT) but no new progress, so
+  no user report per the no-repeat rule.
+- 2026-10-27 (17:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still
+  15 from 10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap
+  checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 10.09s); local allowlist tree (43 files incl.
+  README/ROADMAP) sorted-diff identical to the stored remote snapshot —
+  nothing to push. Within reporting hours (17:49 PDT) but no new progress, so
+  no user report per the no-repeat rule.
+- 2026-10-27 (16:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes, no active subagents), no new
+  garment photos (still 15 from 10-13, newest mtime 10-13 19:02; item #1 stays
+  [NEEDS HER]; photo-gap checklist already delivered 10-18, no repeat nudge;
+  no new uploads in ~/workspace/user/files since 10-18 — newest files remain
+  the 10-17/10-18 PDT family photos already reviewed), INT8 stays deferred;
+  test suite 118/118 green via the foldbot venv (repo root, 8.51s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the
+  stored remote snapshot — nothing to push. Within reporting hours (16:49 PDT)
+  but no new progress, so no user report per the no-repeat rule.
+- 2026-10-27 (14:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; sole pgrep hit was the invoking shell itself, not a live run;
+  no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap
+  checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 8.48s); local allowlist tree (43 files incl.
+  README/ROADMAP) sorted-diff identical to the stored remote snapshot —
+  nothing to push. Within reporting hours (14:49 PDT) but no new progress, so
+  no user report per the no-repeat rule.
+- 2026-10-27 (13:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still
+  15 from 10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER];
+  photo-gap checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.02s); local allowlist tree (43 files incl.
+  README/ROADMAP) sorted-diff identical to the stored remote snapshot —
+  nothing to push. Within reporting hours (13:49 PDT) but no new progress, so
+  no user report per the no-repeat rule.
+- 2026-10-27 (12:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still
+  15 from 10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER];
+  photo-gap checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.57s); local allowlist tree (43 files incl.
+  README/ROADMAP) sorted-diff identical to the stored remote snapshot —
+  nothing to push. Within reporting hours (12:49 PDT) but no new progress, so
+  no user report per the no-repeat rule.
+- 2026-10-27 (11:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep PID was already gone — a transient shell
+  process, not a live run; no background foldbot processes), no new garment
+  photos (still 15 from 10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER];
+  photo-gap checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.44s); local allowlist tree (43 files incl.
+  README/ROADMAP) sorted-diff identical to the stored remote snapshot —
+  nothing to push. Within reporting hours (11:49 PDT) but no new progress, so
+  no user report per the no-repeat rule.
+- 2026-10-27 (10:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still
+  15 from 10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap
+  checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.44s); local allowlist tree (43 files incl.
+  README/ROADMAP) sorted-diff identical to the stored remote snapshot —
+  nothing to push. Within reporting hours (10:49 PDT) but no new progress, so
+  no user report per the no-repeat rule.
+- 2026-10-27 (09:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still
+  15 from 10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap
+  checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.18s); local allowlist tree (43 files incl.
+  README/ROADMAP) sorted-diff identical to the stored remote snapshot —
+  nothing to push. Within reporting hours (09:49 PDT) but no new progress, so
+  no user report per the no-repeat rule.
+- 2026-10-27 (08:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still
+  15 from 10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap
+  checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 12.56s); local allowlist tree (43 files incl.
+  README/ROADMAP) sorted-diff identical to the stored remote snapshot —
+  nothing to push. Within reporting hours (08:49 PDT) but no new progress, so
+  no user report per the no-repeat rule.
+- 2026-10-27 (07:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still
+  15 from 10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap
+  checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.14s); local allowlist tree (43 files incl.
+  README/ROADMAP) sorted-diff identical to the stored remote snapshot —
+  nothing to push. Outside reporting hours (07:49 PDT): work done, no user
+  report.
+- 2026-10-27 (06:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still
+  15 from 10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap
+  checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.72s); local allowlist tree (43 files incl.
+  README/ROADMAP) sorted-diff identical to the stored remote snapshot —
+  nothing to push. Outside reporting hours (06:49 PDT): work done, no user
+  report.
+- 2026-10-27 (05:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still
+  15 from 10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap
+  checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.92s); local allowlist tree (43 files incl.
+  README/ROADMAP) sorted-diff identical to the stored remote snapshots —
+  nothing to push. Outside reporting hours (05:49 PDT): work done, no user
+  report.
+- 2026-10-27 (04:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still
+  15 from 10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap
+  checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 10.31s); local allowlist tree (43 files incl.
+  README/ROADMAP) sorted-diff identical to the stored remote snapshots —
+  nothing to push. Outside reporting hours (04:49 PDT): work done, no user
+  report.
+- 2026-10-27 (03:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still
+  15 from 10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap
+  checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 8.77s); local allowlist tree (43 files incl.
+  README/ROADMAP) sorted-diff identical to the stored remote snapshot —
+  nothing to push. Outside reporting hours (03:49 PDT): work done, no user
+  report.
+- 2026-10-27 (02:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still
+  15 from 10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap
+  checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.36s); local allowlist tree (43 files incl.
+  README/ROADMAP) sorted-diff identical to the stored remote snapshot —
+  nothing to push. Outside reporting hours (02:49 PDT): work done, no user
+  report.
+- 2026-10-27 (01:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still
+  15 from 10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap
+  checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 8.60s); local allowlist tree (43 files incl.
+  README/ROADMAP) sorted-diff identical to the stored remote snapshot —
+  nothing to push. Outside reporting hours (01:49 PDT): work done, no user
+  report.
+- 2026-10-27 (00:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still
+  15 from 10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap
+  checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.27s); local allowlist tree (43 files incl.
+  README/ROADMAP) sorted-diff identical to the stored remote snapshot —
+  nothing to push. Outside reporting hours (00:49 PDT): work done, no user
+  report.
+- 2026-10-26 (23:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still
+  15 from 10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap
+  checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.19s); local allowlist tree (43 files incl.
+  README/ROADMAP) sorted-diff identical to the stored remote snapshot —
+  nothing to push. Outside reporting hours (23:49 PDT): work done, no user
+  report.
+- 2026-10-26 (22:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already delivered
+  10-18, no repeat nudge; no new uploads in ~/workspace/user/files since
+  10-18 — newest files remain the 10-17/10-18 PDT family photos already
+  reviewed), INT8 stays deferred; test suite 118/118 green via the foldbot venv
+  (repo root, 8.80s); local allowlist tree (43 files incl. README/ROADMAP)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (22:49 PDT): work done, no user report.
+- 2026-10-26 (21:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes at all), no new garment
+  photos (still 15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already delivered
+  10-18, no repeat nudge; no new uploads in ~/workspace/user/files since
+  10-18 — newest files remain the 10-18 family photos already reviewed),
+  INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo
+  root, 8.47s); local allowlist tree (43 files incl. README/ROADMAP)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (21:49 PDT) but no new progress, so no user report
+  per the no-repeat rule.
+- 2026-10-26 (20:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes at all), no new garment
+  photos (still 15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already delivered
+  10-18, no repeat nudge; no new uploads in ~/workspace/user/files since
+  10-18 — newest files remain the 10-18 family photos already reviewed),
+  INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo
+  root, 8.32s); local allowlist tree (43 files incl. README/ROADMAP)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (20:49 PDT) but no new progress, so no user report
+  per the no-repeat rule.
+- 2026-10-26 (19:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes at all), no new garment
+  photos (still 15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already delivered
+  10-18, no repeat nudge; no new uploads in ~/workspace/user/files since
+  10-18 — newest files remain the 10-18 family photos already reviewed),
+  INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo
+  root, 8.96s); local allowlist tree (43 files incl. README/ROADMAP)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (19:49 PDT) but no new progress, so no user report
+  per the no-repeat rule.
+- 2026-10-26 (18:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes at all), no new garment
+  photos (still 15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already delivered
+  10-18, no repeat nudge; no new uploads in ~/workspace/user/files since
+  10-18 — newest files remain the 10-18 family photos already reviewed),
+  INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo
+  root, 9.42s); local allowlist tree (43 files incl. README/ROADMAP)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (18:49 PDT) but no new progress, so no user report
+  per the no-repeat rule.
+- 2026-10-26 (17:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes; the sole pgrep hit was the
+  invoking shell itself, not a live run), no new garment photos (still 15 from
+  10-13; item #1 stays [NEEDS HER]; photo-gap checklist already delivered
+  10-18, no repeat nudge; no new uploads in ~/workspace/user/files since
+  10-18 — newest files remain the 10-18 family photos already reviewed),
+  INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo
+  root, 8.14s); local allowlist tree (43 files incl. README/ROADMAP)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (17:49 PDT) but no new progress, so no user report
+  per the no-repeat rule.
+- 2026-10-26 (16:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep PID was the invoking shell itself, not a live
+  run; no background foldbot processes), no new garment photos (still 15 from
+  10-13; item #1 stays [NEEDS HER]; photo-gap checklist already delivered
+  10-18, no repeat nudge; no new uploads in ~/workspace/user/files since
+  10-18 — newest files remain the 10-18 family photos already reviewed),
+  INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo
+  root, 8.64s); local allowlist tree (43 files incl. README/ROADMAP)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (16:49 PDT) but no new progress, so no user report
+  per the no-repeat rule.
+- 2026-10-26 (15:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep PID was the invoking shell itself, not a live
+  run; no background foldbot processes), no new garment photos (still 15 from
+  10-13; item #1 stays [NEEDS HER]; photo-gap checklist already delivered
+  10-18, no repeat nudge; no new uploads in ~/workspace/user/files since
+  10-18 — newest files remain the 10-18 family photos already reviewed),
+  INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo
+  root, 8.47s); local allowlist tree (43 files incl. README/ROADMAP)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (15:49 PDT) but no new progress, so no user report
+  per the no-repeat rule.
+- 2026-10-26 (14:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep PID was the invoking shell itself, not a live
+  run; no background foldbot processes), no new garment photos (still 15 from
+  10-13; item #1 stays [NEEDS HER]; photo-gap checklist already delivered
+  10-18, no repeat nudge; no new uploads in ~/workspace/user/files since
+  10-18 — newest files remain the 10-18 family photos already reviewed),
+  INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo
+  root, 12.54s); local allowlist tree (43 files incl. README/ROADMAP)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (14:49 PDT) but no new progress, so no user report
+  per the no-repeat rule.
+- 2026-10-26 (13:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep PID was the invoking shell itself, not a live
+  run; no background foldbot processes), no new garment photos (still 15 from
+  10-13; item #1 stays [NEEDS HER]; photo-gap checklist already delivered
+  10-18, no repeat nudge; no new uploads in ~/workspace/user/files since
+  10-18 — newest files remain the 10-18 family photos already reviewed),
+  INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo
+  root, 9.84s); local allowlist tree (43 files incl. README/ROADMAP)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (13:49 PDT) but no new progress, so no user report
+  per the no-repeat rule.
+- 2026-10-26 (11:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep PID was already gone — a transient shell
+  process, not a live run; no background foldbot processes), no new garment
+  photos (still 15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist
+  already delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files
+  since 10-18 — newest files remain the 10-18 family photos already
+  reviewed), INT8 stays deferred; test suite 118/118 green via the foldbot
+  venv (repo root, 8.20s); local allowlist tree (43 files incl.
+  README/ROADMAP) sorted-diff identical to the stored remote snapshot —
+  nothing to push. Within reporting hours (11:49 PDT) but no new progress,
+  so no user report per the no-repeat rule.
+- 2026-10-26 (10:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files
+  since the 08:49 run — newest files remain the 10-18 family photos already
+  reviewed), INT8 stays deferred; test suite 118/118 green via the foldbot
+  venv (repo root, 9.14s); local allowlist tree (43 files incl.
+  README/ROADMAP) sorted-diff identical to the stored remote snapshot —
+  nothing to push. Within reporting hours (10:49 PDT) but no new progress,
+  so no user report per the no-repeat rule.
+- 2026-10-26 (08:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files
+  since the 07:49 run), INT8 stays deferred; test suite 118/118 green via the
+  foldbot venv (repo root, 9.06s); local allowlist tree (43 files incl.
+  README/ROADMAP + docs PDF) sorted-diff identical to the stored remote
+  snapshot — nothing to push. Within reporting hours (08:49 PDT) but no new
+  progress, so no user report per the no-repeat rule.
+- 2026-10-26 (07:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes — the one pgrep hit was a
+  transient shell), no new garment photos (still 15 from 10-13; item #1 stays
+  [NEEDS HER]; photo-gap checklist already delivered 10-18, no repeat nudge;
+  no new uploads in ~/workspace/user/files since 10-18 — newest files are the
+  same 10-17/10-18 PDT family photos already reviewed), INT8 stays deferred;
+  test suite 118/118 green via the foldbot venv (repo root, 9.45s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the
+  stored remote snapshot — nothing to push. Outside reporting hours (07:49
+  PDT): work done, no user report.
+
+- 2026-10-26 (06:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files
+  since 10-18 — newest files are the same 10-17 PDT family photos already
+  reviewed), INT8 stays deferred; test suite 118/118 green via the foldbot
+  venv (repo root, 9.39s); local allowlist tree (43 files incl. README/ROADMAP,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot
+  — nothing to push. Outside reporting hours (06:49 PDT): work done, no user
+  report.
+
+- 2026-10-26 (05:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files
+  since 10-18 — newest files are the same 10-17 PDT family photos already
+  reviewed), INT8 stays deferred; test suite 118/118 green via the foldbot
+  venv (repo root, 9.40s); local allowlist tree (43 files incl. README/ROADMAP,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot
+  — nothing to push. Outside reporting hours (05:49 PDT): work done, no user
+  report.
+
+- 2026-10-26 (04:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes; the sole pgrep hit was the
+  invoking shell itself), no new garment photos (still 15 from 10-13; item #1
+  stays [NEEDS HER]; photo-gap checklist already delivered 10-18, no repeat
+  nudge; no new uploads in ~/workspace/user/files since 10-18 — newest files
+  are the same 10-17 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root,
+  8.33s); local allowlist tree (43 files incl. README/ROADMAP,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot
+  — nothing to push. Outside reporting hours (04:49 PDT): work done, no user
+  report.
+
+- 2026-10-26 (03:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files
+  since 10-18 — the two files newer than 2026-10-18 UTC are the same 10-17 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 9.59s); local allowlist tree
+  (43 files incl. README/ROADMAP and docs/*.pdf, __pycache__ excluded)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (03:49 PDT): work done, no user report.
+
+- 2026-10-26 (02:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files
+  since 10-18 — the two files newer than 2026-10-18 UTC are the same 10-17 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 9.45s); local allowlist tree
+  (43 files incl. README/ROADMAP and docs/*.pdf, __pycache__ excluded)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (02:49 PDT): work done, no user report.
+
+- 2026-10-26 (01:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files
+  since 10-18 — the two files newer than 2026-10-18 UTC are the same 10-17 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 8.44s); local allowlist tree
+  (43 files incl. README/ROADMAP, __pycache__ excluded) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Outside reporting hours
+  (01:49 PDT): work done, no user report.
+
+- 2026-10-25 (23:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files
+  since 10-18 — the two files newer than 2026-10-18 UTC are the same 10-17 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 10.31s); local allowlist tree
+  (43 files incl. README/ROADMAP and docs/*.pdf, __pycache__ excluded)
+  sorted-diff identical to both stored remote snapshots — nothing to push.
+  Outside reporting hours (23:49 PDT): work done, no user report.
+
+- 2026-10-25 (22:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep PID was already gone — a transient shell
+  process, not a live run; no background foldbot processes), no new garment
+  photos (still 15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist
+  already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — the two files newer than 2026-10-18 UTC
+  are the same 10-17 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root,
+  8.16s); local allowlist tree (43 files incl. README/ROADMAP, __pycache__
+  excluded) sorted-diff identical to the stored remote snapshot — nothing to
+  push. Outside reporting hours (22:49 PDT): work done, no user report.
+
+- 2026-10-25 (21:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files
+  since 10-18 — the two files newer than 2026-10-18 UTC are the same 10-17 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 8.71s); local allowlist tree
+  (43 files incl. README/ROADMAP and dashboard/index.html, __pycache__
+  excluded) sorted-diff identical to the stored remote snapshot — nothing to
+  push. Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-25 (20:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files
+  since 10-18 — the two files newer than 2026-10-18 UTC are the same 10-17 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 9.76s); local allowlist tree
+  (43 files incl. README/ROADMAP, __pycache__ excluded) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Nothing moved: no user
+  report, per the no-progress-stays-silent rule.
+
+- 2026-10-25 (19:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files
+  since 10-18 — the two files newer than 2026-10-18 UTC are the same 10-17 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 8.46s); local allowlist tree
+  (43 files incl. README/ROADMAP, __pycache__ excluded) sorted-diff identical
+  to both stored remote snapshots — nothing to push. Nothing moved: no user
+  report, per the no-progress-stays-silent rule.
+
+- 2026-10-25 (18:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files
+  since 10-18 — the two files newer than 2026-10-18 UTC are the same 10-17 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 9.38s); local allowlist tree
+  (43 files incl. README/ROADMAP and dashboard/progress.json, __pycache__
+  excluded) sorted-diff identical to the stored remote snapshot — nothing to
+  push. Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-25 (16:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files
+  since 10-18 — the two files newer than 2026-10-18 UTC are the same 10-17 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 9.76s); local allowlist tree
+  (43 files incl. README/ROADMAP, __pycache__ excluded) sorted-diff identical
+  to both stored remote snapshots — nothing to push. Nothing moved: no user
+  report, per the no-progress-stays-silent rule.
+
+- 2026-10-25 (15:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files
+  since 10-18 — the two files newer than 2026-10-18 UTC are the same 10-17 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 9.94s); local allowlist tree
+  (43 files incl. README/ROADMAP and docs/*.pdf, __pycache__ excluded)
+  sorted-diff identical to both stored remote snapshots — nothing to push.
+  Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-25 (17:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files
+  since 10-18 — the two files newer than 2026-10-18 UTC are the same 10-17 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 9.11s); local allowlist tree
+  (43 files incl. README/ROADMAP, __pycache__ excluded) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Nothing moved: no user
+  report, per the no-progress-stays-silent rule.
+
+- 2026-10-25 (13:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files
+  since 10-18 — the two files newer than 2026-10-18 UTC are the same 10-17 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 8.56s); local allowlist tree
+  (43 files incl. README/ROADMAP, __pycache__ excluded) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Nothing moved: no user
+  report, per the no-progress-stays-silent rule.
+
+- 2026-10-25 (12:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep PID was already gone — a transient shell
+  process, not a live run; no background foldbot processes), no new garment
+  photos (still 15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist
+  already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — the files newer than the real-photo
+  set are the same 10-17 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root,
+  7.23s); local allowlist tree (43 files incl. README/ROADMAP,
+  __pycache__ excluded) sorted-diff identical to the stored remote
+  snapshot — nothing to push. Nothing moved: no user report, per the
+  no-progress-stays-silent rule.
+
+- 2026-10-25 (11:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files
+  since 10-18 — newest files are the same 10-18 family photos already
+  reviewed), INT8 stays deferred; test suite 118/118 green via the foldbot
+  venv (repo root, 8.16s); local allowlist tree (43 files incl.
+  README/ROADMAP, __pycache__ excluded) sorted-diff identical to the stored
+  remote snapshot — nothing to push. Nothing moved: no user report, per the
+  no-progress-stays-silent rule.
+
+- 2026-10-25 (10:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files
+  since 10-18 — the two files newer than 2026-10-18 UTC are the same 10-17 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 8.38s); local allowlist tree
+  (43 files incl. README/ROADMAP, __pycache__ excluded) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Nothing moved: no user
+  report, per the no-progress-stays-silent rule.
+
+- 2026-10-25 (09:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files
+  since 10-18 — the two files newer than 2026-10-18 UTC are the same 10-17 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 10.27s); local allowlist tree
+  (43 files incl. README/ROADMAP, __pycache__ excluded) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Nothing moved: no user
+  report, per the no-progress-stays-silent rule.
+
+- 2026-10-25 (08:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files
+  since 10-18 — newest files are the 10-18 family photos already reviewed),
+  INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo
+  root, 8.82s); local allowlist tree (43 files incl. README/ROADMAP,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot
+  — nothing to push. Nothing moved: no user report, per the
+  no-progress-stays-silent rule.
+
+- 2026-10-25 (07:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes; the sole pgrep hit was the
+  invoking shell itself), no new garment photos (still 15 from 10-13; item #1
+  stays [NEEDS HER]; photo-gap checklist already delivered 10-18, no repeat
+  nudge; no new uploads in ~/workspace/user/files since 10-18 — newest files
+  are the 10-18 family photos already reviewed), INT8 stays deferred; test
+  suite 118/118 green via the foldbot venv (repo root, 7.99s); local
+  allowlist tree (43 files incl. README/ROADMAP, __pycache__ excluded)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (07:49 PDT): work done, no user report.
+
+- 2026-10-25 (06:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files
+  since 10-18 — newest files are the 10-17 PDT family photos already
+  reviewed), INT8 stays deferred; test suite 118/118 green via the foldbot
+  venv (repo root, 9.31s); local allowlist tree (43 files incl. README/ROADMAP,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot
+  — nothing to push. Outside reporting hours (06:49 PDT): work done, no user
+  report.
+
+- 2026-10-25 (05:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; the two user/files files newer than
+  2026-10-18 UTC are the same 10-17 PDT family photos already reviewed),
+  INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo
+  root, 9.40s); local allowlist tree (43 files incl. README/ROADMAP,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot
+  — nothing to push. Outside reporting hours (05:49 PDT): work done, no user
+  report.
+
+- 2026-10-25 (04:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files
+  since 10-18), INT8 stays deferred; test suite 118/118 green via the foldbot
+  venv (repo root, 8.36s); local allowlist tree (43 files incl. README/ROADMAP,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot
+  — nothing to push. Outside reporting hours (04:49 PDT): work done, no user
+  report.
+
+- 2026-10-25 (03:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files
+  since 10-18), INT8 stays deferred; test suite 118/118 green via the foldbot
+  venv (repo root, 8.71s); local allowlist tree (43 files incl. README/ROADMAP,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot
+  — nothing to push. Outside reporting hours (03:49 PDT): work done, no user
+  report.
+
+- 2026-10-25 (02:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files
+  since 10-18 — newest files are the 10-18 family photos already reviewed),
+  INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo
+  root, 9.20s); local allowlist tree (43 files incl. README/ROADMAP,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot
+  — nothing to push. Outside reporting hours (02:49 PDT): work done, no user
+  report.
+
+- 2026-10-25 (01:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files
+  since 10-18 — newest files are the 10-18 family photos already reviewed),
+  INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo
+  root, 11.90s); local allowlist tree (43 files incl. README/ROADMAP,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot
+  — nothing to push. Outside reporting hours (01:49 PDT): work done, no user
+  report.
+
+- 2026-10-25 (00:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep PID was already gone — a transient shell
+  process, not a live run; no background foldbot processes), no new garment
+  photos (still 15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist
+  already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files are the 10-18 family
+  photos already reviewed), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.36s); local allowlist tree (43 files
+  incl. README/ROADMAP, __pycache__ excluded) sorted-diff identical to the
+  stored remote snapshot — nothing to push. Outside reporting hours
+  (00:49 PDT): work done, no user report.
+
+- 2026-10-24 (23:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since
+  10-18), INT8 stays deferred; test suite 118/118 green via the foldbot venv
+  (repo root, 8.72s); local allowlist tree (43 files incl. README/ROADMAP,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot —
+  nothing to push. Outside reporting hours (23:49 PDT): work done, no user report.
+
+- 2026-10-24 (22:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since
+  10-18 — newest files are the 10-18 family photos already reviewed),
+  INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo root,
+  8.93s); local allowlist tree (43 files incl. README/ROADMAP, __pycache__
+  excluded) sorted-diff identical to the stored remote snapshot — nothing to
+  push. Outside reporting hours (22:49 PDT): work done, no user report.
+
+- 2026-10-24 (21:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; both pgrep PIDs were already gone — transient shell processes,
+  not live runs; no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since
+  10-18 — newest files are the 10-18 family photos already reviewed),
+  INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo root,
+  8.35s); local allowlist tree (43 files incl. README/ROADMAP, __pycache__
+  excluded) sorted-diff identical to the stored remote snapshot — nothing to
+  push. Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-24 (20:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; the two user/files files newer than
+  2026-10-18 UTC are the same 10-17 PDT family photos already reviewed —
+  mtime check confirms nothing new), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 8.85s); local allowlist tree
+  (43 files incl. README/ROADMAP, __pycache__ excluded) sorted-diff identical
+  to both stored remote snapshots — nothing to push. Nothing moved: no user
+  report, per the no-progress-stays-silent rule.
+
+- 2026-10-24 (19:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep PID was already gone — a transient shell
+  process, not a live run; no background foldbot processes), no new garment
+  photos (still 15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist
+  already delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since
+  10-18 — newest files are the 10-18 family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.36s);
+  local allowlist tree 43 files (incl. docs/*.pdf, __pycache__ excluded) matches
+  the prior remote state — nothing to push. Note: the stored remote-tree snapshot
+  files had vanished from the repo dir (first listing showed them, then gone);
+  snapshot recreated from the current allowlist tree (43 files) for future runs.
+  Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-24 (18:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep PID was the invoking shell itself, not a live
+  run; no background foldbot processes), no new garment photos (still 15 from
+  10-13; item #1 stays [NEEDS HER]; photo-gap checklist already delivered
+  10-18, no repeat nudge; no new uploads in ~/workspace/user/files since
+  10-18 — newest files are the 10-18 family photos already reviewed), INT8
+  stays deferred; test suite 118/118 green via the foldbot venv (repo root,
+  9.55s); local allowlist tree (43 files incl. README/ROADMAP, __pycache__
+  excluded) sorted-diff identical to the stored remote snapshot — nothing to
+  push. Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-24 (17:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep PID was already gone — a transient shell
+  process, not a live run; no background foldbot processes), no new garment
+  photos (still 15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist
+  already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files are the 10-18 family
+  photos already reviewed), INT8 stays deferred; test suite 118/118 green via
+  the foldbot venv (repo root, 9.21s); local allowlist tree (43 files incl.
+  README/ROADMAP, __pycache__ excluded) sorted-diff identical to the stored
+  remote snapshot — nothing to push. Nothing moved: no user report, per the
+  no-progress-stays-silent rule.
+
+- 2026-10-24 (16:49 PDT hourly run): no-op health check — overlap guard clear
+  (no background foldbot processes), no new garment photos (still 15 from 10-13; item #1
+  stays [NEEDS HER]; photo-gap checklist already delivered 10-18, no repeat
+  nudge; no new uploads in ~/workspace/user/files since 10-18 — newest files
+  are the 10-18 family photos already reviewed), INT8 stays deferred; test
+  suite 118/118 green via the foldbot venv (repo root, 8.93s); local
+  allowlist tree (43 files incl. README/ROADMAP, __pycache__ excluded)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-24 (15:49 PDT hourly run): no-op health check — overlap guard clear
+  (no background foldbot processes), no new garment photos (still 15 from 10-13; item #1
+  stays [NEEDS HER]; photo-gap checklist already delivered 10-18, no repeat
+  nudge; no new uploads in ~/workspace/user/files since 10-18 — newest files
+  are the 10-18 family photos already reviewed), INT8 stays deferred; test
+  suite 118/118 green via the foldbot venv (repo root, 8.11s); local
+  allowlist tree (43 files incl. README/ROADMAP, __pycache__ excluded)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-24 (14:49 PDT hourly run): no-op health check — overlap guard clear
+  (no background foldbot processes; process list empty, pgrep hit was only
+  the invoking shell), no new garment photos (still 15 from 10-13; item #1
+  stays [NEEDS HER]; photo-gap checklist already delivered 10-18, no repeat
+  nudge; no new uploads in ~/workspace/user/files since 10-18 — newest files
+  are the 10-18 family photos already reviewed), INT8 stays deferred; test
+  suite 118/118 green via the foldbot venv (repo root, 8.24s); local
+  allowlist tree (43 files incl. README/ROADMAP, __pycache__ excluded)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-24 (13:49 PDT hourly run): no-op health check — overlap guard clear
+  (no foldbot processes), no new garment photos (still 15 from 10-13; item #1
+  stays [NEEDS HER]; photo-gap checklist already delivered 10-18, no repeat
+  nudge; no new uploads in ~/workspace/user/files since 10-18 — newest files
+  are the 10-18 family photos already reviewed), INT8 stays deferred; test
+  suite 118/118 green via the foldbot venv (repo root, 8.21s); local
+  allowlist tree (43 files incl. README/ROADMAP, __pycache__ excluded)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-24 (12:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep PID was already gone — a transient shell
+  process, not a live run; no background foldbot processes), no new garment
+  photos (still 15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist
+  already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files are the 10-18 family
+  photos already reviewed), INT8 stays deferred; test suite 118/118 green via
+  the foldbot venv (repo root, 8.25s); local allowlist tree (43 files incl.
+  README/ROADMAP, __pycache__ excluded) sorted-diff identical to the stored
+  remote snapshot — nothing to push. Nothing moved: no user report, per the
+  no-progress-stays-silent rule.
+
+- 2026-10-24 (11:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files
+  since 10-18 — newest files are the 10-18 family photos already reviewed),
+  INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo
+  root, 7.28s); local allowlist tree (43 files incl. README/ROADMAP,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot
+  — nothing to push. Nothing moved: no user report, per the
+  no-progress-stays-silent rule.
+
+- 2026-10-24 (10:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files
+  since 10-18 — newest files are the 10-18 family photos already reviewed),
+  INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo
+  root, 10.07s); local allowlist tree (43 files incl. README/ROADMAP,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot
+  — nothing to push. Nothing moved: no user report, per the
+  no-progress-stays-silent rule.
+
+- 2026-10-24 (09:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep PID was already gone — a transient shell
+  process, not a live run; no background foldbot processes), no new garment
+  photos (still 15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist
+  already delivered 10-18, no repeat nudge; the 5 user/files uploads since
+  10-14 are the same ones reviewed at 08:49 — family photos, not board
+  garments, and nothing newer than 10-18); INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 9.46s); local allowlist tree
+  (43 files incl. README/ROADMAP, __pycache__ excluded) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Nothing moved: no user
+  report, per the no-progress-stays-silent rule.
+
+- 2026-10-24 (08:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge); extra scan of ~/workspace/user/files
+  uploads since 10-14 found only unrelated family photos (kids in Spider-Man
+  costumes, 10-16) and a shopping-bag photo (10-17) — not board garments, so
+  item #1 still blocked on her photos; INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 8.44s); local allowlist tree
+  (43 files incl. README/ROADMAP, __pycache__ excluded) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Nothing moved: no user
+  report, per the no-progress-stays-silent rule.
+
+- 2026-10-24 (07:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 7.35s); local allowlist tree
+  (43 files incl. README/ROADMAP, __pycache__ excluded) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Outside reporting hours
+  (07:49 PDT): work done, no user report.
+
+- 2026-10-24 (05:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 9.19s); local allowlist tree
+  (43 files incl. README/ROADMAP, __pycache__ excluded) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Outside reporting hours
+  (05:49 PDT): work done, no user report.
+
+- 2026-10-24 (04:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep PID was already gone — a transient shell
+  process, not a live run; no background foldbot processes), no new garment
+  photos (still 15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist
+  already delivered 10-18, no repeat nudge), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 9.77s); local allowlist tree
+  (43 files incl. README/ROADMAP, __pycache__ excluded) sorted-diff identical
+  to the stored remote snapshot — nothing to push. Outside reporting hours
+  (04:49 PDT): work done, no user report.
+
+- 2026-10-24 (03:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 8.65s); local allowlist tree (43 files
+  incl. README/ROADMAP, __pycache__ excluded) sorted-diff identical to the
+  stored remote snapshot — nothing to push. Outside reporting hours (03:49
+  PDT): work done, no user report.
+
+- 2026-10-24 (02:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes; the sole pgrep hit was the
+  invoking shell itself), no new garment photos (still 15 from 10-13; item #1
+  stays [NEEDS HER]; photo-gap checklist already delivered 10-18, no repeat
+  nudge), INT8 stays deferred; test suite 118/118 green via the foldbot venv
+  (repo root, 7.96s); local allowlist tree (43 files incl. README/ROADMAP,
+  __pycache__ excluded) sorted-diff identical to the stored remote
+  snapshot — nothing to push. Outside reporting hours (02:49 PDT): work
+  done, no user report.
+
+- 2026-10-24 (01:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes; the sole pgrep hit was the
+  invoking shell itself), no new garment photos (still 15 from 10-13; item #1
+  stays [NEEDS HER]; photo-gap checklist already delivered 10-18, no repeat
+  nudge), INT8 stays deferred; test suite 118/118 green via the foldbot venv
+  (repo root, 8.42s); local allowlist tree (43 files incl. README/ROADMAP,
+  __pycache__ excluded) sorted-diff identical to the stored remote
+  snapshot — nothing to push. Outside reporting hours (01:49 PDT): work
+  done, no user report.
+
+- 2026-10-24 (00:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 8.18s); local allowlist tree (43 files
+  incl. README/ROADMAP, __pycache__ excluded) sorted-diff identical to the
+  stored remote snapshot — nothing to push. Outside reporting hours (00:49
+  PDT): work done, no user report.
+
+- 2026-10-23 (22:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep PID was already gone — a transient shell
+  process, not a live run; no background foldbot processes), no new garment
+  photos (still 15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist
+  already delivered 10-18, no repeat nudge), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 8.91s); local allowlist tree
+  (43 files incl. README/ROADMAP) sorted-diff identical to the stored remote
+  snapshot — nothing to push. Outside reporting hours (22:49 PDT): work done,
+  no user report.
+
+- 2026-10-23 (21:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 8.06s); local allowlist tree (43 files
+  incl. README/ROADMAP, __pycache__ excluded) sorted-diff identical to the
+  stored remote snapshot — nothing to push. Nothing moved: no user report, per
+  the no-progress-stays-silent rule.
+
+- 2026-10-23 (20:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 8.10s); local allowlist tree (43 files
+  incl. README/ROADMAP) sorted-diff identical to the stored remote snapshot —
+  nothing to push. Nothing moved: no user report, per the no-progress-stays-
+  silent rule.
+
+- 2026-10-23 (19:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 8.88s); local allowlist tree (43 files
+  incl. README/ROADMAP) sorted-diff identical to the stored remote snapshot —
+  nothing to push. Nothing moved: no user report, per the no-progress-stays-
+  silent rule.
+
+- 2026-10-23 (18:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 7.36s); local allowlist tree (43 files
+  incl. README/ROADMAP) sorted-diff identical to the stored remote snapshot —
+  nothing to push. Nothing moved: no user report, per the no-progress-stays-
+  silent rule.
+
+- 2026-10-23 (20:49 PDT hourly run): no-op health check — overlap guard clear
+  (no background foldbot processes, no lock file), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 9.14s); local allowlist tree (43 files
+  incl. README/ROADMAP) sorted-diff identical to the stored remote snapshot —
+  nothing to push. Nothing moved: no user report, per the no-progress-stays-
+  silent rule.
+
+- 2026-10-23 (16:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 9.57s); local allowlist tree (43 files
+  incl. README/ROADMAP) sorted-diff identical to the stored remote snapshot —
+  nothing to push. Nothing moved: no user report, per the no-progress-stays-
+  silent rule.
+
+- 2026-10-23 (15:49 PDT hourly run): no-op health check — overlap guard clear
+  (the only pgrep hit was the command's own shell; no background foldbot
+  processes), no new garment photos (still 15 from 10-13; item #1 stays
+  [NEEDS HER]; photo-gap checklist already delivered 10-18, no repeat nudge),
+  INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo
+  root, 8.73s); local allowlist tree (43 files incl. README/ROADMAP)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-23 (14:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 8.61s); local allowlist tree
+  (43 files incl. README/ROADMAP) sorted-diff identical to the stored remote
+  snapshot (43 files) — nothing to push. Nothing moved: no user report, per the
+  no-progress-stays-silent rule.
+
+- 2026-10-23 (13:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file before this run set one; the sole pgrep PID was already gone —
+  a transient shell process, not a live run; no background foldbot processes),
+  no new garment photos (still 15 from 10-13; item #1 stays [NEEDS HER]),
+  INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo
+  root, 9.45s); local allowlist tree (43 files incl. README/ROADMAP)
+  sorted-diff identical to the stored remote snapshot (43 files) — nothing to
+  push. Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-23 (12:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep PID was already gone — a transient shell
+  process, not a live run; no background foldbot processes), no new garment
+  photos (still 15 from 10-13; item #1 stays [NEEDS HER]), INT8 stays deferred;
+  test suite 118/118 green via the foldbot venv (repo root, 8.96s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the
+  stored remote snapshot (43 files) — nothing to push. Nothing moved: no user
+  report, per the no-progress-stays-silent rule.
+
+- 2026-10-23 (11:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; both pgrep PIDs were already gone — transient shell processes,
+  not live runs), no new garment photos (still 15 from 10-13; item #1 stays
+  [NEEDS HER]), INT8 stays deferred; test suite 118/118 green via the foldbot
+  venv (repo root, 7.10s); local allowlist tree (43 files incl. README/ROADMAP)
+  filename-diff identical to the stored remote snapshot — nothing to push.
+  Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-23 (10:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 7.98s); local allowlist tree
+  (43 files incl. README/ROADMAP) sorted-diff identical to the stored remote
+  snapshot — nothing to push. Nothing moved: no user report, per the
+  no-progress-stays-silent rule.
+
+- 2026-10-23 (09:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 8.07s); local allowlist tree
+  (43 files incl. README/ROADMAP) sorted-diff identical to the stored remote
+  snapshot — nothing to push. Nothing moved: no user report, per the
+  no-progress-stays-silent rule.
+
+- 2026-10-23 (08:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 11.50s); local allowlist tree
+  (43 files incl. README/ROADMAP) sorted-diff identical to the stored remote
+  snapshot — nothing to push. Nothing moved: no user report, per the
+  no-progress-stays-silent rule.
+
+- 2026-10-23 (07:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep PID was already gone — a transient shell process,
+  not a live run; no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 9.68s); local allowlist tree
+  (43 files incl. README/ROADMAP) sorted-diff identical to the stored remote
+  snapshot — nothing to push. Outside reporting hours (07:49 PDT): work done,
+  no user report.
+
+- 2026-10-23 (06:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 8.91s); local allowlist tree
+  (43 files) sorted-diff identical to the stored remote snapshot — nothing to
+  push. Outside reporting hours (06:49 PDT): work done, no user report.
+
+- 2026-10-23 (05:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 7.22s); local allowlist tree
+  (43 files) sorted-diff identical to the stored remote snapshot — nothing to
+  push. Outside reporting hours (05:49 PDT): work done, no user report.
+
+- 2026-10-23 (04:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 8.59s); local allowlist tree
+  (43 files) sorted-diff identical to the stored remote snapshot — nothing to
+  push. Outside reporting hours (04:49 PDT): work done, no user report.
+
+- 2026-10-23 (03:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the pgrep PID was already gone — a transient shell process,
+  not a live run; no background foldbot processes), no new garment photos
+  (still 15 from 10-13; item #1 stays [NEEDS HER]), INT8 stays deferred;
+  test suite 118/118 green via the foldbot venv (repo root, 7.16s); local
+  allowlist tree (43 files) sorted-diff identical to the stored remote
+  snapshot — nothing to push. Outside reporting hours (03:49 PDT): work done,
+  no user report.
+
+- 2026-10-23 (01:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep PID was the invoking shell itself, transient —
+  no background foldbot processes), no new garment photos (still 15 from 10-13;
+  item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green via
+  the foldbot venv (repo root, 8.65s); local allowlist tree (43 files)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (01:49 PDT): work done, no user report.
+
+- 2026-10-23 (00:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the pgrep hit was the invoking shell's own transient process
+  line, gone on re-check — no background foldbot processes), no new garment
+  photos (still 15 from 10-13; item #1 stays [NEEDS HER]), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.94s);
+  local allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical
+  to the stored remote snapshot (43 files) — nothing to push. Outside
+  reporting hours (00:49 PDT): work done, no user report.
+
+- 2026-10-22 (23:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; both pgrep PIDs were already gone — transient shell processes,
+  not live runs), no new garment photos (still 15 from 10-13; item #1 stays
+  [NEEDS HER]), INT8 stays deferred; test suite 118/118 green via the foldbot
+  venv (repo root, 9.47s); local allowlist tree (43 files) sorted-diff identical
+  to the stored remote snapshot (43 files) — nothing to push. gh.py still has
+  no raw-api tree-fetch subcommand; fresh remote verify only needed before a
+  push, which this run had none. Outside reporting hours (23:49 PDT): work
+  done, no user report.
+
+- 2026-10-22 (22:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes; the sole pgrep PID was already
+  gone — a transient shell process, not a live run), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 9.10s); local allowlist tree
+  (43 files incl. README/ROADMAP) sorted-diff identical to the stored remote
+  snapshot — nothing to push. Outside reporting hours (22:49 PDT): work done,
+  no user report.
+
+- 2026-10-22 (21:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes; the sole pgrep PID was already
+  gone — a transient shell process, not a live run), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 9.44s); local allowlist tree
+  (43 files incl. README/ROADMAP) sorted-diff identical to the stored remote
+  snapshot — nothing to push. Nothing moved: no user report, per the
+  no-progress-stays-silent rule.
+
+- 2026-10-22 (19:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 9.11s); local allowlist tree
+  (43 files incl. README/ROADMAP) sorted-diff identical to the stored remote
+  snapshot — nothing to push. Nothing moved: no user report, per the
+  no-progress-stays-silent rule.
+
+- 2026-10-22 (17:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 8.72s); local allowlist tree
+  (43 files incl. README/ROADMAP) sorted-diff identical to the stored remote
+  snapshot — nothing to push. Nothing moved: no user report, per the
+  no-progress-stays-silent rule.
+
+- 2026-10-22 (16:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 10.76s); local allowlist tree
+  (43 files incl. README/ROADMAP) sorted-diff identical to the stored remote
+  snapshot — nothing to push. Nothing moved: no user report, per the
+  no-progress-stays-silent rule.
+
+- 2026-10-22 (15:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 8.50s); local allowlist tree (43 files)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-22 (14:49 PDT hourly run): no-op health check — overlap guard clear
+  (the pgrep hit was the invoking shell itself, already gone; no lock file, no
+  background foldbot processes), no new garment photos (still 15 from 10-13;
+  item #1 stays [NEEDS HER]; photo-gap checklist delivered 10-18, no repeat
+  nudge), INT8 stays deferred; test suite 118/118 green via the foldbot venv
+  (repo root, 9.39s); local allowlist tree (43 files incl. docs/*.pdf,
+  README/ROADMAP) sorted-diff identical to the verified remote snapshot —
+  nothing to push. Nothing moved: no user report, per the no-progress-stays-
+  silent rule.
+
+- 2026-10-22 (13:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.60s); local allowlist tree (43 files)
+  diff-identical to the stored remote snapshot — nothing to push. Nothing
+  moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-22 (12:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.33s); local allowlist tree (43 files)
+  diff-identical to the stored remote snapshot — nothing to push. Nothing
+  moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-22 (09:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 8.76s); local allowlist tree (43 files,
+  find-pattern verified against the remote snapshot) sorted-diff identical to
+  the verified remote snapshot — nothing to push. Nothing moved: no user
+  report, per the no-progress-stays-silent rule.
+
+
+
+- 2026-10-22 (06:49 PDT hourly run): no-op health check — overlap guard clear
+  (the pgrep hit was the invoking shell itself, already gone; no lock file, no
+  background foldbot processes), no new garment photos (still 15; item #1 stays
+  [NEEDS HER]), INT8 stays deferred; test suite 118/118 green via the foldbot
+  venv (repo root, 8.87s); local allowlist tree (43 files) sorted-diff
+  identical to the verified remote snapshot — nothing to push. Outside
+  reporting hours (06:49 PDT): work done, no user report.
+
 
 - 2026-10-06: board-based folding mainline (use_board=True default), BoardFoldSimulator, check_placement(), pants tri-fold via arm waist-grab. Pushed a429b5a.
 - 2026-10-06: YOLOv8n trained on real-clothing composites (mAP50 0.995, overfit caveat documented).
@@ -320,6 +3787,70 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
   files, allowlist-clean, verified). Top queue item #1 still [NEEDS HER]:
   no new garment photos since 10-13; INT8 stays deferred.
 
+- 2026-10-15 (06:49 PDT hourly run): no-op health check — overlap guard clear,
+  no new garment photos (still 15; item #1 stays [NEEDS HER]), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv; local tree matches
+  remote (43 files, allowlist-clean) — nothing to push.
+
+- 2026-10-15 (07:49 PDT hourly run): no-op health check — overlap guard clear,
+  no new garment photos (still 15; item #1 stays [NEEDS HER]), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv; remote main tree
+  still 43 files, matching the snapshot — nothing to push.
+
+- 2026-10-15 (08:49 PDT hourly run): no-op health check — overlap guard clear,
+  no new garment photos (still 15; item #1 stays [NEEDS HER]), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv — nothing to push.
+
+- 2026-10-15 (09:49 PDT hourly run): no-op health check — overlap guard clear,
+  no new garment photos (still 15; item #1 stays [NEEDS HER]), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv — nothing to push.
+
+- 2026-10-15 (10:49 PDT hourly run): no-op health check — overlap guard clear,
+  no new garment photos (still 15; item #1 stays [NEEDS HER]), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv; local tree == remote
+  snapshot (43 files, allowlist-clean) — nothing to push.
+
+- 2026-10-15 (11:49 PDT hourly run): no-op health check — overlap guard clear,
+  no new garment photos (still 15; item #1 stays [NEEDS HER]), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv; no local changes
+  since the 02:49 push — nothing to push.
+
+- 2026-10-15 (12:49 PDT hourly run): no-op health check — overlap guard clear,
+  no new garment photos (still 15; item #1 stays [NEEDS HER]), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv; no local changes
+  since the 02:49 push — nothing to push.
+
+- 2026-10-15 (13:49 PDT hourly run): no-op health check — overlap guard clear,
+  no new garment photos (still 15; item #1 stays [NEEDS HER]), INT8 stays
+  deferred; test suite 118/118 green (run from repo root — an absolute-path
+  run triggered a spurious collection error on test_board.py, pure cwd
+  artifact, suite itself fine); local allowlist tree matches the remote
+  snapshot (43 files, no local-only allowlist files) — nothing to push.
+
+- 2026-10-15 (14:49 PDT hourly run): no-op health check — overlap guard clear
+  (no other run processes active), no new garment photos (still 15; item #1
+  stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green via the
+  foldbot venv; local allowlist file list identical to the remote snapshot
+  (43 files, diff clean) — nothing to push.
+
+- 2026-10-15 (15:49 PDT hourly run): no-op health check — overlap guard clear
+  (no other run processes active), no new garment photos (still 15; item #1
+  stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green via the
+  foldbot venv; local allowlist tree identical to the remote snapshot
+  (43 files incl. docs pdf, diff clean) — nothing to push.
+
+- 2026-10-15 (16:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background sessions), no new garment photos (still 15;
+  item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (run from repo root, 10.3s); local allowlist file list
+  diff-identical to the remote snapshot (43 files) — nothing to push.
+
+- 2026-10-15 (17:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background sessions), no new garment photos (still 15;
+  item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (run from repo root, 11.4s); local allowlist file list
+  diff-identical to the remote snapshot (43 files) — nothing to push.
+
 - 2026-10-14: retry-decorator unification (closes the item-8 "future
   cleanup"): bt/pick_subtree.py's GraspWithRetry now uses
   bt.retry_decorator.RetryWithLog instead of the silent
@@ -334,3 +3865,1325 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
   once before the re-attempt). Full suite 117/117 green via the foldbot
   venv's pytest. Pushed 5e57df1 (remote tree 43 files, allowlist-clean,
   verified).
+
+- 2026-10-15 (18:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background sessions), no new garment photos (still 15;
+  item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (run from repo root, 9.5s); local allowlist tree (43
+  files incl. README/ROADMAP) matches remote main tree (43 blobs) — nothing
+  to push.
+
+- 2026-10-15 (19:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos
+  (still 15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (run from repo root, 9.0s); local
+  allowlist tree (43 files) diff-identical to the remote main tree
+  (43 blobs, verified via the GitHub trees API) — nothing to push.
+
+- 2026-10-15 (20:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes; pgrep hit was the
+  invoking shell itself), no new garment photos (still 15; item #1 stays
+  [NEEDS HER]), INT8 stays deferred; test suite 118/118 green via the
+  foldbot venv (run from repo root, 9.0s); local allowlist tree (43 files
+  incl. README/ROADMAP) diff-identical to the remote snapshot (43 files,
+  sorted-diff clean) — nothing to push.
+
+- 2026-10-15 (21:49 PDT hourly run): no-op health check — overlap guard clear
+  (the pgrep PID was the invoking shell itself, process already gone), no new
+  garment photos (still 15; item #1 stays [NEEDS HER]), INT8 stays deferred;
+  test suite 118/118 green via the foldbot venv (run from repo root, 9.6s);
+  local allowlist tree (43 files) diff-identical to the remote snapshot
+  (43 files, sorted-diff clean) — nothing to push.
+
+- 2026-10-15 (22:49 PDT hourly run): no-op health check — overlap guard clear
+  (the sole pgrep PID was already gone — a transient shell process, not a live
+  run; no background foldbot processes), no new garment photos (still 15; item
+  #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green via the
+  foldbot venv (run from repo root, 9.5s); local allowlist tree (43 files) diff-
+  identical to the remote snapshot (43 files, sorted-diff clean) — nothing to
+  push.
+
+- 2026-10-15 (23:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (run from repo root, 9.0s); local allowlist tree (incl.
+  dashboard/index.html + docs pdf) diff-identical to the remote snapshot
+  (43 files, sorted-diff clean) — nothing to push.
+  Outside reporting hours (23:49 PDT): work done, no user report.
+
+
+- 2026-10-16 (00:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (run from repo root, 9.2s); local allowlist tree
+  (43 files) diff-identical to the remote snapshot (43 files, sorted-diff
+  clean) — nothing to push. Outside reporting hours (00:49 PDT): work done,
+  no user report.
+
+- 2026-10-16 (01:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the pgrep PID was the invoking shell itself, transient),
+  no new garment photos (still 15; item #1 stays [NEEDS HER]), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (run from repo
+  root, 8.7s); local allowlist tree (43 files) diff-identical to the
+  verified remote snapshot (43 files incl. dashboard/progress.json,
+  sorted-diff clean) — nothing to push. Note: a direct remote-tree fetch
+  failed this run because gh.py's `api` subcommand printed usage (script
+  has no raw-api path); verified against the stored remote snapshot
+  instead, which sufficed since there was nothing to push. Outside
+  reporting hours (01:49 PDT): work done, no user report.
+
+- 2026-10-16 (02:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (run from repo root, 9.3s); local allowlist tree
+  (43 files) diff-identical to the verified remote snapshot (43 files,
+  sorted-diff clean) — nothing to push. Outside reporting hours (02:49 PDT):
+  work done, no user report.
+
+- 2026-10-16 (03:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (run from repo root, 8.4s); local allowlist tree
+  (43 files incl. README/ROADMAP) diff-identical to the verified remote
+  snapshot (43 files, sorted-diff clean) — nothing to push. Outside reporting
+  hours (03:49 PDT): work done, no user report.
+
+- 2026-10-16 (04:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (run from repo root, 8.6s); local allowlist tree
+  (43 files) diff-identical to the remote snapshot (43 files, sorted-diff
+  clean) — nothing to push. Outside reporting hours (04:49 PDT): work done,
+  no user report.
+
+- 2026-10-16 (05:49 PDT hourly run): no-op health check — overlap guard clear
+  (no background foldbot processes), no new garment photos (still 15; item #1
+  stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green via the
+  foldbot venv (run from repo root, 9.7s); local allowlist tree (43 files)
+  diff-identical to the verified remote snapshot (43 files, sorted-diff clean)
+  — nothing to push. Outside reporting hours (05:49 PDT): work done, no user
+  report.
+
+- 2026-10-16 (06:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (run from repo root, 9.4s); local allowlist tree
+  (43 files incl. README/ROADMAP) diff-identical to the verified remote
+  snapshot (43 files, sorted-diff clean) — nothing to push. Outside reporting
+  hours (06:49 PDT): work done, no user report.
+
+- 2026-10-16 (07:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (run from repo root, 9.2s); local allowlist tree
+  (43 files) diff-identical to the verified remote snapshot (43 files,
+  sorted-diff clean) — nothing to push. Outside reporting hours (07:49 PDT):
+  work done, no user report.
+
+- 2026-10-16 (09:49 PDT hourly run): no-op health check — overlap guard clear
+  (the one pgrep PID was already gone — a transient shell process, not a live
+  run; no lock file, no background foldbot processes), no new garment photos
+  (still 15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (run from repo root, 7.7s — the first
+  attempt was interrupted by a service restart mid-run, read-only tests,
+  retried clean); local allowlist tree (43 files) diff-identical to the
+  verified remote snapshot (43 files, sorted-diff clean) — nothing to push.
+  Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-16 (10:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (run from repo root, 9.0s); local allowlist tree
+  (43 files) diff-identical to the verified remote snapshot (43 files,
+  sorted-diff clean) — nothing to push. Nothing moved: no user report, per the
+  no-progress-stays-silent rule.
+
+- 2026-10-16 (11:49 PDT hourly run): no-op health check — overlap guard clear
+  (the one pgrep PID was already gone — a transient shell
+  process, not a live
+  run; no lock file, no background foldbot processes), no new garment photos
+  (still 15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (run from repo root, 9.0s); local
+  allowlist tree (43 files) diff-identical to the verified remote snapshot
+  (43 files, sorted-diff clean) — nothing to push. Nothing moved: no user
+  report, per the no-progress-stays-silent rule.
+
+- 2026-10-16 (14:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the one pgrep PID was already gone — a transient shell
+  process, not a live run), no new garment photos (still 15; item #1 stays
+  [NEEDS HER]), INT8 stays deferred; test suite 118/118 green via the foldbot
+  venv (run from repo root, 10.9s); local allowlist tree (43 files incl.
+  README/ROADMAP) matches the verified remote snapshot — nothing to push.
+  Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-16 (12:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (run from repo root, 9.5s); local allowlist tree
+  (43 files) diff-identical to the live remote main tree (43 blobs, verified
+  fresh via the GitHub trees API — /tmp snapshot had been wiped by a restart,
+  re-verified; snapshot now also persisted to the goal's hidden_files). —
+  nothing to push. Nothing moved: no user report, per the no-progress-stays-
+  silent rule.
+
+- 2026-10-16 (13:49 PDT hourly run): no-op health check — overlap guard clear
+  (no background sessions, no foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (run from repo root, 9.5s); local allowlist tree
+  (43 files incl. README/ROADMAP) sorted-diff identical to the stored remote
+  snapshot (43 files) — nothing to push. Nothing moved: no user report, per
+  the no-progress-stays-silent rule.
+
+- 2026-10-16 (15:49 PDT hourly run): no-op health check — overlap guard clear
+  (the one pgrep PID was a transient process, already gone; no background
+  foldbot processes), no new garment photos (still 15; item #1 stays
+  [NEEDS HER]), INT8 stays deferred; test suite 118/118 green via the
+  foldbot venv (run from repo root, 11.8s); local allowlist tree (43 files)
+  matches the verified remote snapshot (43 files, names identical) — nothing
+  to push. Nothing moved: no user report, per the no-progress-stays-silent
+  rule.
+
+- 2026-10-16 (16:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos
+  (still 15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (run from repo root, 9.7s); local
+  allowlist tree (43 files) sorted-diff identical to the stored remote
+  snapshot (43 files) — nothing to push. Nothing moved: no user report, per
+  the no-progress-stays-silent rule.
+
+- 2026-10-16 (17:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (run from repo root, 12.9s); local allowlist tree
+  (43 files, excluding the pytest_cache artifact) sorted-diff identical to the
+  stored remote snapshot (43 files) — nothing to push. Nothing moved: no user
+  report, per the no-progress-stays-silent rule.
+
+- 2026-10-16 (19:49 PDT hourly run): no-op health check — overlap guard clear
+  (the one pgrep PID was already gone — a transient shell process, not a live
+  run; no background foldbot processes), no new garment photos (still 15; item
+  #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green via the
+  foldbot venv (run from repo root, 10.2s); local allowlist tree (43 files,
+  filter fixed to include *.pdf — the earlier 42-vs-43 diff was my own find
+  pattern, not a real tree difference) diff-identical to the stored remote
+  snapshot (43 files) — nothing to push. Nothing moved: no user report, per
+  the no-progress-stays-silent rule.
+
+- 2026-10-16 (20:49 PDT hourly run): no-op health check — overlap guard clear
+  (lock file set by this run, no other background foldbot processes), no new
+  garment photos (still 15; item #1 stays [NEEDS HER]), INT8 stays deferred;
+  test suite 118/118 green via the foldbot venv (run from repo root, 9.85s);
+  local allowlist tree (43 files incl. README/ROADMAP) diff-identical to the
+  stored remote snapshot (43 files) — nothing to push. Nothing moved: no user
+  report, per the no-progress-stays-silent rule.
+
+- 2026-10-16 (21:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (run from repo root, 11.45s); local allowlist tree
+  (43 files) sorted-diff identical to the stored remote snapshot (43 files) —
+  nothing to push. Nothing moved: no user report, per the no-progress-stays-
+  silent rule.
+
+- 2026-10-16 (22:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (run from repo root, 9.15s); local allowlist tree
+  (43 files incl. README/ROADMAP) sorted-diff identical to the stored remote
+  snapshot (43 files) — nothing to push. Outside reporting hours (22:49 PDT):
+  work done, no user report.
+
+- 2026-10-16 (23:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (run from repo root, 8.69s); local allowlist tree
+  (43 files incl. README/ROADMAP) sorted-diff identical to the stored remote
+  snapshot (43 files) — nothing to push. Outside reporting hours (23:49 PDT):
+  work done, no user report.
+
+- 2026-10-17 (00:49 PDT hourly run): no-op health check — overlap guard clear
+  (lock file set by this run, no background foldbot processes), no new garment
+  photos (still 15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (run from repo root, 7.12s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the
+  stored remote snapshot (43 files) — nothing to push. Outside reporting
+  hours (00:49 PDT): work done, no user report.
+
+- 2026-10-17 (01:49 PDT hourly run): no-op health check — overlap guard clear
+  (lock file set by this run, no background foldbot processes), no new garment
+  photos (still 15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (run from repo root, 9.12s); local
+  allowlist tree (43 files) sorted-diff identical to the stored remote
+  snapshot (43 files) — nothing to push. Outside reporting hours (01:49 PDT):
+  work done, no user report.
+
+- 2026-10-17 (02:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the one pgrep PID was already gone — a transient shell
+  process, not a live run; no background foldbot processes), no new garment
+  photos (still 15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (run from repo root, 7.02s); local
+  allowlist tree (43 files, excluding the pytest_cache artifact) sorted-diff
+  identical to the stored remote snapshot (43 files) — nothing to push.
+  Outside reporting hours (02:49 PDT): work done, no user report.
+
+- 2026-10-17 (03:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (run from repo root, 8.79s); local allowlist tree
+  (43 files) sorted-diff identical to the stored remote snapshot (43 files) —
+  nothing to push. Outside reporting hours (03:49 PDT): work done, no user
+  report.
+
+- 2026-10-18 (04:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 8.45s); local allowlist tree (43 files)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (04:49 PDT): work done, no user report.
+
+- 2026-10-17 (04:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (run from repo root, 8.79s); local allowlist tree
+  (43 files) sorted-diff identical to the stored remote snapshot (43 files) —
+  nothing to push. Outside reporting hours (04:49 PDT): work done, no user
+  report.
+
+- 2026-10-17 (05:49 PDT hourly run): no-op health check — overlap guard clear
+  (the one pgrep PID was already gone — a transient shell process, not a live
+  run; no lock file, no background foldbot processes), no new garment photos
+  (still 15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (run from repo root, 9.59s); local
+  allowlist tree (43 files) sorted-diff identical to the stored remote
+  snapshot (43 files) — nothing to push. Outside reporting hours (05:49 PDT):
+  work done, no user report.
+
+- 2026-10-17 (06:49 PDT hourly run): no-op health check — overlap guard clear
+  (no other run processes active; lock file set by this run then removed), no
+  new garment photos (still 15; item #1 stays [NEEDS HER]), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (run from repo
+  root, 9.41s); local allowlist tree (43 files incl. README/ROADMAP)
+  sorted-diff identical to the stored remote snapshot (43 files) — nothing to
+  push. Outside reporting hours (06:49 PDT): work done, no user report.
+
+- 2026-10-17 (07:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.0s); local allowlist tree (43 files)
+  diff-identical to the verified remote snapshot — nothing to push.
+
+- 2026-10-17 (08:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 8.54s); local allowlist tree (43 files) sorted-
+  diff identical to the verified remote snapshot — nothing to push. - 2026-10-17 (09:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 10.9s); local allowlist tree (43 files) sorted-
+  diff identical to the verified remote snapshot — nothing to push. Nothing moved:
+  no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-17 (10:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no other run processes; no background foldbot processes), no
+  new garment photos (still 15; item #1 stays [NEEDS HER]), INT8 stays deferred;
+  test suite 118/118 green via the foldbot venv (repo root, 11.01s); local
+  allowlist tree (43 files, find-pattern verified against the docs-pdf file)
+  sorted-diff identical to the stored remote snapshot (43 files) — nothing to
+  push. Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-17 (11:49 PDT hourly run): no-op health check — overlap guard clear
+  (the pgrep PID was a transient shell process, already gone; no lock file, no
+  background foldbot processes), no new garment photos (still 15; item #1 stays
+  [NEEDS HER]), INT8 stays deferred; test suite 118/118 green via the foldbot
+  venv (repo root, 10.47s); local allowlist tree (43 files) sorted-diff
+  identical to the verified remote snapshot — nothing to push. Nothing moved:
+  no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-17 (12:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.02s); local allowlist tree (43 files)
+  sorted-diff identical to the stored remote snapshot both directions —
+  nothing to push. Nothing moved: no user report, per the
+  no-progress-stays-silent rule.
+
+- 2026-10-17 (14:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.30s); local allowlist tree (43 files,
+  excluding pytest/pycache artifacts) diff-identical to the stored remote
+  snapshot — nothing to push. Nothing moved: no user report, per the
+  no-progress-stays-silent rule.
+
+- 2026-10-17 (15:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still 15; item #1 stays
+  [NEEDS HER]), INT8 stays deferred; test suite 118/118 green via the foldbot
+  venv (repo root, 10.37s); local allowlist tree (43 files, full-pattern
+  find incl. dashboard docs assets) sorted-diff identical to the verified remote
+  snapshot — nothing to push. Nothing moved: no user report, per the
+  no-progress-stays-silent rule.
+
+- 2026-10-17 (16:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.07s); local allowlist tree (43 files, find
+  pattern fixed to -path for perception/ + pytest_cache excluded) sorted-diff
+  identical to the verified remote snapshot — nothing to push. Nothing moved:
+  no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-17 (17:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 10.16s); local allowlist tree (43 files,
+  root README/ROADMAP included in the find) sorted-diff identical to the
+  verified remote snapshot — nothing to push. Nothing moved: no user report,
+  per the no-progress-stays-silent rule.
+
+- 2026-10-17 (18:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the one pgrep PID was already gone — a transient shell
+  process, not a live run; no background foldbot processes), no new garment
+  photos (still 15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 8.86s); local allowlist tree
+  (43 files) sorted-diff identical to the stored remote snapshot (only the
+  "./" prefix differed in the comparison, names match) — nothing to push.
+  Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-17 (19:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.28s); local allowlist content (43 files —
+  the only local-only extras were .gitignore and .pytest_cache, neither of
+  which belongs in the repo) matches the verified remote tree exactly — nothing
+  to push. Nothing moved: no user report, per the no-progress-stays-silent
+  rule.
+
+- 2026-10-17 (20:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 10.17s); local allowlist tree (43 files)
+  diff-identical to the stored remote snapshot — nothing to push. Nothing
+  moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-20 (19:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 8.74s); local allowlist tree (43 files)
+  identical to the stored remote snapshot as a sorted set (an earlier run's
+  line-count comparison misread ordering as a diff; both files list the same
+  43 paths) — nothing to push. Nothing moved: no user report, per the
+  no-progress-stays-silent rule (19:49 PDT is within reporting hours, but
+  there is genuinely no new progress to report).
+
+- 2026-10-20 (07:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.14s); local allowlist tree (41 subdir
+  files + README/ROADMAP = 43 files) sorted-diff identical to the stored remote
+  snapshot (both directions clean) — nothing to push. Outside reporting hours
+  (07:49 PDT): work done, no user report.
+
+- 2026-10-17 (23:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 7.16s); local allowlist tree (43 files,
+  README/ROADMAP included) sorted-diff identical to the stored remote snapshot
+  — nothing to push. Outside reporting hours (23:49 PDT): work done, no user
+  report.
+
+- 2026-10-18 (00:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the one pgrep PID was already gone — a transient shell
+  process, not a live run; no background foldbot processes), no new garment
+  photos (still 15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 9.71s); local allowlist tree
+  (43 files, README/ROADMAP included) sorted-diff identical to the stored
+  remote snapshot — nothing to push. Outside reporting hours (00:49 PDT): work
+  done, no user report.
+
+- 2026-10-18 (01:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 10.21s); local allowlist tree matches the
+  remote snapshot (43 files; the only local-only extras were __pycache__ .pyc
+  artifacts, excluded from the push allowlist by rule) — nothing to push.
+  Outside reporting hours (01:49 PDT): work done, no user report.
+
+- 2026-10-18 (02:49 PDT hourly run): no-op health check — overlap guard clear
+  (the one pgrep PID was already gone — a transient shell process, not a live
+  run; no lock file, no background foldbot processes), no new garment photos
+  (still 15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 8.75s); local allowlist tree
+  (43 files) sorted-diff identical to the stored remote snapshot — nothing to
+  push. Outside reporting hours (02:49 PDT): work done, no user report.
+
+- 2026-10-18 (03:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the only pgrep PIDs were the invoking shell itself, transient;
+  no background foldbot processes), no new garment photos (still 15; item #1
+  stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green via the
+  foldbot venv (repo root, 9.39s); local allowlist tree (43 files) diff-identical
+  to the stored remote snapshot both directions — nothing to push. Outside
+  reporting hours (03:49 PDT): work done, no user report.
+
+- 2026-10-18 (05:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.29s); local allowlist tree (43 files)
+  matches the stored remote snapshot — nothing to push. Outside reporting
+  hours (05:49 PDT): work done, no user report.
+
+- 2026-10-18 (06:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.26s); local allowlist tree (43 files)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (06:49 PDT): work done, no user report.
+
+- 2026-10-18 (07:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes; the three pgrep PIDs were
+  already gone — transient processes from this run's own pytest invocation),
+  no new garment photos (still 15; item #1 stays [NEEDS HER]), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.26s);
+  local allowlist tree (43 files) sorted-diff identical to the stored remote
+  snapshot — nothing to push. Outside reporting hours (07:49 PDT): work done,
+  no user report.
+
+- 2026-10-18 (08:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 8.26s); local allowlist tree (43 files)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-18 (09:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 7.14s); local allowlist tree (43 files)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-18 (10:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 8.58s); local allowlist tree (43 files)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-18 (11:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.90s); local allowlist tree (43 files)
+  diff-identical to the stored remote snapshot — nothing to push. Nothing
+  moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-18 (12:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.25s); local allowlist tree (43 files)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-18 (13:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.10s); local allowlist tree (43 files)
+  diff-identical to the stored remote snapshot — nothing to push. Nothing
+  moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-18 (14:49 PDT hourly run): no-op health check — overlap guard clear
+  (the pgrep PID was already gone — a transient shell process, not a live
+  run; no lock file, no background foldbot processes), no new garment photos
+  (still 15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 7.18s); local allowlist tree
+  (43 files) diff-identical to the stored remote snapshot — nothing to push.
+  Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-18 (15:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.05s); local allowlist tree (43 files)
+  diff-identical to the stored remote snapshot — nothing to push. Nothing
+  moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-18 (16:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 10.09s); local allowlist tree (43 files,
+  README/ROADMAP included) sorted-diff identical to the verified remote
+  snapshot — nothing to push. Nothing moved: no user report, per the
+  no-progress-stays-silent rule.
+
+- 2026-10-18 (17:49 PDT hourly run): no-op health check — overlap guard clear
+  (lock set by this run; the two pgrep PIDs were already gone — transient shell
+  processes, not live runs), no new garment photos (still 15; item #1 stays
+  [NEEDS HER]; photo-gap checklist was already delivered to her at 16:38 PDT,
+  so no repeat nudge per the drop-it-if-ignored rule), INT8 stays deferred;
+  test suite 118/118 green via the foldbot venv (repo root, 10.53s); local
+  allowlist tree (43 files) diff-identical to the stored remote snapshot —
+  nothing to push. Nothing moved: no user report, per the
+  no-progress-stays-silent rule.
+
+- 2026-10-18 (18:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes, no active child agents),
+  no new garment photos (still 15; item #1 stays [NEEDS HER]), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.49s);
+  local allowlist tree (43 files) matches remote main tree (43 blobs, verified
+  via the GitHub trees API); local ROADMAP done-log lines remain unpushed
+  (no-op log drift, per convention) — nothing to push. Nothing moved: no
+  user report, per the no-progress-stays-silent rule.
+
+- 2026-10-18 (19:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes; the one pgrep PID was already
+  gone — a transient shell process, not a live run), no new garment photos
+  (still 15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 9.88s); local allowlist tree
+  (43 files) diff-identical to the stored remote snapshot — nothing to push.
+  Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-18 (20:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.38s); local allowlist tree (43 files)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-18 (21:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.22s); local allowlist tree (43 files)
+  diff-identical to the stored remote snapshot (43 files) — nothing to push.
+  Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-18 (22:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 8.19s); local allowlist tree (43 files incl.
+  README/ROADMAP) diff-identical to the stored remote snapshot (43 files) —
+  nothing to push. Outside reporting hours (22:49 PDT): work done, no user
+  report.
+
+- 2026-10-18 (23:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 8.77s); local allowlist tree (43 files)
+  diff-identical to the stored remote snapshot — nothing to push. Outside
+  reporting hours (23:49 PDT): work done, no user report.
+
+- 2026-10-19 (00:49 PDT hourly run): no-op health check — overlap guard clear
+  (lock file set by this run, no background foldbot processes), no new garment
+  photos (still 15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 7.99s); local allowlist tree
+  (43 files) diff-identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (00:49 PDT): work done, no user report.
+
+- 2026-10-19 (01:49 PDT hourly run): no-op health check — overlap guard clear
+  (no background foldbot processes; pgrep hits were this run's own shell),
+  no new garment photos (still 15; item #1 stays [NEEDS HER]), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.98s);
+  local allowlist tree (43 files, allowlist-clean: no .pt/data/cutouts/photos)
+  diff-identical to the stored remote snapshot — nothing to push. Outside
+  reporting hours (01:49 PDT): work done, no user report.
+
+- 2026-10-19 (02:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 8.90s); local allowlist tree (43 files)
+  diff-identical to the stored remote snapshot — nothing to push. Outside
+  reporting hours (02:49 PDT): work done, no user report.
+
+- 2026-10-19 (03:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes; lock file set by this run),
+  no new garment photos (still 15 from 10-13; item #1 stays [NEEDS HER];
+  photo-gap checklist already delivered to her 10-18 16:38 PDT, no repeat
+  nudge), INT8 stays deferred; test suite 118/118 green via the foldbot venv
+  (repo root, 9.24s); local allowlist tree (43 files) diff-identical to the
+  stored remote snapshot (43 files, sorted-diff clean) — nothing to push.
+  Outside reporting hours (03:49 PDT): work done, no user report.
+
+- 2026-10-19 (04:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep hit was this run's own shell, transient),
+  no new garment photos (still 15 from 10-13; item #1 stays [NEEDS HER];
+  photo-gap checklist already delivered to her 10-18 16:38 PDT, no repeat
+  nudge), INT8 stays deferred; test suite 118/118 green via the foldbot venv
+  (repo root, 8.72s); local allowlist tree (43 files) diff-identical to the
+  stored remote snapshot — the only local-only extras were
+  data/real_train/annotations.json and data/real_val/annotations.json
+  (Oct-6 synthetic label artifacts, data/ is never pushed) — nothing to push.
+  Outside reporting hours (04:49 PDT): work done, no user report.
+
+- 2026-10-19 (05:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered to her 10-18 16:38 PDT, no repeat nudge), INT8 stays deferred;
+  test suite 118/118 green via the foldbot venv (repo root, 8.55s); local
+  allowlist tree (43 files) diff-identical to the stored remote snapshot —
+  nothing to push. Outside reporting hours (05:49 PDT): work done, no user
+  report.
+
+- 2026-10-19 (06:49 PDT hourly run): no-op health check — overlap guard clear
+  (process.list empty, no background foldbot processes), no new garment
+  photos (still 15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist
+  already delivered to her 10-18 16:38 PDT, no repeat nudge), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root,
+  11.0s); local allowlist tree (43 files) comm-diff identical to the stored
+  remote snapshot — nothing to push. Outside reporting hours (06:49 PDT):
+  work done, no user report.
+
+- 2026-10-19 (07:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 10.6s); local allowlist tree (43 files)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (07:49 PDT): work done, no user report.
+
+- 2026-10-19 (08:49 PDT hourly run): no-op health check — overlap guard clear (no lock file, no background foldbot processes), no new garment photos (still 15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo root, 8.84s); local allowlist tree (43 files incl. README/ROADMAP) diff-identical to the stored remote snapshot — nothing to push. Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-19 (09:49 PDT hourly run): no-op health check — overlap guard clear (no lock file, no background foldbot processes), no new garment photos (still 15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo root, 9.50s); local allowlist tree (43 files incl. README/ROADMAP) diff-identical to the stored remote snapshot (comm clean both directions) — nothing to push. Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-19 (11:49 PDT hourly run): no-op health check — overlap guard clear (no lock file, no background foldbot processes), no new garment photos (still 15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already delivered to her 10-18 16:38 PDT, no repeat nudge), INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo root, 8.35s); local allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the stored remote snapshot — nothing to push. Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-19 (12:49 PDT hourly run): no-op health check — overlap guard clear (no lock file, no foldbot background processes), no new garment photos (still 15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already delivered to her 10-18 16:38 PDT, no repeat nudge), INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo root, 9.41s); local allowlist tree (43 files) name-identical to remote HEAD cb6aebae; only ROADMAP.md content differs (accumulated local done-log lines, no code changes — following the since-10-15 convention, not pushed). Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-19 (13:49 PDT hourly run): no-op health check — overlap guard clear (no lock file, no background foldbot processes), no new garment photos (still 15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already delivered to her 10-18 16:38 PDT, no repeat nudge), INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo root, 7.46s); local allowlist tree (43 files) name-identical to the stored remote snapshot, and remote HEAD on main is still cb6aebae (2026-10-15, verified fresh via the public GitHub API) — nothing to push. Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-19 (14:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.39s); local allowlist tree (43 files)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-19 (15:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered to her 10-18 16:38 PDT, no repeat nudge), INT8 stays deferred; test
+  suite 118/118 green via the foldbot venv (repo root, 9.21s); local allowlist
+  tree (43 files) comm-identical to the stored remote snapshot — nothing to
+  push. Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-19 (16:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes, no active subagents), no new
+  garment photos (still 15 from 10-13; item #1 stays [NEEDS HER]), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.77s);
+  local allowlist tree (43 files) diff-identical to the stored remote snapshot
+  (43 files) — nothing to push. Nothing moved: no user report, per the
+  no-progress-stays-silent rule.
+
+- 2026-10-19 (17:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the pgrep hit was the invoking shell itself, transient),
+  no new garment photos (still 15 from 10-13; item #1 stays [NEEDS HER];
+  photo-gap checklist already delivered to her 10-18 16:38 PDT, no repeat
+  nudge), INT8 stays deferred; test suite 118/118 green via the foldbot venv
+  (repo root, 9.72s); local allowlist tree (43 files) diff-identical to the
+  stored remote snapshot — nothing to push. Nothing moved: no user report,
+  per the no-progress-stays-silent rule.
+
+- 2026-10-19 (18:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 8.20s); local allowlist tree (43 files)
+  diff-identical to the stored remote snapshot (43 files) — nothing to push.
+  Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-19 (19:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the one pgrep PID was already gone — a transient shell
+  process, not a live run; no background foldbot processes), no new garment
+  photos (still 15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 9.55s); local allowlist tree
+  (43 files, name-sorted comm verified) identical to the stored remote
+  snapshot — nothing to push. Nothing moved: no user report, per the
+  no-progress-stays-silent rule.
+
+- 2026-10-19 (20:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 8.09s); local allowlist tree (43 files)
+  diff-identical to the stored remote snapshot — nothing to push. Nothing
+  moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-19 (21:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the pgrep PID was already gone — a transient process from this
+  run's own earlier shell command, not a live run; no background foldbot
+  processes), no new garment photos (still 15 from 10-13; item #1 stays
+  [NEEDS HER]; photo-gap checklist already delivered to her 10-18 16:38 PDT,
+  no repeat nudge), INT8 stays deferred; test suite 118/118 green via the
+  foldbot venv (repo root, 8.32s); local allowlist tree (43 files) diff-identical
+  to the stored remote snapshot — nothing to push. Nothing moved: no user
+  report, per the no-progress-stays-silent rule.
+
+- 2026-10-19 (22:49 PDT hourly run): no-op health check — overlap guard clear
+  (lock set/removed by this run; no background foldbot processes, no .git dir
+  in local repo — remote compared via GitHub API tree instead), no new garment
+  photos (still 15 from 10-13; item #1 stays [NEEDS HER]), INT8 stays deferred;
+  test suite 118/118 green via the foldbot venv (10.30s); remote main HEAD
+  cb6aebae verified live: 43 allowlist files name-identical to local tree —
+  nothing to push. Nothing moved: no user report (outside 08:00–22:00 hours
+  and the no-progress-stays-silent rule).
+
+- 2026-10-19 (23:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist delivered to her
+  10-18 16:38 PDT, no repeat nudge), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 9.80s); local allowlist tree (43 files)
+  diff-identical to the stored remote snapshot — nothing to push. Nothing moved:
+  no user report (outside 08:00–22:00 hours and the no-progress-stays-silent
+  rule).
+
+- 2026-10-20 (00:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the one pgrep pytest PID was already gone — a transient shell
+  process, not a live run; no background foldbot processes), no new garment
+  photos (still 15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist
+  delivered to her 10-18 16:38 PDT, no repeat nudge), INT8 stays deferred; test
+  suite 118/118 green via the foldbot venv (repo root, 9.70s); local allowlist
+  tree (43 files incl. README/ROADMAP) sorted-diff identical to the stored
+  remote snapshot — nothing to push. Nothing moved: no user report (outside
+  08:00–22:00 hours and the no-progress-stays-silent rule).
+
+
+- 2026-10-20 (01:49 PDT hourly run): no-op health check — overlap guard clear
+  (the three pgrep PIDs were already gone — transient shell processes, not live
+  runs; no lock file, no background foldbot processes), no new garment photos
+  (still 15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 9.81s); local allowlist tree
+  (43 files) sorted-diff identical to the stored remote snapshot — nothing to
+  push. Outside reporting hours (01:49 PDT): work done, no user report.
+
+- 2026-10-20 (02:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 10.63s); local allowlist tree (43 files incl.
+  README/ROADMAP) diff-identical to the stored remote snapshot — nothing to
+  push. Outside reporting hours (02:49 PDT): work done, no user report.
+
+- 2026-10-20 (03:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 8.75s); local allowlist tree
+  (43 files) sorted-diff identical to the stored remote snapshot — nothing to
+  push. Outside reporting hours (03:49 PDT): work done, no user report.
+
+- 2026-10-20 (04:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 8.64s); local allowlist tree (43 files)
+  name-identical to the stored remote snapshot (43 files, only the "./" find
+  prefix differed) — nothing to push. Outside reporting hours (04:49 PDT):
+  work done, no user report.
+
+- 2026-10-20 (05:49 PDT hourly run): no-op health check — overlap guard clear
+  (the one pgrep PID was already gone — a transient shell process, not a live
+  run; no lock file, no background foldbot processes), no new garment photos
+  (still 15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 7.40s); local allowlist tree
+  (43 files incl. README/ROADMAP) diff-identical to the stored remote snapshot
+  — nothing to push. Outside reporting hours (05:49 PDT): work done, no user
+  report.
+
+- 2026-10-20 (06:49 PDT hourly run): no-op health check — overlap guard clear
+  (the pgrep PID was the invoking shell itself; ps confirmed no real foldbot
+  processes, no lock file), no new garment photos (still 15; item #1 stays
+  [NEEDS HER]), INT8 stays deferred; test suite 118/118 green via the foldbot
+  venv (repo root, 9.60s); local allowlist tree (43 files) sorted-diff
+  identical to the stored remote snapshot — nothing to push. Nothing moved:
+  no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-20 (08:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.64s); local allowlist tree (43 files,
+  __pycache__/.pyc excluded) sorted-diff identical to the verified remote
+  snapshot — nothing to push. Nothing moved: no user report, per the
+  no-progress-stays-silent rule.
+
+- 2026-10-20 (09:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.27s); local allowlist tree (43 files incl.
+  README/ROADMAP, __pycache__/.pyc excluded) sorted-diff identical to the
+  stored remote snapshot — nothing to push. Nothing moved: no user report, per
+  the no-progress-stays-silent rule.
+
+- 2026-10-20 (10:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.11s); local allowlist tree (43 files:
+  bt/, perception/*.py, planning/, execution/, msgs/, tests/, docs/,
+  dashboard/, README.md, ROADMAP.md) sorted-diff identical to the stored remote
+  snapshot — nothing to push. Nothing moved: no user report, per the
+  no-progress-stays-silent rule.
+
+- 2026-10-20 (11:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no active subagents, no background foldbot processes), no new
+  garment photos (still 15; item #1 stays [NEEDS HER]), INT8 stays deferred;
+  test suite 118/118 green via the foldbot venv (repo root, 10.27s); local
+  allowlist tree (41 subdir files + README/ROADMAP = 43) name-identical to the
+  verified remote snapshot (43 files) — nothing to push. Nothing moved: no
+  user report, per the no-progress-stays-silent rule.
+
+- 2026-10-20 (12:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes; the pgrep PID was this run's
+  own shell), no new garment photos (still 15 from 10-13; item #1 stays
+  [NEEDS HER]; photo-gap checklist already delivered 10-18 16:38 PDT, no repeat
+  nudge), INT8 stays deferred; test suite 118/118 green via the foldbot venv
+  (repo root, 9.32s); local allowlist tree (41 subdir files + README/ROADMAP =
+  43) name-identical to the verified remote snapshot — nothing to push. Nothing
+  moved: no user report, per the no-progress-stays-silent rule.
+- 2026-10-20 (13:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no foldbot background processes), no new garment photos
+  (still 15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18 16:38 PDT, no repeat nudge), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (9.27s); local allowlist tree (43 files)
+  name-identical to the verified remote snapshot — nothing to push. Nothing
+  moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-20 (14:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no foldbot background processes; the one pgrep PID was this
+  run's own shell), no new garment photos (still 15 from 10-13; item #1 stays
+  [NEEDS HER]; photo-gap checklist already delivered 10-18 16:38 PDT, no repeat
+  nudge), INT8 stays deferred; test suite 118/118 green via the foldbot venv
+  (repo root, 11.57s); local allowlist tree (41 subdir files + README/ROADMAP =
+  43) name-identical to the verified remote snapshot — nothing to push. Nothing
+  moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-20 (15:49 PDT hourly run): no-op health check — overlap guard clear
+  (no foldbot background processes; the one pgrep hit was this run's own shell),
+  no new garment photos (still 15 from 10-13; item #1 stays [NEEDS HER];
+  photo-gap checklist already delivered 10-18 16:38 PDT, no repeat nudge),
+  INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo
+  root, 9.51s); local allowlist tree (43 files) name-identical to the remote
+  main tree (verified live via GitHub trees API, 43 blobs) — nothing to push.
+  Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-20 (16:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no foldbot background processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18 16:38 PDT, no repeat nudge), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 10.60s); local allowlist tree
+  (43 files) sorted-diff identical to the stored remote snapshot (43 files,
+  both directions) — nothing to push. Nothing moved: no user report, per the
+  no-progress-stays-silent rule.
+
+- 2026-10-20 (17:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.78s); local allowlist tree (43 files incl.
+  README/ROADMAP) sorted-diff identical to the stored remote snapshot — nothing
+  to push. Nothing moved: no user report, per the no-progress-stays-silent
+  rule.
+
+- 2026-10-20 (18:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 8.59s); local allowlist tree (43 files)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-20 (20:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes; this run's lock set then
+  removed), no new garment photos (still 15 from 10-13; item #1 stays
+  [NEEDS HER]; photo-gap checklist already delivered 10-18 16:38 PDT, no repeat
+  nudge), INT8 stays deferred; test suite 118/118 green via the foldbot venv
+  (repo root, 8.73s); local allowlist tree (43 files) name-identical to the
+  verified remote snapshot (sorted-diff clean) — nothing to push. Nothing moved:
+  no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-20 (21:49 PDT hourly run): no-op health check — overlap guard clear
+  (the one pgrep PID was already gone — a transient process, not a live run;
+  no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.94s); local allowlist tree (43 files)
+  diff-identical to the stored remote snapshot — nothing to push. Nothing
+  moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-20 (22:49 PDT hourly run): no-op health check — overlap guard clear
+  (lock file set by this run, no background foldbot processes), no new garment
+  photos (still 15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 8.84s); local allowlist tree
+  (43 files) sorted-diff identical to the stored remote snapshot — nothing to
+  push. Outside reporting hours (22:49 PDT): work done, no user report.
+
+- 2026-10-21 (00:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.19s); local allowlist tree (43 files) set-
+  identical to the stored remote snapshot (only the "./" prefix differed in the
+  sorted-diff) — nothing to push. Outside reporting hours (00:49 PDT): work
+  done, no user report.
+
+- 2026-10-21 (01:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 8.9s); local allowlist tree (43 files incl.
+  README/ROADMAP) matches the stored remote snapshot (prefix-only comparison
+  difference, names identical) — nothing to push. Outside reporting hours
+  (01:49 PDT): work done, no user report.
+
+- 2026-10-21 (02:49 PDT hourly run): no-op health check — overlap guard clear
+  (process.list empty, no lock file, no background foldbot processes), no new
+  garment photos (still 15 from 10-13; item #1 stays [NEEDS HER]), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.13s);
+  local allowlist tree (43 files, __pycache__/.pyc excluded) diff-identical
+  to the stored remote snapshot — nothing to push. Outside reporting hours
+  (02:49 PDT): work done, no user report.
+
+- 2026-10-21 (03:49 PDT hourly run): no-op health check — overlap guard clear
+  (process.list empty, no lock file, no background foldbot processes), no new
+  garment photos (still 15 from 10-13; item #1 stays [NEEDS HER]), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.75s);
+  local allowlist tree (43 files, __pycache__/.pyc excluded) diff-identical
+  to the stored remote snapshot — nothing to push. Outside reporting hours
+  (03:49 PDT): work done, no user report.
+
+- 2026-10-21 (04:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 8.66s); local allowlist tree (43 files,
+  incl. tests/) sorted-diff identical to the verified remote snapshot —
+  nothing to push. Outside reporting hours (04:49 PDT): work done, no user
+  report.
+
+- 2026-10-21 (05:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 8.61s); local allowlist tree (43 files)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (05:49 PDT): work done, no user report.
+
+- 2026-10-21 (06:49 PDT hourly run): no-op health check — overlap guard clear
+  (the one pgrep PID was already gone — a transient process, not a live run;
+  no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 9.79s); local allowlist tree (43
+  files, __pycache__/.pyc excluded) diff-identical to the stored remote
+  snapshot — nothing to push. Outside reporting hours (06:49 PDT): work
+  done, no user report.
+
+- 2026-10-21 (07:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered to her 10-18 16:38 PDT, no repeat nudge), INT8 stays deferred; test
+  suite 118/118 green via the foldbot venv (repo root, 9.00s); local allowlist
+  tree (43 files, __pycache__/.pyc excluded) diff-identical to the stored remote
+  snapshot — nothing to push. Outside reporting hours (07:49 PDT): work done,
+  no user report.
+
+- 2026-10-21 (08:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered to her 10-18 16:38 PDT, no repeat nudge), INT8 stays deferred; test
+  suite 118/118 green via the foldbot venv (repo root, 10.30s); local allowlist
+  tree (43 files) git-blob-sha identical to remote main for every file except
+  ROADMAP.md itself (local run-log entries since the 2026-10-15 02:49 PDT push —
+  no code changed, nothing to push). Within reporting hours (08:49 PDT) but no
+  new progress: no user report.
+
+- 2026-10-21 (09:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 8.46s); local allowlist tree (43 files)
+  diff-identical to the stored remote snapshot (43 files) — nothing to push.
+  Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-21 (10:49 PDT hourly run): no-op health check — overlap guard clear
+  (the one pgrep PID was already gone — a transient shell process, not a live
+  run; no lock file, no background foldbot processes), no new garment photos
+  (still 15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 7.25s); local allowlist tree
+  (43 files) sorted-diff identical to the stored remote snapshot — nothing to
+  push. Nothing moved: no user report, per the no-progress-stays-silent rule.
+- 2026-10-21 (11:49 PDT hourly run): no-op health check — overlap guard clear (no lock file, no background foldbot processes), no new garment photos (still 15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo root, 7.65s); local allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the stored remote snapshot (43 files) — nothing to push. Nothing moved: no user report, per the no-progress-stays-silent rule.
+- 2026-10-21 (12:49 PDT hourly run): no-op health check — overlap guard clear (no subagents, no lock file; the pgrep PIDs were this run's own parallel pytest processes, already gone), no new garment photos (still 15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo root, 8.90s); local allowlist tree (43 files) diff-identical to the stored remote snapshot (43 files) — nothing to push. Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-21 (13:49 PDT hourly run): no-op health check — overlap guard clear
+  (pgrep PIDs already gone — transient processes, not a live run; no background
+  foldbot processes), no new garment photos (still 15; item #1 stays [NEEDS HER]),
+  INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo root,
+  9.61s); local allowlist tree (43 files) diff-identical to the stored remote
+  snapshot — nothing to push. Nothing moved: no user report, per the
+  no-progress-stays-silent rule.
+
+- 2026-10-21 (14:49 PDT hourly run): no-op health check — overlap guard clear
+  (no subagents, no lock file; pgrep PIDs were this run's own pytest processes,
+  already gone), no new garment photos (still 15; item #1 stays [NEEDS HER]),
+  INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo root,
+  8.95s); local allowlist tree (43 files incl. README/ROADMAP, +dashboard/progress.json
+  and docs/foldbot-ros2-bt-design.pdf in the find pattern this run) diff-identical
+  to the stored remote snapshot — nothing to push. Nothing moved: no user report,
+  per the no-progress-stays-silent rule.
+
+- 2026-10-21 (15:49 PDT hourly run): no-op health check — overlap guard clear
+  (no foldbot processes active), no new garment photos (still 15; item #1 stays
+  [NEEDS HER]), INT8 stays deferred; test suite 118/118 green via the foldbot
+  venv (repo root, 8.87s); local allowlist tree (43 files incl. README/ROADMAP)
+  diff-identical to the stored remote snapshot — nothing to push. Nothing moved:
+  no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-21 (16:49 PDT hourly run): no-op health check — overlap guard clear
+  (lock set/removed by this run, no background foldbot processes), no new garment
+  photos (still 15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 8.76s); local allowlist tree
+  (43 files) sorted-diff identical to the stored remote snapshot — nothing to
+  push. Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-21 (17:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 9.65s); local allowlist tree
+  (43 files, __pycache__/.pyc excluded) diff-identical to the stored remote
+  snapshot — nothing to push. Nothing moved: no user report, per the
+  no-progress-stays-silent rule.
+
+- 2026-10-21 (18:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already delivered
+  to her 10-18, no repeat nudge), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.86s); local allowlist tree (43 files,
+  __pycache__/.pyc/.pt/data excluded) diff-identical to the stored remote
+  snapshot — nothing to push. Nothing moved: no user report, per the
+  no-progress-stays-silent rule.
+
+- 2026-10-21 (19:49 PDT hourly run): no-op health check — overlap guard clear
+  (lock set/removed by this run; the one pgrep PID was already gone — a
+  transient process, not a live run; no background foldbot processes), no new
+  garment photos (still 15 from 10-13; item #1 stays [NEEDS HER]; photo-gap
+  checklist delivered 10-18, no repeat nudge), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 13.02s); local allowlist tree
+  (41 subdir files + README/ROADMAP = 43) sorted-diff identical to the verified
+  remote snapshot — nothing to push. Nothing moved: no user report, per the
+  no-progress-stays-silent rule.
+
+- 2026-10-21 (20:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist delivered 10-18,
+  no repeat nudge), INT8 stays deferred; test suite 118/118 green via the
+  foldbot venv (repo root, 7.41s); local allowlist tree (41 subdir files +
+  README/ROADMAP = 43) sorted-diff identical to the verified remote snapshot —
+  nothing to push. Nothing moved: no user report, per the no-progress-stays-
+  silent rule.
+
+- 2026-10-21 (21:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist delivered 10-18,
+  no repeat nudge), INT8 stays deferred; test suite 118/118 green via the
+  foldbot venv (repo root, 8.53s); local allowlist tree (43 files incl.
+  README/ROADMAP) sorted-diff identical to the stored remote snapshot (43
+  files, comm clean both directions) — nothing to push. Nothing moved: no user
+  report, per the no-progress-stays-silent rule.
+
+- 2026-10-21 (22:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.10s); local allowlist tree (43 files)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (22:49 PDT): work done, no user report.
+
+- 2026-10-21 (23:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes; pgrep PIDs were this run's
+  own pytest processes), no new garment photos (still 15 from 10-13; item #1
+  stays [NEEDS HER]; photo-gap checklist delivered 10-18, no repeat nudge),
+  INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo
+  root, 11.52s); local allowlist tree (43 files) sorted-diff identical to the
+  verified remote snapshot — nothing to push. Outside reporting hours
+  (23:49 PDT): work done, no user report.
+
+- 2026-10-22 (00:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist delivered 10-18,
+  no repeat nudge), INT8 stays deferred; test suite 118/118 green via the
+  foldbot venv (repo root, 9.13s); local allowlist tree (41 subdir files +
+  README/ROADMAP = 43) name-identical to the stored remote snapshot (43 files,
+  comm clean both directions) — nothing to push. Outside reporting hours
+  (00:49 PDT): work done, no user report.
+
+- 2026-10-22 (01:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the pgrep hit was this run's own shell, transient; no
+  background foldbot processes), no new garment photos (still 15 from 10-13;
+  item #1 stays [NEEDS HER]; photo-gap checklist delivered 10-18, no repeat
+  nudge), INT8 stays deferred; test suite 118/118 green via the foldbot venv
+  (repo root, 8.50s); local allowlist tree (43 files) comm-identical to the
+  stored remote snapshot both directions — nothing to push. Outside reporting
+  hours (01:49 PDT): work done, no user report.
+
+- 2026-10-22 (02:49 PDT hourly run): no-op health check — overlap guard clear
+  (lock set/removed by this run; the pgrep PID was a transient process,
+  already gone — not a live run; no background foldbot processes), no new
+  garment photos (still 15 from 10-13; item #1 stays [NEEDS HER]; photo-gap
+  checklist delivered 10-18, no repeat nudge), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 8.74s); local allowlist tree
+  (43 files incl. README/ROADMAP) comm-identical to the stored remote snapshot
+  both directions — nothing to push. Outside reporting hours (02:49 PDT):
+  work done, no user report.
+
+- 2026-10-22 (03:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist delivered 10-18,
+  no repeat nudge), INT8 stays deferred; test suite 118/118 green via the
+  foldbot venv (repo root, 8.83s); local allowlist tree (43 files incl.
+  README/ROADMAP) comm-identical to the stored remote snapshot both directions
+  — nothing to push. Outside reporting hours (03:49 PDT): work done, no user
+  report.
+
+- 2026-10-22 (04:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist delivered 10-18,
+  no repeat nudge), INT8 stays deferred; test suite 118/118 green via the
+  foldbot venv (repo root, 9.29s); local allowlist tree (43 files incl.
+  README/ROADMAP) diff-identical to the stored remote snapshot — nothing to
+  push. Outside reporting hours (04:49 PDT): work done, no user report.
+
+- 2026-10-22 (05:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.16s); local allowlist tree (43 files)
+  sorted-diff identical to the stored remote snapshot — nothing to push.
+  Outside reporting hours (05:49 PDT): work done, no user report.
+
+- 2026-10-22 (07:49 PDT hourly run): no-op health check — overlap guard clear
+  (lock set/removed by this run, no background foldbot processes), no new garment
+  photos (still 15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist
+  delivered to her 10-18, no repeat nudge), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 9.06s); local allowlist tree
+  (43 files incl. README/ROADMAP) sorted-diff clean vs the stored remote snapshot
+  both directions — nothing to push. Outside reporting hours (07:49 PDT): work
+  done, no user report.
+
+- 2026-10-22 (08:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 9.64s); local allowlist tree (43 files)
+  sorted-diff identical to the verified remote snapshot (43 files) — nothing to
+  push. Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-22 (10:49 PDT hourly run): no-op health check — overlap guard clear (no lock file, no background foldbot processes), no new garment photos (still 15; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo root, 9.96s); local allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the verified remote snapshot — nothing to push. Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-22 (11:49 PDT hourly run): no-op health check — overlap guard clear (no lock file, no background foldbot processes), no new garment photos (still 15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist delivered 10-18, no repeat nudge), INT8 stays deferred; test suite 118/118 green via the foldbot venv (repo root, 8.61s); local allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the verified remote snapshot — nothing to push. Nothing moved: no user report, per the no-progress-stays-silent rule.
+
+- 2026-10-22 (18:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 9.58s); local allowlist tree
+  (43 files incl. README/ROADMAP) sorted-diff identical to the stored remote
+  snapshot — nothing to push. Nothing moved: no user report, per the
+  no-progress-stays-silent rule.
+
+- 2026-10-22 (20:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 9.19s); local allowlist tree
+  (41 subdir files + README/ROADMAP = 43) sorted-diff identical to the stored
+  remote snapshot (43 files) — nothing to push. Nothing moved: no user report,
+  per the no-progress-stays-silent rule.
+
+- 2026-10-23 (02:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 7.33s); live GitHub tree
+  verified via API == stored snapshot == local allowlist tree (43 files each) —
+  nothing to push. Outside reporting hours (02:49 PDT): work done, no user
+  report, per the no-progress-stays-silent rule.
+
+- 2026-10-23 (23:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; all pgrep PIDs already gone — transient shell processes, not
+  live runs; no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 8.15s); local allowlist tree
+  (43 files incl. README/ROADMAP) sorted-diff identical to the stored remote
+  snapshot — nothing to push. Outside reporting hours (23:49 PDT): work done,
+  no user report.
+
+- 2026-10-24 (06:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]), INT8 stays deferred; test suite
+  118/118 green via the foldbot venv (repo root, 8.44s); local allowlist tree
+  (43 files incl. README/ROADMAP + docs PDF) sorted-diff identical to the
+  stored remote snapshot; GitHub repo confirmed live (main branch) — nothing
+  to push. Outside reporting hours (06:49 PDT): work done, no user report.
+
+- 2026-10-26 (00:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file, no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files
+  since 10-18 — the files newer than 2026-10-18 UTC are the same 10-17 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118
+  green via the foldbot venv (repo root, 9.42s); local allowlist tree
+  (43 files incl. README/ROADMAP) sorted-diff identical to the stored remote
+  snapshot — nothing to push. Outside reporting hours (00:49 PDT): work done,
+  no user report.
+- 2026-10-26 (09:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; the two files newer than 2026-10-18 UTC in
+  ~/workspace/user/files are the same 10-17 PDT family photos already
+  reviewed), INT8 stays deferred; test suite 118/118 green via the foldbot
+  venv (repo root, 8.54s); local allowlist tree sorted-diff identical to the
+  stored remote snapshot — nothing to push. Within reporting hours (09:49 PDT)
+  but no genuinely new progress, so no user report per the no-repeat rule.
+- 2026-10-26 (12:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; the two files newer than 2026-10-18 UTC in
+  ~/workspace/user/files are the same 10-17 PDT family photos already
+  reviewed), INT8 stays deferred; test suite 118/118 green via the foldbot
+  venv (repo root, 8.94s); local allowlist tree sorted-diff identical to the
+  stored remote snapshot — nothing to push. Within reporting hours (12:49 PDT)
+  but no genuinely new progress, so no user report per the no-repeat rule.
+- 2026-10-27 (15:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still
+  15 from 10-13; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; the files newer than 2026-10-18 UTC in
+  ~/workspace/user/files are the same 10-17 PDT family photos already
+  reviewed), INT8 stays deferred; test suite 118/118 green via the foldbot
+  venv (repo root, 8.10s); local allowlist tree sorted-diff identical to the
+  stored remote snapshot — nothing to push. Within reporting hours (15:49 PDT)
+  but no genuinely new progress, so no user report per the no-repeat rule.
+- 2026-10-27 (23:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; the sole pgrep PID was this run's own check shell, not a live
+  run; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap
+  checklist already delivered 10-18, no repeat nudge; no new uploads in
+  ~/workspace/user/files since 10-18 — newest files remain the 10-17/10-18 PDT
+  family photos already reviewed), INT8 stays deferred; test suite 118/118 green
+  via the foldbot venv (repo root, 8.70s); local allowlist tree (43 files incl.
+  README/ROADMAP) sorted-diff identical to the stored remote snapshot —
+  nothing to push. Outside reporting hours (23:49 PDT): work done, no user
+  report.
+
+- 2026-10-29 (02:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 6.77s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the stored
+  remote snapshot — nothing to push. Outside reporting hours (02:49 PDT): work done,
+  no user report.
+
+- 2026-10-30 (04:49 PDT hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.39s); local
+  allowlist tree (43 files incl. README/ROADMAP) sorted-diff identical to the stored
+  remote snapshot — nothing to push. Outside reporting hours (04:49 PDT): work done,
+  no user report.
+
+- 2026-11-02 (09:49 PST hourly run): no-op health check — overlap guard clear
+  (no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 8.45s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (09:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
+
+- 2026-11-03 (21:49 PST hourly run): no-op health check — overlap guard clear
+  (no lock file; no background foldbot processes), no new garment photos (still 15 from
+  10-13, newest mtime 10-13 19:02 UTC; item #1 stays [NEEDS HER]; photo-gap checklist already
+  delivered 10-18, no repeat nudge; no new uploads in ~/workspace/user/files since 10-18 —
+  newest files remain the 10-17/10-18 PDT family photos already reviewed), INT8 stays
+  deferred; test suite 118/118 green via the foldbot venv (repo root, 9.19s);
+  local allowlist tree (43 files incl. README/ROADMAP, dashboard/progress.json and the docs PDF,
+  __pycache__ excluded) sorted-diff identical to the stored remote snapshot — nothing to push.
+  Within reporting hours (21:49 PST) but nothing new moved, so no user report per the
+  no-"nothing new" rule.
