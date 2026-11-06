@@ -223,7 +223,7 @@ folding kept as use_board=False fallback. Public repo: https://github.com/WanruJ
   remote also carries ~45 __pycache__ .pyc blobs (left alone, never restored). Full suite
   now 148 passed, 1 skipped (ROS-middleware test, expected without ROS 2 here), 46 subtests,
   8.87s — was 118/118 before the restore. Snapshot files refreshed to the live 68-file
-  non-pyc tree. ROADMAP.md synced to GitHub via single-file put (commit pending below);
+  non-pyc tree. ROADMAP.md synced to GitHub via single-file put, commit 61d1265;
   no tree-push (would delete remote-only ROS code). Within reporting hours (21:49 PST)
   and this is genuinely new progress, so a user report goes out.
 
